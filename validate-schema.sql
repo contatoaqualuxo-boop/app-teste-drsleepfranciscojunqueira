@@ -1,67 +1,65 @@
 
 -- ============================================
--- RELATÓRIO DE VALIDAÇÃO DO BANCO DE DADOS
+-- 1. VERIFICAR TABELAS EXISTENTES
 -- ============================================
-
--- 1. Verificar tabelas existentes
-SELECT 'TABELAS EXISTENTES' AS tipo, table_name AS valor, NULL AS extra
+SELECT 'TABELAS EXISTENTES' AS categoria, table_name AS nome
 FROM information_schema.tables
 WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
-ORDER BY table_name
+ORDER BY table_name;
 
-UNION ALL
-
--- 2. Verificar se RLS está habilitado nas tabelas
-SELECT 'RLS HABILITADO' AS tipo, tablename AS valor, rowsecurity::text AS extra
+-- ============================================
+-- 2. VERIFICAR RLS HABILITADO
+-- ============================================
+SELECT 'RLS HABILITADO' AS categoria, tablename AS tabela, rowsecurity::text AS rls_ativado
 FROM pg_tables
 WHERE schemaname = 'public'
-ORDER BY tablename
+ORDER BY tablename;
 
-UNION ALL
-
--- 3. Verificar políticas RLS criadas
-SELECT 'POLÍTICAS RLS' AS tipo, tablename || ' - ' || policyname AS valor, cmd AS extra
+-- ============================================
+-- 3. VERIFICAR POLÍTICAS RLS CRIADAS
+-- ============================================
+SELECT 'POLÍTICAS RLS' AS categoria, tablename AS tabela, policyname AS politica, cmd AS comando
 FROM pg_policies
 WHERE schemaname = 'public'
-ORDER BY tablename, policyname
+ORDER BY tablename, policyname;
 
-UNION ALL
-
--- 4. Verificar dados iniciais: companies
-SELECT 'DADOS - EMPRESAS' AS tipo, name AS valor, slug AS extra
+-- ============================================
+-- 4. VERIFICAR DADOS INICIAIS: COMPANIES
+-- ============================================
+SELECT 'DADOS - EMPRESAS' AS categoria, name AS nome, slug AS identificador
 FROM companies
-ORDER BY name
+ORDER BY name;
 
-UNION ALL
-
--- 5. Verificar dados iniciais: stores
-SELECT 'DADOS - LOJAS' AS tipo, name AS valor, NULL AS extra
+-- ============================================
+-- 5. VERIFICAR DADOS INICIAIS: STORES
+-- ============================================
+SELECT 'DADOS - LOJAS' AS categoria, name AS nome
 FROM stores
-ORDER BY name
+ORDER BY name;
 
-UNION ALL
-
--- 6. Verificar dados iniciais: roles
-SELECT 'DADOS - ROLES' AS tipo, name AS valor, description AS extra
+-- ============================================
+-- 6. VERIFICAR DADOS INICIAIS: ROLES
+-- ============================================
+SELECT 'DADOS - ROLES' AS categoria, name AS nome, description AS descricao
 FROM roles
-ORDER BY name
+ORDER BY name;
 
-UNION ALL
-
--- 7. Verificar dados iniciais: product_categories
-SELECT 'DADOS - CATEGORIAS' AS tipo, name AS valor, slug AS extra
+-- ============================================
+-- 7. VERIFICAR DADOS INICIAIS: PRODUCT CATEGORIES
+-- ============================================
+SELECT 'DADOS - CATEGORIAS' AS categoria, name AS nome, slug AS identificador
 FROM product_categories
-ORDER BY name
+ORDER BY name;
 
-UNION ALL
+-- ============================================
+-- 8. VERIFICAR DADOS INICIAIS: SETTINGS
+-- ============================================
+SELECT 'DADOS - CONFIGURAÇÕES' AS categoria, app_name AS nome_app, company_name AS nome_empresa
+FROM settings;
 
--- 8. Verificar dados iniciais: settings
-SELECT 'DADOS - CONFIGURAÇÕES' AS tipo, app_name AS valor, company_name AS extra
-FROM settings
-
-UNION ALL
-
--- 9. Verificar dados iniciais: notification_templates
-SELECT 'DADOS - TEMPLATES NOTIFICAÇÕES' AS tipo, name AS valor, slug AS extra
+-- ============================================
+-- 9. VERIFICAR DADOS INICIAIS: NOTIFICATION TEMPLATES
+-- ============================================
+SELECT 'DADOS - TEMPLATES NOTIFICAÇÕES' AS categoria, name AS nome, slug AS identificador
 FROM notification_templates
 ORDER BY name;
