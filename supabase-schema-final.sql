@@ -337,76 +337,91 @@ ALTER TABLE customer_timeline ENABLE ROW LEVEL SECURITY;
 -- ============================================
 
 -- Políticas para companies
-CREATE POLICY IF NOT EXISTS "Companies: authenticated users can read"
+DROP POLICY IF EXISTS "Companies: authenticated users can read" ON companies;
+CREATE POLICY "Companies: authenticated users can read"
   ON companies FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
 -- Políticas para stores
-CREATE POLICY IF NOT EXISTS "Stores: authenticated users can read"
+DROP POLICY IF EXISTS "Stores: authenticated users can read" ON stores;
+CREATE POLICY "Stores: authenticated users can read"
   ON stores FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
 -- Políticas para roles
-CREATE POLICY IF NOT EXISTS "Roles: authenticated users can read"
+DROP POLICY IF EXISTS "Roles: authenticated users can read" ON roles;
+CREATE POLICY "Roles: authenticated users can read"
   ON roles FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
 -- Políticas para users
-CREATE POLICY IF NOT EXISTS "Users: can read own data"
+DROP POLICY IF EXISTS "Users: can read own data" ON users;
+CREATE POLICY "Users: can read own data"
   ON users FOR SELECT
   USING (auth.uid() = id);
 
-CREATE POLICY IF NOT EXISTS "Users: can update own data"
+DROP POLICY IF EXISTS "Users: can update own data" ON users;
+CREATE POLICY "Users: can update own data"
   ON users FOR UPDATE
   USING (auth.uid() = id);
 
 -- Políticas para user_roles
-CREATE POLICY IF NOT EXISTS "User Roles: can read own roles"
+DROP POLICY IF EXISTS "User Roles: can read own roles" ON user_roles;
+CREATE POLICY "User Roles: can read own roles"
   ON user_roles FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Políticas para product_categories
-CREATE POLICY IF NOT EXISTS "Product Categories: authenticated users can read"
+DROP POLICY IF EXISTS "Product Categories: authenticated users can read" ON product_categories;
+CREATE POLICY "Product Categories: authenticated users can read"
   ON product_categories FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
 -- Políticas para products
-CREATE POLICY IF NOT EXISTS "Products: authenticated users can read active products"
+DROP POLICY IF EXISTS "Products: authenticated users can read active products" ON products;
+CREATE POLICY "Products: authenticated users can read active products"
   ON products FOR SELECT
   USING (auth.uid() IS NOT NULL AND is_active = true);
 
 -- Políticas para user_products
-CREATE POLICY IF NOT EXISTS "User Products: can read own products"
+DROP POLICY IF EXISTS "User Products: can read own products" ON user_products;
+CREATE POLICY "User Products: can read own products"
   ON user_products FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Políticas para wallets
-CREATE POLICY IF NOT EXISTS "Wallets: can read own wallet"
+DROP POLICY IF EXISTS "Wallets: can read own wallet" ON wallets;
+CREATE POLICY "Wallets: can read own wallet"
   ON wallets FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Políticas para documents
-CREATE POLICY IF NOT EXISTS "Documents: can read own documents"
+DROP POLICY IF EXISTS "Documents: can read own documents" ON documents;
+CREATE POLICY "Documents: can read own documents"
   ON documents FOR SELECT
   USING (auth.uid() = user_id OR auth.uid() IN (SELECT user_id FROM user_products WHERE user_products.id = documents.user_product_id));
 
 -- Políticas para settings
-CREATE POLICY IF NOT EXISTS "Settings: authenticated users can read company settings"
+DROP POLICY IF EXISTS "Settings: authenticated users can read company settings" ON settings;
+CREATE POLICY "Settings: authenticated users can read company settings"
   ON settings FOR SELECT
   USING (auth.uid() IS NOT NULL);
 
 -- Políticas para notification_templates
-CREATE POLICY IF NOT EXISTS "Notification Templates: authenticated users can read active templates"
+DROP POLICY IF EXISTS "Notification Templates: authenticated users can read active templates" ON notification_templates;
+CREATE POLICY "Notification Templates: authenticated users can read active templates"
   ON notification_templates FOR SELECT
   USING (auth.uid() IS NOT NULL AND is_active = true);
 
 -- Políticas para audit_logs (apenas admins podem ler, por enquanto nenhum acesso para MVP)
-CREATE POLICY IF NOT EXISTS "Audit Logs: no public access"
+DROP POLICY IF EXISTS "Audit Logs: no public access" ON audit_logs;
+CREATE POLICY "Audit Logs: no public access"
   ON audit_logs FOR ALL
   USING (false);
 
 -- Políticas para customer_timeline
-CREATE POLICY IF NOT EXISTS "Customer Timeline: can read own timeline"
+DROP POLICY IF EXISTS "Customer Timeline: can read own timeline" ON customer_timeline;
+CREATE POLICY "Customer Timeline: can read own timeline"
   ON customer_timeline FOR SELECT
   USING (auth.uid() = user_id);
 
