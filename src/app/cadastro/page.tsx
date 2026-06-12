@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   User,
   Phone,
@@ -17,38 +18,122 @@ import {
   Moon,
   Star,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+import { createClient } from "@/lib/supabase";
+
+type SignupFormData = {
+  nome: string;
+  whatsapp: string;
+  email: string;
+  dataNascimento: string;
+  senha: string;
+  confirmarSenha: string;
+};
+
+type SignupErrors = {
+  nome: string;
+  whatsapp: string;
+  email: string;
+  dataNascimento: string;
+  senha: string;
+  confirmarSenha: string;
+  general: string;
+};
+
+const initialFormData: SignupFormData = {
+  nome: "",
+  whatsapp: "",
+  email: "",
+  dataNascimento: "",
+  senha: "",
+  confirmarSenha: "",
+};
+
+const initialErrors: SignupErrors = {
+  nome: "",
+  whatsapp: "",
+  email: "",
+  dataNascimento: "",
+  senha: "",
+  confirmarSenha: "",
+  general: "",
+};
+
+function normalizeBirthDate(value: string) {
+  const trimmed = value.trim();
+
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) {
+    const [day, month, year] = trimmed.split("/");
+    return `${year}-${month}-${day}`;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return trimmed;
+  }
+
+  return "";
+}
 
 export default function CadastroPage() {
-  const [formData, setFormData] = useState({
-    nome: "",
-    whatsapp: "",
-    email: "",
-    dataNascimento: "",
-  });
-  const [errors, setErrors] = useState({
-    nome: "",
-    whatsapp: "",
-    email: "",
-    dataNascimento: "",
-  });
+  const router = useRouter();
+  const supabase = useMemo(() => createClient(), []);
+  const [formData, setFormData] = useState(initialFormData);
+  const [errors, setErrors] = useState(initialErrors);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateAndSubmit = (e: React.FormEvent) => {
+  const validateAndSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newErrors: typeof errors = {
+
+    const normalizedBirthDate = normalizeBirthDate(formData.dataNascimento);
+    const nextErrors: SignupErrors = {
       nome: formData.nome.trim() ? "" : "Por favor, informe seu nome completo.",
       whatsapp: formData.whatsapp.trim() ? "" : "Por favor, informe seu WhatsApp.",
       email: formData.email.trim() ? "" : "Por favor, informe seu e-mail.",
-      dataNascimento: formData.dataNascimento.trim() ? "" : "Por favor, informe sua data de nascimento.",
+      dataNascimento: normalizedBirthDate ? "" : "Informe a data no formato DD/MM/AAAA.",
+      senha: formData.senha.length >= 6 ? "" : "A senha deve ter pelo menos 6 caracteres.",
+      confirmarSenha:
+        formData.confirmarSenha === formData.senha ? "" : "As senhas precisam ser iguais.",
+      general: "",
     };
 
-    setErrors(newErrors);
+    setErrors(nextErrors);
 
-    const hasErrors = Object.values(newErrors).some((error) => error);
-    if (!hasErrors) {
-      // Simular navegação para home
-      window.location.href = "/home";
+    if (Object.values(nextErrors).some(Boolean)) {
+      return;
     }
+
+    setIsSubmitting(true);
+
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email.trim(),
+      password: formData.senha,
+      options: {
+        data: {
+          name: formData.nome.trim(),
+          phone: formData.whatsapp.trim(),
+          birth_date: normalizedBirthDate,
+        },
+      },
+    });
+
+    if (error) {
+      setErrors({
+        ...initialErrors,
+        general: "Nao foi possivel criar sua conta agora. Tente novamente em instantes.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (data.session) {
+      await supabase.auth.signOut();
+    }
+
+    setFormData(initialFormData);
+    setIsSubmitting(false);
+    router.push("/login?signup=success");
+    router.refresh();
   };
 
   return (
@@ -271,12 +356,71 @@ export default function CadastroPage() {
               {errors.dataNascimento && <p className="text-red-400 text-xs ml-1">{errors.dataNascimento}</p>}
             </div>
 
+            {/* Senha */}
+            <div className="space-y-1.5">
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
+                  <Lock className="w-5.5 h-5.5" strokeWidth={2} />
+                </div>
+                <input
+                  type="password"
+                  value={formData.senha}
+                  onChange={(e) => {
+                    setFormData({ ...formData, senha: e.target.value });
+                    if (errors.senha || errors.general || errors.confirmarSenha) {
+                      setErrors({ ...errors, senha: "", confirmarSenha: "", general: "" });
+                    }
+                  }}
+                  placeholder="Senha"
+                  autoComplete="new-password"
+                  className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
+                    errors.senha ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+                  }`}
+                />
+              </div>
+              {errors.senha && <p className="text-red-400 text-xs ml-1">{errors.senha}</p>}
+            </div>
+
+            {/* Confirmar senha */}
+            <div className="space-y-1.5">
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
+                  <Lock className="w-5.5 h-5.5" strokeWidth={2} />
+                </div>
+                <input
+                  type="password"
+                  value={formData.confirmarSenha}
+                  onChange={(e) => {
+                    setFormData({ ...formData, confirmarSenha: e.target.value });
+                    if (errors.confirmarSenha || errors.general) {
+                      setErrors({ ...errors, confirmarSenha: "", general: "" });
+                    }
+                  }}
+                  placeholder="Confirmar senha"
+                  autoComplete="new-password"
+                  className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
+                    errors.confirmarSenha ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+                  }`}
+                />
+              </div>
+              {errors.confirmarSenha && <p className="text-red-400 text-xs ml-1">{errors.confirmarSenha}</p>}
+            </div>
+
+            {errors.general ? (
+              <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+                <p className="text-sm text-red-200">{errors.general}</p>
+              </div>
+            ) : null}
+
             {/* Submit button */}
             <button
               type="submit"
+              disabled={isSubmitting}
               className="w-full flex items-center justify-center gap-3 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white py-4.5 px-6 rounded-2xl shadow-xl shadow-blue-600/40 active:scale-[0.98] transition-all mt-2"
             >
-              <span className="text-xl font-bold tracking-tight">Começar minha jornada</span>
+              <span className="text-xl font-bold tracking-tight">
+                {isSubmitting ? "Criando conta..." : "Comecar minha jornada"}
+              </span>
               <ChevronRight className="w-6 h-6 opacity-90" />
             </button>
           </form>

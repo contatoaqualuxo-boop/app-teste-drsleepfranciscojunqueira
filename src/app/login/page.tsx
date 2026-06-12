@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   ChevronLeft,
@@ -30,6 +30,7 @@ const initialErrors: LoginErrors = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
   const [formData, setFormData] = useState({
     email: "",
@@ -37,6 +38,7 @@ export default function LoginPage() {
   });
   const [errors, setErrors] = useState<LoginErrors>(initialErrors);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const signupStatus = searchParams.get("signup");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -179,6 +181,14 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {signupStatus === "success" ? (
+              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
+                <p className="text-sm text-emerald-100">
+                  Cadastro realizado com sucesso. Agora voce pode entrar com seu e-mail e sua senha.
+                </p>
+              </div>
+            ) : null}
+
             <div className="space-y-1.5">
               <div className="relative">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
