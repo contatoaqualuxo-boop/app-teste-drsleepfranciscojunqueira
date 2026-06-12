@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,12 +25,46 @@ import {
   MapPin
 } from "lucide-react";
 
+import { useAuth } from "@/components/AuthProvider";
+
 export default function MinhaContaPage() {
+  const router = useRouter();
+  const { signOut, user } = useAuth();
   const [toast, setToast] = useState<string | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const showToast = (message: string) => {
     setToast(message);
     setTimeout(() => setToast(null), 3000);
+  };
+
+  const customerName = useMemo(() => {
+    const metadataName = user?.user_metadata?.name;
+
+    if (typeof metadataName === "string" && metadataName.trim()) {
+      return metadataName.trim();
+    }
+
+    if (user?.email) {
+      return user.email.split("@")[0];
+    }
+
+    return "Cliente";
+  }, [user]);
+
+  const customerEmail = user?.email ?? "conta@previsita.app";
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+
+    try {
+      await signOut();
+      router.replace("/login");
+      router.refresh();
+    } catch {
+      showToast("Nao foi possivel sair da conta agora.");
+      setIsSigningOut(false);
+    }
   };
 
   return (
@@ -71,10 +106,13 @@ export default function MinhaContaPage() {
             {/* Info */}
             <div className="flex-1">
               <h2 className="text-2xl font-black text-white leading-tight">
-                Olá, Fernando! 👋
+                Ola, {customerName}! 👋
               </h2>
               <p className="text-blue-100/70 text-sm mt-1">
                 Aqui você gerencia suas informações e acompanha sua jornada de sono.
+              </p>
+              <p className="text-white/40 text-xs mt-2">
+                {customerEmail}
               </p>
               <div className="flex items-center gap-2 mt-3">
                 <div className="flex items-center gap-1 px-3 py-1 bg-blue-600/30 rounded-full border border-blue-500/30">
@@ -271,16 +309,23 @@ export default function MinhaContaPage() {
 
         {/* Sair da Conta */}
         <div>
-          <Link href="/" className="bg-red-900/20 border border-red-500/30 rounded-2xl p-4 flex items-center gap-3 hover:bg-red-900/30 transition-all">
+          <button
+            type="button"
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            className="w-full bg-red-900/20 border border-red-500/30 rounded-2xl p-4 flex items-center gap-3 hover:bg-red-900/30 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+          >
             <div className="w-10 h-10 rounded-full bg-red-600/20 flex items-center justify-center">
               <LogOut className="w-5 h-5 text-red-400" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-white font-medium">Sair da conta</p>
+              <p className="text-white font-medium">
+                {isSigningOut ? "Saindo..." : "Sair da conta"}
+              </p>
               <p className="text-white/40 text-xs">Encerrar sessão neste dispositivo</p>
             </div>
             <ChevronRight className="w-4 h-4 text-red-400" />
-          </Link>
+          </button>
         </div>
       </div>
 

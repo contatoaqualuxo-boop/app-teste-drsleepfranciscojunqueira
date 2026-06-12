@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import {
   Bell,
   User,
@@ -18,8 +19,23 @@ import {
   Sparkles
 } from "lucide-react";
 
+import { useAuth } from "@/components/AuthProvider";
+
 export default function HomePage() {
-  const customerName = "Cliente"; // Mock name
+  const { user } = useAuth();
+  const customerName = useMemo(() => {
+    const metadataName = user?.user_metadata?.name;
+
+    if (typeof metadataName === "string" && metadataName.trim()) {
+      return metadataName.trim();
+    }
+
+    if (user?.email) {
+      return user.email.split("@")[0];
+    }
+
+    return "Cliente";
+  }, [user]);
 
   return (
     <main className="min-h-screen relative flex flex-col overflow-hidden pb-32" style={{ background: "var(--background)" }}>
