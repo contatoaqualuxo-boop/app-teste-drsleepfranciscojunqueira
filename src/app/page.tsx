@@ -61,7 +61,7 @@ export default function WelcomePage() {
 
           {/* MODO DEMONSTRAÇÃO - futuramente substituir por autenticação real */}
           <Link
-            href="/home"
+            href="/login"
             className="w-full flex items-center justify-between py-4 px-6 rounded-2xl active:scale-[0.98] transition-all"
             style={{
               background: "var(--card-bg)",

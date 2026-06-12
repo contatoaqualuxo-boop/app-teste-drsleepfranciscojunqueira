@@ -146,7 +146,7 @@ export default function CadastroPage() {
 
           {/* Já possuo cadastro */}
           <Link
-            href="/home"
+            href="/login"
             className="flex flex-col items-center gap-2 bg-transparent border-2 border-white/20 hover:border-white/40 text-white py-4 px-3 rounded-2xl transition-all active:scale-[0.98]"
           >
             <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
