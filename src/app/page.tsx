@@ -86,9 +86,6 @@ export default function WelcomePage() {
             <span className="text-xs font-medium leading-tight" style={{ color: "var(--text-muted)" }}>
               Garantia do produto
             </span>
-            <span className="text-[10px] leading-tight" style={{ color: "var(--text-muted)" }}>
-              Acesse informações importantes sobre sua compra.
-            </span>
           </div>
 
           <div className="flex flex-col items-center text-center gap-2">
@@ -97,9 +94,6 @@ export default function WelcomePage() {
             </div>
             <span className="text-xs font-medium leading-tight" style={{ color: "var(--text-muted)" }}>
               Cuidados personalizados
-            </span>
-            <span className="text-[10px] leading-tight" style={{ color: "var(--text-muted)" }}>
-              Receba lembretes para giro, limpeza e conservação.
             </span>
           </div>
 
@@ -110,9 +104,6 @@ export default function WelcomePage() {
             <span className="text-xs font-medium leading-tight" style={{ color: "var(--text-muted)" }}>
               Clube do Sono
             </span>
-            <span className="text-[10px] leading-tight" style={{ color: "var(--text-muted)" }}>
-              Acumule pontos e desbloqueie recompensas.
-            </span>
           </div>
 
           <div className="flex flex-col items-center text-center gap-2">
@@ -121,9 +112,6 @@ export default function WelcomePage() {
             </div>
             <span className="text-xs font-medium leading-tight" style={{ color: "var(--text-muted)" }}>
               Indique e ganhe
-            </span>
-            <span className="text-[10px] leading-tight" style={{ color: "var(--text-muted)" }}>
-              Convide amigos e acompanhe suas recompensas.
             </span>
           </div>
         </div>
