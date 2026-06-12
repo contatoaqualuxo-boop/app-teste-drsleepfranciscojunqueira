@@ -203,3 +203,49 @@ Todo desenvolvimento deve priorizar:
 Nenhuma decisão deve ser tomada pensando apenas no cliente atual.
 
 Sempre pensar na Plataforma Prévisita como produto principal.
+
+---
+
+## Filosofia Oficial da Plataforma
+
+### Cliente Fundador
+
+A empresa Dr. Sleep – Francisco Junqueira é oficialmente reconhecida como o Cliente Fundador da Plataforma Prévisita.
+
+Ela representa a primeira implementação completa da plataforma e servirá como referência histórica da evolução do produto.
+
+Essa informação possui apenas valor documental.
+
+Nenhuma funcionalidade poderá ser criada exclusivamente para a Dr. Sleep.
+
+Toda implementação deverá ser reutilizável para qualquer empresa.
+
+### Princípio da Escalabilidade
+
+Antes de implementar qualquer funcionalidade, validar internamente:
+
+- Essa funcionalidade atende qualquer empresa?
+- Ela pode ser reutilizada por centenas de clientes?
+- Existe configuração White Label para personalização?
+- Essa decisão continuará correta daqui a cinco anos?
+
+Caso alguma resposta seja negativa, revisar a implementação antes de prosseguir.
+
+### Princípio da Evolução
+
+Toda evolução da plataforma deverá preservar compatibilidade.
+
+Nunca quebrar:
+
+- banco de dados;
+- autenticação;
+- arquitetura;
+- APIs;
+- permissões;
+- estrutura multiempresa.
+
+Novas funcionalidades devem ser adicionadas sem comprometer implementações anteriores.
+
+### Missão
+
+Construir a Plataforma Prévisita como um SaaS White Label de alto padrão, preparado para atender empresas de qualquer segmento, priorizando escalabilidade, segurança, performance, reutilização, facilidade de implantação e excelência na experiência do usuário.
