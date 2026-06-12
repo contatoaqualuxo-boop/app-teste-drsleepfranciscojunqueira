@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   ChevronLeft,
@@ -16,40 +15,33 @@ import {
 
 import { createClient } from "@/lib/supabase";
 
-type LoginErrors = {
+type RecoveryErrors = {
   email: string;
-  password: string;
   general: string;
 };
 
-const initialErrors: LoginErrors = {
+const initialErrors: RecoveryErrors = {
   email: "",
-  password: "",
   general: "",
 };
 
-export default function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+export default function PasswordRecoveryPage() {
   const supabase = useMemo(() => createClient(), []);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState<LoginErrors>(initialErrors);
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState<RecoveryErrors>(initialErrors);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const signupStatus = searchParams.get("signup");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const nextErrors: LoginErrors = {
-      email: formData.email.trim() ? "" : "Por favor, informe seu e-mail.",
-      password: formData.password.trim() ? "" : "Por favor, informe sua senha.",
+    const nextErrors: RecoveryErrors = {
+      email: email.trim() ? "" : "Por favor, informe seu e-mail.",
       general: "",
     };
 
     setErrors(nextErrors);
+    setIsSuccess(false);
 
     if (Object.values(nextErrors).some(Boolean)) {
       return;
@@ -57,22 +49,22 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: formData.email.trim(),
-      password: formData.password,
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/login`,
     });
 
     if (error) {
       setErrors({
-        ...initialErrors,
-        general: "Nao foi possivel entrar. Verifique seus dados e tente novamente.",
+        email: "",
+        general: "Nao foi possivel enviar a recuperacao agora. Tente novamente em instantes.",
       });
       setIsSubmitting(false);
       return;
     }
 
-    router.replace("/home");
-    router.refresh();
+    setIsSuccess(true);
+    setIsSubmitting(false);
+    setEmail("");
   };
 
   return (
@@ -109,7 +101,7 @@ export default function LoginPage() {
 
       <div className="relative z-10 flex-1 flex flex-col px-4 pt-6 pb-6 max-w-md mx-auto w-full">
         <Link
-          href="/"
+          href="/login"
           className="w-fit mb-4 flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
         >
           <ChevronLeft className="w-5 h-5 text-white" />
@@ -129,7 +121,7 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center space-y-2 mb-4">
-          <p className="text-2xl text-white/90 font-medium">Acesse sua conta</p>
+          <p className="text-2xl text-white/90 font-medium">Recupere seu acesso</p>
           <h1 className="text-4xl font-black text-white tracking-tight">
             Plataforma <span className="text-blue-400 font-bold">Previsita</span>
           </h1>
@@ -140,33 +132,8 @@ export default function LoginPage() {
 
         <div className="text-center mb-6 px-4">
           <p className="text-blue-100/80 text-[17px] leading-relaxed">
-            Entre com seu e-mail e sua senha para continuar com seguranca na sua jornada.
+            Informe seu e-mail para receber as instrucoes de recuperacao da sua senha.
           </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <Link
-            href="/cadastro"
-            className="flex flex-col items-center gap-2 bg-transparent border-2 border-white/20 hover:border-white/40 text-white py-4 px-3 rounded-2xl transition-all active:scale-[0.98]"
-          >
-            <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
-              <Mail className="w-5 h-5" />
-            </div>
-            <div className="text-center">
-              <p className="text-base font-bold">Criar conta</p>
-              <p className="text-[11px] text-white/60">Novo acesso</p>
-            </div>
-          </Link>
-
-          <div className="flex flex-col items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 text-white py-4 px-3 rounded-2xl shadow-xl shadow-blue-600/30">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <Lock className="w-5 h-5" />
-            </div>
-            <div className="text-center">
-              <p className="text-base font-bold">Entrar</p>
-              <p className="text-[11px] text-white/80">Acesso seguro</p>
-            </div>
-          </div>
         </div>
 
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-5 shadow-2xl shadow-black/30 mb-4">
@@ -175,16 +142,16 @@ export default function LoginPage() {
               <Lock className="w-5.5 h-5.5 text-blue-400" />
             </div>
             <div>
-              <h2 className="text-white font-bold text-lg">Login</h2>
-              <p className="text-blue-100/60 text-sm">Use suas credenciais para acessar a plataforma.</p>
+              <h2 className="text-white font-bold text-lg">Recuperacao de senha</h2>
+              <p className="text-blue-100/60 text-sm">Enviaremos um link seguro pelo Supabase Auth.</p>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {signupStatus === "success" ? (
+            {isSuccess ? (
               <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
                 <p className="text-sm text-emerald-100">
-                  Cadastro realizado com sucesso. Agora voce pode entrar com seu e-mail e sua senha.
+                  Se este e-mail estiver cadastrado, enviaremos as instrucoes de recuperacao em instantes.
                 </p>
               </div>
             ) : null}
@@ -196,11 +163,12 @@ export default function LoginPage() {
                 </div>
                 <input
                   type="email"
-                  value={formData.email}
+                  value={email}
                   onChange={(event) => {
-                    setFormData((current) => ({ ...current, email: event.target.value }));
-                    if (errors.email || errors.general) {
-                      setErrors((current) => ({ ...current, email: "", general: "" }));
+                    setEmail(event.target.value);
+                    if (errors.email || errors.general || isSuccess) {
+                      setErrors(initialErrors);
+                      setIsSuccess(false);
                     }
                   }}
                   placeholder="E-mail"
@@ -211,39 +179,6 @@ export default function LoginPage() {
                 />
               </div>
               {errors.email ? <p className="text-red-400 text-xs ml-1">{errors.email}</p> : null}
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
-                  <Lock className="w-5.5 h-5.5" strokeWidth={2} />
-                </div>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(event) => {
-                    setFormData((current) => ({ ...current, password: event.target.value }));
-                    if (errors.password || errors.general) {
-                      setErrors((current) => ({ ...current, password: "", general: "" }));
-                    }
-                  }}
-                  placeholder="Senha"
-                  autoComplete="current-password"
-                  className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
-                    errors.password ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
-                  }`}
-                />
-              </div>
-              {errors.password ? <p className="text-red-400 text-xs ml-1">{errors.password}</p> : null}
-            </div>
-
-            <div className="flex justify-end">
-              <Link
-                href="/recuperar-senha"
-                className="text-sm text-blue-300 hover:text-blue-200 transition-colors"
-              >
-                Esqueci minha senha
-              </Link>
             </div>
 
             {errors.general ? (
@@ -258,7 +193,7 @@ export default function LoginPage() {
               className="w-full flex items-center justify-center gap-3 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 disabled:opacity-70 disabled:cursor-not-allowed text-white py-4.5 px-6 rounded-2xl shadow-xl shadow-blue-600/40 active:scale-[0.98] transition-all mt-2"
             >
               <span className="text-xl font-bold tracking-tight">
-                {isSubmitting ? "Entrando..." : "Entrar agora"}
+                {isSubmitting ? "Enviando..." : "Enviar recuperacao"}
               </span>
               <ChevronRight className="w-6 h-6 opacity-90" />
             </button>
@@ -267,7 +202,7 @@ export default function LoginPage() {
           <div className="mt-4 flex items-start gap-3 px-2">
             <ShieldCheck className="w-5.5 h-5.5 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-blue-100/70 text-[13px] leading-relaxed">
-              Seu acesso usa autenticacao do Supabase e mantem a plataforma protegida para cada empresa.
+              O fluxo continua generico para qualquer empresa da plataforma e preserva a arquitetura multiempresa.
             </p>
           </div>
         </div>
