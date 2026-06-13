@@ -18,9 +18,8 @@ import {
   Globe,
   Mail,
   Phone,
-  Instagram,
-  Facebook,
-  Youtube
+  Hash,
+  Play
 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 
@@ -320,7 +319,7 @@ export default function CompanySettingsPage() {
                   )}
                   {settings.instagram && (
                     <div className="p-4 bg-white/3 rounded-xl border border-white/5 flex items-center gap-2">
-                      <Instagram className="w-4 h-4 text-white/40" />
+                      <Hash className="w-4 h-4 text-white/40" />
                       <div>
                         <p className="text-white/40 text-xs">Instagram</p>
                         <p className="text-white font-medium text-sm">{settings.instagram}</p>
@@ -329,7 +328,7 @@ export default function CompanySettingsPage() {
                   )}
                   {settings.facebook && (
                     <div className="p-4 bg-white/3 rounded-xl border border-white/5 flex items-center gap-2">
-                      <Facebook className="w-4 h-4 text-white/40" />
+                      <Hash className="w-4 h-4 text-white/40" />
                       <div>
                         <p className="text-white/40 text-xs">Facebook</p>
                         <p className="text-white font-medium text-sm">{settings.facebook}</p>
@@ -338,7 +337,7 @@ export default function CompanySettingsPage() {
                   )}
                   {settings.youtube && (
                     <div className="p-4 bg-white/3 rounded-xl border border-white/5 flex items-center gap-2">
-                      <Youtube className="w-4 h-4 text-white/40" />
+                      <Play className="w-4 h-4 text-white/40" />
                       <div>
                         <p className="text-white/40 text-xs">YouTube</p>
                         <p className="text-white font-medium text-sm">{settings.youtube}</p>
