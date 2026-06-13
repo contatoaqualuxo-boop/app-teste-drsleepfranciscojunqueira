@@ -440,13 +440,129 @@ export default function WhiteLabelPage() {
                 </div>
               </div>
 
-              {/* Identidade Visual */}
+              {/* Paleta de Cores */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/30 to-indigo-500/30 flex items-center justify-center flex-shrink-0">
                     <Palette className="w-6 h-6 text-white/60" />
                   </div>
-                  <h3 className="text-white font-bold text-xl">Cores e Nome</h3>
+                  <div className="flex-1">
+                    <h3 className="text-white font-bold text-xl">Paleta de Cores da Marca</h3>
+                    <p className="text-purple-200/70 text-sm">Cores que definem a identidade visual</p>
+                  </div>
+                  <div className="ml-auto">
+                    <div className="px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-300 text-xs font-medium">
+                      Em breve será possível alterar
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview da Paleta */}
+                <div className="bg-[#020617] border border-white/10 rounded-xl p-6 mb-6">
+                  <div className="grid grid-cols-4 gap-3 mb-6">
+                    <div className="aspect-square rounded-xl border border-white/10 flex items-center justify-center" style={{ backgroundColor: settings.primary_color || "#6366f1" }}>
+                      <div className="text-white/80 text-xs font-mono">
+                        {settings.primary_color || "#6366f1"}
+                      </div>
+                    </div>
+                    <div className="aspect-square rounded-xl border border-white/10 flex items-center justify-center" style={{ backgroundColor: settings.secondary_color || "#8b5cf6" }}>
+                      <div className="text-white/80 text-xs font-mono">
+                        {settings.secondary_color || "#8b5cf6"}
+                      </div>
+                    </div>
+                    <div className="aspect-square rounded-xl border border-white/10 flex items-center justify-center" style={{ backgroundColor: "#f59e0b" }}>
+                      <div className="text-white/80 text-xs font-mono">#f59e0b</div>
+                    </div>
+                    <div className="aspect-square rounded-xl border border-white/10 flex items-center justify-center" style={{ backgroundColor: "#020617" }}>
+                      <div className="text-white/80 text-xs font-mono">#020617</div>
+                    </div>
+                  </div>
+
+                  {/* Exemplo de Uso */}
+                  <div className="p-4 rounded-xl border border-white/10 bg-white/5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <button 
+                        className="px-4 py-2 rounded-lg text-white font-medium transition-all hover:opacity-90"
+                        style={{ backgroundColor: settings.primary_color || "#6366f1" }}
+                      >
+                        Botão Primário
+                      </button>
+                      <button 
+                        className="px-4 py-2 rounded-lg text-white font-medium transition-all hover:opacity-90"
+                        style={{ backgroundColor: settings.secondary_color || "#8b5cf6" }}
+                      >
+                        Botão Secundário
+                      </button>
+                    </div>
+                    <div className="p-4 rounded-lg border border-white/10" style={{ backgroundColor: settings.secondary_color ? `${settings.secondary_color}20` : "#8b5cf620" }}>
+                      <p className="text-white font-medium">Exemplo de Card</p>
+                      <p className="text-white/60 text-sm">Usando as cores da marca</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Seções das Cores */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-5 bg-white/3 rounded-xl border border-white/5">
+                    <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Cor Primária</p>
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-12 h-12 rounded-xl border border-white/10"
+                        style={{ backgroundColor: settings.primary_color || "#6366f1" }}
+                      />
+                      <span className="text-white font-semibold text-base font-mono">
+                        {settings.primary_color || "#6366f1"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 bg-white/3 rounded-xl border border-white/5">
+                    <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Cor Secundária</p>
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-12 h-12 rounded-xl border border-white/10"
+                        style={{ backgroundColor: settings.secondary_color || "#8b5cf6" }}
+                      />
+                      <span className="text-white font-semibold text-base font-mono">
+                        {settings.secondary_color || "#8b5cf6"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 bg-white/3 rounded-xl border border-white/5">
+                    <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Cor de Destaque</p>
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-12 h-12 rounded-xl border border-white/10"
+                        style={{ backgroundColor: "#f59e0b" }}
+                      />
+                      <span className="text-white font-semibold text-base font-mono">#f59e0b</span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 bg-white/3 rounded-xl border border-white/5">
+                    <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Cor de Fundo</p>
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-12 h-12 rounded-xl border border-white/10"
+                        style={{ backgroundColor: "#020617" }}
+                      />
+                      <span className="text-white font-semibold text-base font-mono">#020617</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Nome e Aplicativo */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500/30 to-blue-500/30 flex items-center justify-center flex-shrink-0">
+                    <Globe className="w-6 h-6 text-white/60" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-white font-bold text-xl">Nome e Identidade</h3>
+                    <p className="text-indigo-200/70 text-sm">Nome da empresa e do aplicativo</p>
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {settings.app_name && (
@@ -459,30 +575,6 @@ export default function WhiteLabelPage() {
                     <div className="p-5 bg-white/3 rounded-xl border border-white/5">
                       <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Nome da Empresa</p>
                       <p className="text-white font-semibold text-base">{settings.company_name}</p>
-                    </div>
-                  )}
-                  {settings.primary_color && (
-                    <div className="p-5 bg-white/3 rounded-xl border border-white/5">
-                      <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Cor Primária</p>
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="w-12 h-12 rounded-xl border border-white/10"
-                          style={{ backgroundColor: settings.primary_color }}
-                        />
-                        <span className="text-white font-semibold text-base font-mono">{settings.primary_color}</span>
-                      </div>
-                    </div>
-                  )}
-                  {settings.secondary_color && (
-                    <div className="p-5 bg-white/3 rounded-xl border border-white/5">
-                      <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Cor Secundária</p>
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="w-12 h-12 rounded-xl border border-white/10"
-                          style={{ backgroundColor: settings.secondary_color }}
-                        />
-                        <span className="text-white font-semibold text-base font-mono">{settings.secondary_color}</span>
-                      </div>
                     </div>
                   )}
                 </div>
