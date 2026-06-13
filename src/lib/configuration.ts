@@ -115,7 +115,7 @@ export class ConfigurationEngine {
     cliente: NavItem[];
   } {
     return {
-      superAdmin: getNavigation('super_admin'),
+      superAdmin: getNavigation('superAdmin'),
       empresa: getNavigation('empresa'),
       cliente: getNavigation('cliente')
     };
