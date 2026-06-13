@@ -1,5 +1,5 @@
 
-# Plataforma Prévisita - Estado do Projeto (v1.0-phase3-complete)
+# Plataforma Prévisita - Estado do Projeto (v1.0-phase4-complete)
 
 ## Tudo que já foi implementado
 
@@ -42,16 +42,23 @@
 - Listagem de permissões/roles.
 - Listagem de configurações globais.
 
+### 6. Painel da Empresa (FASE 4)
+- Dashboard Empresa com métricas.
+- Listagem de clientes.
+- Listagem de produtos.
+- Listagem de garantias (user_products).
+- Listagem de timeline do cliente.
+- Listagem de documentos.
+- Listagem de categorias.
+- Listagem de configurações da empresa.
+- Listagem de programa de fidelidade (wallets).
+
 ## Tudo que falta implementar
 
-### 1. Painel da Empresa (FASE 4)
-- Dashboard Empresa.
-- Gerenciamento de clientes.
-- Gerenciamento de produtos e categorias.
-- Timeline do cliente.
-- Gerenciamento de documentos.
-- Configurações da empresa.
-- Programa de fidelidade.
+### 1. White Label (FASE 5)
+- Personalização visual por empresa (logo, cores, nome).
+- Domínios/subdomínios.
+- Redes sociais e links.
 
 ### 2. Aplicativo do Cliente (FASE 6)
 - Home do cliente.
@@ -66,18 +73,16 @@
 - Perfil do cliente.
 
 ### 3. Outras Fases
-- FASE 5: White Label.
 - FASE 7: Notificações.
 - FASE 8: Analytics.
 - FASE 9: Marketplace de Módulos.
 
 ## Ordem Correta das Próximas Etapas
-1. **Painel da Empresa**: Implementar todas as funcionalidades do painel da empresa (FASE 4).
-2. **White Label**: Implementar personalização visual por empresa (FASE 5).
-3. **Aplicativo do Cliente**: Conectar todas as páginas do cliente com dados reais (FASE 6).
-4. **Notificações**: Implementar envio de e-mails, WhatsApp e push (FASE 7).
-5. **Analytics**: Implementar dashboards de métricas (FASE 8).
-6. **Marketplace**: Preparar arquitetura para módulos adicionais (FASE 9).
+1. **White Label**: Implementar personalização visual por empresa (FASE 5).
+2. **Aplicativo do Cliente**: Conectar todas as páginas do cliente com dados reais (FASE 6).
+3. **Notificações**: Implementar envio de e-mails, WhatsApp e push (FASE 7).
+4. **Analytics**: Implementar dashboards de métricas (FASE 8).
+5. **Marketplace**: Preparar arquitetura para módulos adicionais (FASE 9).
 
 ## Dependências
 - Node.js
@@ -102,7 +107,7 @@
 
 ## CHECKPOINT OFICIAL
 Data: 2026-06-13
-Versão: v1.0-phase3-complete
-Último commit: 6bb78fd57250f2d46b14d487b767611f5b627ab3
-Deploy Vercel: Commit 6bb78fd (deploy automático acionado)
-Status Geral: FASE 3 concluída, projeto pronto para iniciar FASE 4.
+Versão: v1.0-phase4-complete
+Último commit: e9d3f21d08fe986c9c3f3928047a00b1f77120d7
+Deploy Vercel: Commit e9d3f21 (deploy automático acionado)
+Status Geral: FASE 4 concluída, projeto pronto para iniciar FASE 5.
