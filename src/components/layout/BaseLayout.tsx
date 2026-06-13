@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bell, LucideIcon from 'lucide-react';
+import { Bell, type LucideIcon } from 'lucide-react';
 import { useTheme } from '@/lib/theme';
 
 interface NavItem {
