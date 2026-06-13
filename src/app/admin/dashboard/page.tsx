@@ -220,10 +220,11 @@ export default function SuperAdminDashboardPage() {
           {/* Configurações */}
           <div className="mb-6">
             <p className="text-white/40 text-xs uppercase tracking-wider px-3 mb-2">Configurações</p>
-            <button onClick={() => showToast("Funcionalidade será implementada em breve")} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
+            <Link href="/admin/settings" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
               <Settings className="w-5 h-5" />
               <span>Configurações Globais</span>
-            </button>
+              <ChevronRight className="w-4 h-4 ml-auto text-white/40" />
+            </Link>
           </div>
         </div>
 
