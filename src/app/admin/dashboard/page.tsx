@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Home,
   Users,
@@ -15,7 +16,8 @@ import {
   TrendingUp,
   User,
   Plus,
-  LayoutDashboard
+  LayoutDashboard,
+  ChevronRight
 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useAuth } from "@/components/AuthProvider";
@@ -193,10 +195,11 @@ export default function SuperAdminDashboardPage() {
               <Home className="w-5 h-5" />
               <span>Dashboard</span>
             </button>
-            <button onClick={() => showToast("Funcionalidade será implementada em breve")} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
+            <Link href="/admin/companies" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
               <Building2 className="w-5 h-5" />
               <span>Empresas</span>
-            </button>
+              <ChevronRight className="w-4 h-4 ml-auto text-white/40" />
+            </Link>
             <button onClick={() => showToast("Funcionalidade será implementada em breve")} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
               <Store className="w-5 h-5" />
               <span>Lojas</span>
@@ -366,6 +369,9 @@ export default function SuperAdminDashboardPage() {
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-white font-medium text-lg">Empresas Recentes</p>
+                <Link href="/admin/companies" className="text-blue-400 text-xs font-medium hover:text-blue-300 transition-all flex items-center gap-1">
+                  Ver todas <ChevronRight className="w-3 h-3" />
+                </Link>
               </div>
               {isLoading ? (
                 <div className="space-y-3">
