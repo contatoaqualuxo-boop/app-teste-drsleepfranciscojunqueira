@@ -292,15 +292,20 @@ export default function WhiteLabelPage() {
                 </div>
               </div>
 
-              {/* Logo da Empresa */}
+              {/* Logo Principal */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/30 to-indigo-500/30 flex items-center justify-center flex-shrink-0">
                     <Image className="w-6 h-6 text-white/60" />
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-xl">Logo da Empresa</h3>
-                    <p className="text-purple-200/70 text-sm">Upload em breve</p>
+                    <h3 className="text-white font-bold text-xl">Logo Principal</h3>
+                    <p className="text-purple-200/70 text-sm">Logo oficial da marca</p>
+                  </div>
+                  <div className="ml-auto">
+                    <div className="px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-300 text-xs font-medium">
+                      Em breve será possível alterar
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -308,14 +313,11 @@ export default function WhiteLabelPage() {
                   <div className="bg-white/5 border border-white/10 rounded-xl p-6">
                     <div className="flex items-center gap-4">
                       <div className="w-24 h-24 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
-                        <img src={settings.logo_url} alt="Logo" className="w-full h-full object-contain" />
+                        <img src={settings.logo_url} alt="Logo Principal" className="w-full h-full object-contain" />
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-semibold text-base mb-2">Logo Atual</p>
-                        <p className="text-white/50 text-sm">Logo da marca</p>
-                      </div>
-                      <div className="px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-300 text-sm font-medium">
-                        Em breve
+                        <p className="text-white/50 text-sm">Logo oficial da sua marca</p>
                       </div>
                     </div>
                   </div>
@@ -327,10 +329,7 @@ export default function WhiteLabelPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-semibold text-base mb-2">Logo Não Definido</p>
-                        <p className="text-white/50 text-sm">Adicione o logo da sua marca</p>
-                      </div>
-                      <div className="px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-300 text-sm font-medium">
-                        Em breve
+                        <p className="text-white/50 text-sm">Adicione o logo oficial da sua marca</p>
                       </div>
                     </div>
                   </div>
@@ -346,7 +345,12 @@ export default function WhiteLabelPage() {
                   </div>
                   <div>
                     <h3 className="text-white font-bold text-xl">Favicon</h3>
-                    <p className="text-cyan-200/70 text-sm">Icone da aba do navegador</p>
+                    <p className="text-cyan-200/70 text-sm">Ícone da aba do navegador</p>
+                  </div>
+                  <div className="ml-auto">
+                    <div className="px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-300 text-xs font-medium">
+                      Em breve será possível alterar
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -358,10 +362,7 @@ export default function WhiteLabelPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-semibold text-base mb-2">Favicon Atual</p>
-                        <p className="text-white/50 text-sm">Icone da marca</p>
-                      </div>
-                      <div className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-300 text-sm font-medium">
-                        Em breve
+                        <p className="text-white/50 text-sm">Ícone da sua marca</p>
                       </div>
                     </div>
                   </div>
@@ -373,10 +374,7 @@ export default function WhiteLabelPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-semibold text-base mb-2">Favicon Não Definido</p>
-                        <p className="text-white/50 text-sm">Adicione o icone da sua marca</p>
-                      </div>
-                      <div className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-300 text-sm font-medium">
-                        Em breve
+                        <p className="text-white/50 text-sm">Adicione o ícone da sua marca</p>
                       </div>
                     </div>
                   </div>
@@ -384,30 +382,59 @@ export default function WhiteLabelPage() {
                 </div>
               </div>
 
-              {/* Imagem/Banner da Marca */}
+              {/* Banner Institucional */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center flex-shrink-0">
                     <Image className="w-6 h-6 text-white/60" />
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-xl">Imagem/Banner da Marca</h3>
-                    <p className="text-amber-200/70 text-sm">Banner para a marca</p>
+                    <h3 className="text-white font-bold text-xl">Banner Institucional</h3>
+                    <p className="text-amber-200/70 text-sm">Banner principal da marca</p>
+                  </div>
+                  <div className="ml-auto">
+                    <div className="px-3 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-300 text-xs font-medium">
+                      Em breve será possível alterar
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                    <div className="w-full h-40 rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/20 flex items-center justify-center mb-4">
-                      <Image className="w-12 h-12 text-amber-300/50" />
+                    <div className="w-full h-44 rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/20 flex items-center justify-center mb-4">
+                      <Image className="w-14 h-14 text-amber-300/50" />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white font-semibold text-base mb-1">Banner Não Definido</p>
-                        <p className="text-white/50 text-sm">Adicione um banner da sua marca</p>
-                      </div>
-                      <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-300 text-sm font-medium">
-                        Em breve
-                      </div>
+                    <div>
+                      <p className="text-white font-semibold text-base mb-1">Banner Não Definido</p>
+                      <p className="text-white/50 text-sm">Adicione o banner institucional da sua marca</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Open Graph Image */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-rose-500/30 to-pink-500/30 flex items-center justify-center flex-shrink-0">
+                    <Image className="w-6 h-6 text-white/60" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-xl">Imagem de Compartilhamento</h3>
+                    <p className="text-rose-200/70 text-sm">Open Graph Image para redes sociais</p>
+                  </div>
+                  <div className="ml-auto">
+                    <div className="px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-300 text-xs font-medium">
+                      Em breve será possível alterar
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <div className="w-full h-52 rounded-xl bg-gradient-to-br from-rose-600/20 to-pink-600/20 border border-rose-500/20 flex items-center justify-center mb-4">
+                      <Image className="w-16 h-16 text-rose-300/50" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold text-base mb-1">Imagem de Compartilhamento Não Definida</p>
+                      <p className="text-white/50 text-sm">Adicione a imagem que aparecerá em compartilhamentos</p>
                     </div>
                   </div>
                 </div>
