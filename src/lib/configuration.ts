@@ -106,7 +106,7 @@ export class ConfigurationEngine {
 
   get theme(): Theme {
     const settings = this._companySettings;
-    return createTheme(settings);
+    return createTheme(settings ?? undefined);
   }
 
   get navigation(): {
