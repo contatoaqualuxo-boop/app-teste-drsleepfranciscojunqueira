@@ -50,7 +50,7 @@ export default function PasswordRecoveryPage() {
     setIsSubmitting(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/login`,
+      redirectTo: `${window.location.origin}/redefinir-senha`,
     });
 
     if (error) {

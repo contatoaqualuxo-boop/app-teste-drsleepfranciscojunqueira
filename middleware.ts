@@ -6,6 +6,7 @@ const PUBLIC_ROUTES = new Set([
   "/login",
   "/cadastro",
   "/recuperar-senha",
+  "/redefinir-senha",
 ]);
 
 const PRIVATE_ROUTE_PREFIXES = [
