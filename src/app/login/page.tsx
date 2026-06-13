@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState, Suspense } from "react";
 import {
   ChevronLeft,
@@ -30,7 +30,6 @@ const initialErrors: LoginErrors = {
 
 function LoginForm() {
   const router = useRouter();
-  const { useSearchParams } = require("next/navigation");
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
   const [formData, setFormData] = useState({
