@@ -152,10 +152,10 @@ export default function CompanyDashboardPage() {
           {/* Principal */}
           <div className="mb-6">
             <p className="text-white/40 text-xs uppercase tracking-wider px-3 mb-2">Principal</p>
-            <button className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 font-medium">
+            <Link href="/empresa/dashboard" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 font-medium">
               <Home className="w-5 h-5" />
               <span>Dashboard</span>
-            </button>
+            </Link>
             <Link href="/empresa/clientes" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
               <Users className="w-5 h-5" />
               <span>Clientes</span>
