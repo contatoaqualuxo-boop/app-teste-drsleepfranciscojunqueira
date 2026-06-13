@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState, Suspense } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -28,8 +28,9 @@ const initialErrors: LoginErrors = {
   general: "",
 };
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const { useSearchParams } = require("next/navigation");
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
   const [formData, setFormData] = useState({
@@ -75,6 +76,94 @@ export default function LoginPage() {
     router.refresh();
   };
 
+  return (
+    <>
+      {signupStatus === "success" ? (
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
+          <p className="text-sm text-emerald-100">
+            Cadastro realizado com sucesso. Agora voce pode entrar com seu e-mail e sua senha.
+          </p>
+        </div>
+      ) : null}
+
+      <div className="space-y-1.5">
+        <div className="relative">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
+            <Mail className="w-5.5 h-5.5" strokeWidth={2} />
+          </div>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={(event) => {
+              setFormData((current) => ({ ...current, email: event.target.value }));
+              if (errors.email || errors.general) {
+                setErrors((current) => ({ ...current, email: "", general: "" }));
+              }
+            }}
+            placeholder="E-mail"
+            autoComplete="email"
+            className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
+              errors.email ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+            }`}
+          />
+        </div>
+        {errors.email ? <p className="text-red-400 text-xs ml-1">{errors.email}</p> : null}
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="relative">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
+            <Lock className="w-5.5 h-5.5" strokeWidth={2} />
+          </div>
+          <input
+            type="password"
+            value={formData.password}
+            onChange={(event) => {
+              setFormData((current) => ({ ...current, password: event.target.value }));
+              if (errors.password || errors.general) {
+                setErrors((current) => ({ ...current, password: "", general: "" }));
+              }
+            }}
+            placeholder="Senha"
+            autoComplete="current-password"
+            className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
+              errors.password ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+            }`}
+          />
+        </div>
+        {errors.password ? <p className="text-red-400 text-xs ml-1">{errors.password}</p> : null}
+      </div>
+
+      <div className="flex justify-end">
+        <Link
+          href="/recuperar-senha"
+          className="text-sm text-blue-300 hover:text-blue-200 transition-colors"
+        >
+          Esqueci minha senha
+        </Link>
+      </div>
+
+      {errors.general ? (
+        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+          <p className="text-sm text-red-200">{errors.general}</p>
+        </div>
+      ) : null}
+
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full flex items-center justify-center gap-3 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 disabled:opacity-70 disabled:cursor-not-allowed text-white py-4.5 px-6 rounded-2xl shadow-xl shadow-blue-600/40 active:scale-[0.98] transition-all mt-2"
+      >
+        <span className="text-xl font-bold tracking-tight">
+          {isSubmitting ? "Entrando..." : "Entrar agora"}
+        </span>
+        <ChevronRight className="w-6 h-6 opacity-90" />
+      </button>
+    </>
+  );
+}
+
+export default function LoginPage() {
   return (
     <main className="min-h-screen bg-[#020617] relative flex flex-col overflow-hidden pb-12">
       <div className="absolute inset-0 z-0">
@@ -180,88 +269,14 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {signupStatus === "success" ? (
-              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
-                <p className="text-sm text-emerald-100">
-                  Cadastro realizado com sucesso. Agora voce pode entrar com seu e-mail e sua senha.
-                </p>
+          <form className="flex flex-col gap-4">
+            <Suspense fallback={
+              <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 px-4 py-3">
+                <p className="text-sm text-blue-100">Carregando...</p>
               </div>
-            ) : null}
-
-            <div className="space-y-1.5">
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
-                  <Mail className="w-5.5 h-5.5" strokeWidth={2} />
-                </div>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(event) => {
-                    setFormData((current) => ({ ...current, email: event.target.value }));
-                    if (errors.email || errors.general) {
-                      setErrors((current) => ({ ...current, email: "", general: "" }));
-                    }
-                  }}
-                  placeholder="E-mail"
-                  autoComplete="email"
-                  className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
-                    errors.email ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
-                  }`}
-                />
-              </div>
-              {errors.email ? <p className="text-red-400 text-xs ml-1">{errors.email}</p> : null}
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
-                  <Lock className="w-5.5 h-5.5" strokeWidth={2} />
-                </div>
-                <input
-                  type="password"
-                  value={formData.password}
-                  onChange={(event) => {
-                    setFormData((current) => ({ ...current, password: event.target.value }));
-                    if (errors.password || errors.general) {
-                      setErrors((current) => ({ ...current, password: "", general: "" }));
-                    }
-                  }}
-                  placeholder="Senha"
-                  autoComplete="current-password"
-                  className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
-                    errors.password ? "border-red-500/50 focus:ring-red-500/20" : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
-                  }`}
-                />
-              </div>
-              {errors.password ? <p className="text-red-400 text-xs ml-1">{errors.password}</p> : null}
-            </div>
-
-            <div className="flex justify-end">
-              <Link
-                href="/recuperar-senha"
-                className="text-sm text-blue-300 hover:text-blue-200 transition-colors"
-              >
-                Esqueci minha senha
-              </Link>
-            </div>
-
-            {errors.general ? (
-              <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
-                <p className="text-sm text-red-200">{errors.general}</p>
-              </div>
-            ) : null}
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full flex items-center justify-center gap-3 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 disabled:opacity-70 disabled:cursor-not-allowed text-white py-4.5 px-6 rounded-2xl shadow-xl shadow-blue-600/40 active:scale-[0.98] transition-all mt-2"
-            >
-              <span className="text-xl font-bold tracking-tight">
-                {isSubmitting ? "Entrando..." : "Entrar agora"}
-              </span>
-              <ChevronRight className="w-6 h-6 opacity-90" />
-            </button>
+            }>
+              <LoginForm />
+            </Suspense>
           </form>
 
           <div className="mt-4 flex items-start gap-3 px-2">

@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -27,8 +27,9 @@ const initialErrors: ResetErrors = {
   general: "",
 };
 
-export default function ResetPasswordPage() {
+function ResetForm() {
   const router = useRouter();
+  const { useSearchParams } = require("next/navigation");
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
   const [password, setPassword] = useState("");
@@ -122,6 +123,107 @@ export default function ResetPasswordPage() {
     }, 1500);
   };
 
+  if (isAuthorizing) {
+    return (
+      <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 px-4 py-3">
+        <p className="text-sm text-blue-100">Validando seu link de redefinicao...</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {isSuccess ? (
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
+          <p className="text-sm text-emerald-100">
+            Senha redefinida com sucesso. Voce sera redirecionado para o login.
+          </p>
+        </div>
+      ) : null}
+
+      <div className="space-y-1.5">
+        <div className="relative">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
+            <Lock className="w-5.5 h-5.5" strokeWidth={2} />
+          </div>
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => {
+              setPassword(event.target.value);
+              if (errors.password || errors.general) {
+                setErrors((current) => ({
+                  ...current,
+                  password: "",
+                  general: "",
+                }));
+              }
+            }}
+            placeholder="Nova senha"
+            autoComplete="new-password"
+            className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
+              errors.password
+                ? "border-red-500/50 focus:ring-red-500/20"
+                : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+            }`}
+          />
+        </div>
+        {errors.password ? <p className="text-red-400 text-xs ml-1">{errors.password}</p> : null}
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="relative">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
+            <Lock className="w-5.5 h-5.5" strokeWidth={2} />
+          </div>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(event) => {
+              setConfirmPassword(event.target.value);
+              if (errors.confirmPassword || errors.general) {
+                setErrors((current) => ({
+                  ...current,
+                  confirmPassword: "",
+                  general: "",
+                }));
+              }
+            }}
+            placeholder="Confirmar nova senha"
+            autoComplete="new-password"
+            className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
+              errors.confirmPassword
+                ? "border-red-500/50 focus:ring-red-500/20"
+                : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
+            }`}
+          />
+        </div>
+        {errors.confirmPassword ? (
+          <p className="text-red-400 text-xs ml-1">{errors.confirmPassword}</p>
+        ) : null}
+      </div>
+
+      {errors.general ? (
+        <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+          <p className="text-sm text-red-200">{errors.general}</p>
+        </div>
+      ) : null}
+
+      <button
+        type="submit"
+        disabled={isSubmitting || !!errors.general}
+        className="w-full flex items-center justify-center gap-3 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 disabled:opacity-70 disabled:cursor-not-allowed text-white py-4.5 px-6 rounded-2xl shadow-xl shadow-blue-600/40 active:scale-[0.98] transition-all mt-2"
+      >
+        <span className="text-xl font-bold tracking-tight">
+          {isSubmitting ? "Salvando..." : "Salvar nova senha"}
+        </span>
+        <ChevronRight className="w-6 h-6 opacity-90" />
+      </button>
+    </form>
+  );
+}
+
+export default function ResetPasswordPage() {
   return (
     <main className="min-h-screen bg-[#020617] relative flex flex-col overflow-hidden pb-12">
       <div className="absolute inset-0 z-0">
@@ -187,100 +289,13 @@ export default function ResetPasswordPage() {
             </div>
           </div>
 
-          {isAuthorizing ? (
+          <Suspense fallback={
             <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 px-4 py-3">
-              <p className="text-sm text-blue-100">Validando seu link de redefinicao...</p>
+              <p className="text-sm text-blue-100">Carregando...</p>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {isSuccess ? (
-                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
-                  <p className="text-sm text-emerald-100">
-                    Senha redefinida com sucesso. Voce sera redirecionado para o login.
-                  </p>
-                </div>
-              ) : null}
-
-              <div className="space-y-1.5">
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
-                    <Lock className="w-5.5 h-5.5" strokeWidth={2} />
-                  </div>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(event) => {
-                      setPassword(event.target.value);
-                      if (errors.password || errors.general) {
-                        setErrors((current) => ({
-                          ...current,
-                          password: "",
-                          general: "",
-                        }));
-                      }
-                    }}
-                    placeholder="Nova senha"
-                    autoComplete="new-password"
-                    className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
-                      errors.password
-                        ? "border-red-500/50 focus:ring-red-500/20"
-                        : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
-                    }`}
-                  />
-                </div>
-                {errors.password ? <p className="text-red-400 text-xs ml-1">{errors.password}</p> : null}
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="relative">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400">
-                    <Lock className="w-5.5 h-5.5" strokeWidth={2} />
-                  </div>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(event) => {
-                      setConfirmPassword(event.target.value);
-                      if (errors.confirmPassword || errors.general) {
-                        setErrors((current) => ({
-                          ...current,
-                          confirmPassword: "",
-                          general: "",
-                        }));
-                      }
-                    }}
-                    placeholder="Confirmar nova senha"
-                    autoComplete="new-password"
-                    className={`w-full bg-white/5 border rounded-2xl py-4 pl-12 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 transition-all ${
-                      errors.confirmPassword
-                        ? "border-red-500/50 focus:ring-red-500/20"
-                        : "border-white/10 focus:border-blue-500/50 focus:ring-blue-500/20"
-                    }`}
-                  />
-                </div>
-                {errors.confirmPassword ? (
-                  <p className="text-red-400 text-xs ml-1">{errors.confirmPassword}</p>
-                ) : null}
-              </div>
-
-              {errors.general ? (
-                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3">
-                  <p className="text-sm text-red-200">{errors.general}</p>
-                </div>
-              ) : null}
-
-              <button
-                type="submit"
-                disabled={isSubmitting || !!errors.general}
-                className="w-full flex items-center justify-center gap-3 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 disabled:opacity-70 disabled:cursor-not-allowed text-white py-4.5 px-6 rounded-2xl shadow-xl shadow-blue-600/40 active:scale-[0.98] transition-all mt-2"
-              >
-                <span className="text-xl font-bold tracking-tight">
-                  {isSubmitting ? "Salvando..." : "Salvar nova senha"}
-                </span>
-                <ChevronRight className="w-6 h-6 opacity-90" />
-              </button>
-            </form>
-          )}
+          }>
+            <ResetForm />
+          </Suspense>
 
           <div className="mt-4 flex items-start gap-3 px-2">
             <ShieldCheck className="w-5.5 h-5.5 text-blue-400 flex-shrink-0 mt-0.5" />
