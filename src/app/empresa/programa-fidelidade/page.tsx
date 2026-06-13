@@ -229,7 +229,7 @@ export default function LoyaltyProgramPage() {
               {wallets.map((wallet) => (
                 <div key={wallet.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden relative">
                       {wallet.users?.avatar_url ? (
                         <Image
                           src={wallet.users.avatar_url}
