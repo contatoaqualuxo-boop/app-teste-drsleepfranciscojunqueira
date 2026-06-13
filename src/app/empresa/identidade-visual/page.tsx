@@ -292,13 +292,134 @@ export default function WhiteLabelPage() {
                 </div>
               </div>
 
-              {/* Identidade Visual */}
+              {/* Logo da Empresa */}
               <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/30 to-indigo-500/30 flex items-center justify-center flex-shrink-0">
                     <Image className="w-6 h-6 text-white/60" />
                   </div>
-                  <h3 className="text-white font-bold text-xl">Identidade Visual</h3>
+                  <div>
+                    <h3 className="text-white font-bold text-xl">Logo da Empresa</h3>
+                    <p className="text-purple-200/70 text-sm">Upload em breve</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {settings.logo_url ? (
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-24 h-24 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img src={settings.logo_url} alt="Logo" className="w-full h-full object-contain" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold text-base mb-2">Logo Atual</p>
+                        <p className="text-white/50 text-sm">Logo da marca</p>
+                      </div>
+                      <div className="px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-300 text-sm font-medium">
+                        Em breve
+                      </div>
+                    </div>
+                  </div>
+                  ) : (
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-600/20 border border-purple-500/20 flex items-center justify-center flex-shrink-0">
+                        <Image className="w-10 h-10 text-purple-300/50" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold text-base mb-2">Logo Não Definido</p>
+                        <p className="text-white/50 text-sm">Adicione o logo da sua marca</p>
+                      </div>
+                      <div className="px-4 py-2 bg-purple-500/10 border border-purple-500/20 rounded-lg text-purple-300 text-sm font-medium">
+                        Em breve
+                      </div>
+                    </div>
+                  </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Favicon */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center flex-shrink-0">
+                    <Image className="w-6 h-6 text-white/60" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-xl">Favicon</h3>
+                    <p className="text-cyan-200/70 text-sm">Icone da aba do navegador</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {settings.favicon_url ? (
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img src={settings.favicon_url} alt="Favicon" className="w-full h-full object-contain" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold text-base mb-2">Favicon Atual</p>
+                        <p className="text-white/50 text-sm">Icone da marca</p>
+                      </div>
+                      <div className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-300 text-sm font-medium">
+                        Em breve
+                      </div>
+                    </div>
+                  </div>
+                  ) : (
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-600/20 to-blue-600/20 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                        <Image className="w-8 h-8 text-cyan-300/50" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold text-base mb-2">Favicon Não Definido</p>
+                        <p className="text-white/50 text-sm">Adicione o icone da sua marca</p>
+                      </div>
+                      <div className="px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-lg text-cyan-300 text-sm font-medium">
+                        Em breve
+                      </div>
+                    </div>
+                  </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Imagem/Banner da Marca */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center flex-shrink-0">
+                    <Image className="w-6 h-6 text-white/60" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold text-xl">Imagem/Banner da Marca</h3>
+                    <p className="text-amber-200/70 text-sm">Banner para a marca</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+                    <div className="w-full h-40 rounded-xl bg-gradient-to-br from-amber-600/20 to-orange-600/20 border border-amber-500/20 flex items-center justify-center mb-4">
+                      <Image className="w-12 h-12 text-amber-300/50" />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white font-semibold text-base mb-1">Banner Não Definido</p>
+                        <p className="text-white/50 text-sm">Adicione um banner da sua marca</p>
+                      </div>
+                      <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-300 text-sm font-medium">
+                        Em breve
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Identidade Visual */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/30 to-indigo-500/30 flex items-center justify-center flex-shrink-0">
+                    <Palette className="w-6 h-6 text-white/60" />
+                  </div>
+                  <h3 className="text-white font-bold text-xl">Cores e Nome</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {settings.app_name && (
@@ -311,14 +432,6 @@ export default function WhiteLabelPage() {
                     <div className="p-5 bg-white/3 rounded-xl border border-white/5">
                       <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Nome da Empresa</p>
                       <p className="text-white font-semibold text-base">{settings.company_name}</p>
-                    </div>
-                  )}
-                  {settings.logo_url && (
-                    <div className="p-5 bg-white/3 rounded-xl border border-white/5">
-                      <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Logo</p>
-                      <div className="w-full h-20 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center overflow-hidden">
-                        <img src={settings.logo_url} alt="Logo" className="max-h-full max-w-full object-contain" />
-                      </div>
                     </div>
                   )}
                   {settings.primary_color && (
