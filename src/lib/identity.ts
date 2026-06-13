@@ -108,7 +108,7 @@ export class IdentityResolver {
       return _identityCache[cacheKey];
     }
 
-    const wl = this._whiteLabelResolver.resolveWhiteLabelFromTenant(finalTenant);
+    const wl = this._whiteLabelResolver.resolveWhiteLabelFromTenant(finalTenant ?? undefined);
 
     const identity: Identity = {
       tenant: finalTenant,
