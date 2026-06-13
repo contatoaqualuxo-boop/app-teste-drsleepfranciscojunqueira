@@ -355,7 +355,7 @@ export default function SuperAdminDashboardPage() {
               ) : founderCompany ? (
                 <p className="text-xl font-bold text-white truncate">{founderCompany.name}</p>
               ) : (
-                <p className="text-white/60 text-sm">Dr. Sleep</p>
+                <p className="text-white/60 text-sm">Dr. Sleep - Francisco Junqueira</p>
               )}
             </div>
           </div>
@@ -426,7 +426,7 @@ export default function SuperAdminDashboardPage() {
                     <ShieldCheck className="w-5 h-5 text-blue-400" />
                     <p className="text-white font-medium text-sm">Cliente Fundador</p>
                   </div>
-                  <p className="text-blue-100/70 text-xs">Dr. Sleep é o primeiro cliente da Plataforma Prévisita e serve como referência para o desenvolvimento</p>
+                  <p className="text-blue-100/70 text-xs">Dr. Sleep - Francisco Junqueira é o primeiro cliente da Plataforma Prévisita e serve como referência para o desenvolvimento</p>
                 </div>
                 <div className="p-4 bg-purple-600/5 rounded-xl border border-purple-500/10">
                   <div className="flex items-center gap-2 mb-2">
