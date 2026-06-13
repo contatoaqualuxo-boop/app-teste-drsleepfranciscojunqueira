@@ -200,10 +200,11 @@ export default function SuperAdminDashboardPage() {
               <span>Empresas</span>
               <ChevronRight className="w-4 h-4 ml-auto text-white/40" />
             </Link>
-            <button onClick={() => showToast("Funcionalidade será implementada em breve")} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
+            <Link href="/admin/stores" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
               <Store className="w-5 h-5" />
               <span>Lojas</span>
-            </button>
+              <ChevronRight className="w-4 h-4 ml-auto text-white/40" />
+            </Link>
             <button onClick={() => showToast("Funcionalidade será implementada em breve")} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
               <Users className="w-5 h-5" />
               <span>Usuários</span>
