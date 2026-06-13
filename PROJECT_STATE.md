@@ -1,5 +1,5 @@
 
-# Plataforma Prévisita - Estado do Projeto (v1.0-foundation)
+# Plataforma Prévisita - Estado do Projeto (v1.0-phase3-complete)
 
 ## Tudo que já foi implementado
 
@@ -27,76 +27,57 @@
 - Pasta `src/lib/supabase` para integração com o Supabase.
 - Pasta `src/lib/types` para tipos TypeScript.
 
-### 4. Páginas e Componentes
-- Páginas publicas e privadas criadas (apenas visual, sem lógica).
-- Componentes básicos existentes (`ClientWrapper`, `PlaceholderPage`).
-- Layout principal configurado.
+### 4. Autenticação (FASE 2)
+- Implementado login real na página `/login`.
+- Implementado cadastro real na página `/cadastro`.
+- Implementado recuperação de senha nas páginas `/recuperar-senha` e `/redefinir-senha`.
+- Criado middleware Next.js para proteção de rotas.
+- Implementado controle de permissões (RBAC) via tabelas `roles` e `user_roles`.
+
+### 5. Painel Super Admin (FASE 3)
+- Dashboard Super Admin com métricas e cards principais.
+- Listagem de empresas.
+- Listagem de lojas.
+- Listagem de usuários.
+- Listagem de permissões/roles.
+- Listagem de configurações globais.
 
 ## Tudo que falta implementar
 
-### 1. Autenticação
-- Implementar login real na página `/login`.
-- Implementar cadastro real na página `/cadastro`.
-- Implementar logout real na página `/minha-conta`.
-- Criar middleware Next.js para proteção de rotas.
-- Criar hook `useAuth`.
+### 1. Painel da Empresa (FASE 4)
+- Dashboard Empresa.
+- Gerenciamento de clientes.
+- Gerenciamento de produtos e categorias.
+- Timeline do cliente.
+- Gerenciamento de documentos.
+- Configurações da empresa.
+- Programa de fidelidade.
 
-### 2. Gerenciamento de Estado
-- Instalar e configurar Zustand.
-- Criar store de autenticação.
-- Criar stores para dados do usuário, carteira, etc.
+### 2. Aplicativo do Cliente (FASE 6)
+- Home do cliente.
+- Meu produto (colchão).
+- Garantia.
+- Documentos.
+- Cuidados com o produto.
+- Programa de fidelidade.
+- Carteira de pontos.
+- Timeline do cliente.
+- Indicações.
+- Perfil do cliente.
 
-### 3. Integração das Páginas do Cliente
-- Conectar `/home` com dados reais.
-- Conectar `/minha-conta` com dados reais e funcionalidades.
-- Conectar `/meu-colchao` com dados reais e upload de arquivos.
-- Conectar `/cuidados` com tarefas e lembretes.
-- Conectar `/clube-do-sono` com pontos e recompensas.
-- Conectar `/indique-ganhe` com programa de indicações.
-- Conectar `/previsita` com link dinâmico da empresa.
-
-### 4. Integração do Painel Admin
-- Conectar `/admin/dashboard` com métricas.
-- Implementar CRUD de clientes (admin).
-- Implementar CRUD de produtos do catálogo (admin).
-- Implementar registro de vendas (admin).
-- Implementar gerenciamento de indicações (admin).
-- Implementar gerenciamento de recompensas (admin).
-- Implementar envio de notificações (admin).
-
-### 5. Supabase Storage
-- Configurar buckets no Supabase.
-- Implementar upload de fotos de produtos.
-- Implementar upload/download de documentos.
-- Criar policies para o Storage.
-
-### 6. Notificações
-- Implementar envio de e-mails via Supabase ou integração externa.
-- Implementar envio de WhatsApp (opcional).
-- Implementar notificações push (opcional).
-- Usar templates da tabela `notification_templates`.
-
-### 7. Logs e Auditoria
-- Implementar log de ações dos admins na tabela `audit_logs`.
-- Criar página de logs no painel admin.
-
-### 8. Testes e Validação
-- Testar RLS e políticas.
-- Testar autenticação e middleware.
-- Testar fluxo completo do cliente.
-- Testar fluxo completo do admin.
+### 3. Outras Fases
+- FASE 5: White Label.
+- FASE 7: Notificações.
+- FASE 8: Analytics.
+- FASE 9: Marketplace de Módulos.
 
 ## Ordem Correta das Próximas Etapas
-1. **Autenticação**: Implementar login, cadastro, logout e middleware.
-2. **Gerenciamento de Estado**: Configurar Zustand e stores básicas.
-3. **Dados do Cliente**: Conectar `/home`, `/minha-conta`, `/meu-colchao`.
-4. **Storage**: Configurar buckets e upload/download de arquivos.
-5. **Cuidados**: Conectar `/cuidados` com tarefas e lembretes.
-6. **Clube do Sono e Indique e Ganhe**: Conectar essas páginas.
-7. **Painel Admin**: Implementar as funcionalidades do admin.
-8. **Notificações**: Implementar envio de notificações.
-9. **Auditoria**: Implementar logs de ações dos admins.
-10. **Testes e Otimizações**: Testar tudo e otimizar performance.
+1. **Painel da Empresa**: Implementar todas as funcionalidades do painel da empresa (FASE 4).
+2. **White Label**: Implementar personalização visual por empresa (FASE 5).
+3. **Aplicativo do Cliente**: Conectar todas as páginas do cliente com dados reais (FASE 6).
+4. **Notificações**: Implementar envio de e-mails, WhatsApp e push (FASE 7).
+5. **Analytics**: Implementar dashboards de métricas (FASE 8).
+6. **Marketplace**: Preparar arquitetura para módulos adicionais (FASE 9).
 
 ## Dependências
 - Node.js
@@ -107,7 +88,6 @@
 - @supabase/ssr
 - lucide-react
 - tailwindcss
-- zustand (a instalar)
 
 ## Decisões Arquiteturais Tomadas (NÃO ALTERAR)
 1. **Framework**: Usar Next.js 16 com App Router (não voltar para Pages Router).
@@ -119,3 +99,10 @@
 7. **Nomenclatura**: Manter snake_case para tabelas/campos do banco, camelCase para código TypeScript.
 8. **RLS**: Sempre manter RLS HABILITADO em todas as tabelas (não desativar).
 9. **Triggers**: Manter triggers `handle_updated_at` e `on_auth_user_created` (não remover).
+
+## CHECKPOINT OFICIAL
+Data: 2026-06-13
+Versão: v1.0-phase3-complete
+Último commit: 6bb78fd57250f2d46b14d487b767611f5b627ab3
+Deploy Vercel: Commit 6bb78fd (deploy automático acionado)
+Status Geral: FASE 3 concluída, projeto pronto para iniciar FASE 4.
