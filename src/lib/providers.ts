@@ -230,10 +230,15 @@ export class ProviderIntegrationEngine {
   }
 
   set currentProviders(providers: Partial<Providers>) {
-    this._currentProviders = {
-      ...DEFAULT_PROVIDERS,
-      ...providers
-    };
+    const mergedProviders: Providers = { ...DEFAULT_PROVIDERS };
+
+    Object.entries(providers).forEach(([key, provider]) => {
+      if (provider) {
+        mergedProviders[key] = provider;
+      }
+    });
+
+    this._currentProviders = mergedProviders;
   }
 }
 
