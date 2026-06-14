@@ -27,7 +27,7 @@ export interface RouteAccess {
   isPublic?: boolean;
 }
 
-const DEFAULT_ACCESS_CONTEXT: AccessContext = {
+export const DEFAULT_ACCESS_CONTEXT: AccessContext = {
   tenant: null,
   permissions: {
     roles: [],
