@@ -10,6 +10,7 @@ import { Identity, IdentityResolver, createIdentityResolver } from './identity';
 import { Theme, createTheme } from './theme';
 import { BrandAssets, BrandAssetsResolver, createBrandAssetsResolver } from './brandAssets';
 import { DesignTokens, DesignTokensEngine, createDesignTokensEngine } from './designTokens';
+import { Motion, MotionResolver, createMotionResolver } from './motion';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -69,6 +70,21 @@ export interface RuntimeDesignTokens {
   containers: Record<string, any>;
 }
 
+export interface RuntimeMotion {
+  duration: Record<string, any>;
+  easing: Record<string, any>;
+  fade: Record<string, any>;
+  slide: Record<string, any>;
+  scale: Record<string, any>;
+  hover: Record<string, any>;
+  press: Record<string, any>;
+  entrance: Record<string, any>;
+  exit: Record<string, any>;
+  microinteractions: Record<string, any>;
+  reducedMotion: boolean;
+  premiumMotion: boolean;
+}
+
 export interface RuntimeAccess {
   isAuthenticated: boolean;
   permissions: string[];
@@ -87,6 +103,7 @@ export interface Runtime {
   theme: RuntimeTheme;
   brandAssets: RuntimeBrandAssets;
   designTokens: RuntimeDesignTokens;
+  motion: RuntimeMotion;
   domain: Record<string, any>;
   plan: RuntimePlan;
   subscription: Subscription | null;
@@ -158,6 +175,20 @@ const DEFAULT_RUNTIME: Runtime = {
     elevation: {},
     containers: {}
   },
+  motion: {
+    duration: {},
+    easing: {},
+    fade: {},
+    slide: {},
+    scale: {},
+    hover: {},
+    press: {},
+    entrance: {},
+    exit: {},
+    microinteractions: {},
+    reducedMotion: false,
+    premiumMotion: false
+  },
   domain: {},
   plan: {
     id: 'starter',
@@ -200,6 +231,7 @@ let _runtimeIdentityCache: Record<string, RuntimeIdentity> = {};
 let _runtimeThemeCache: Record<string, RuntimeTheme> = {};
 let _runtimeBrandAssetsCache: Record<string, RuntimeBrandAssets> = {};
 let _runtimeDesignTokensCache: Record<string, RuntimeDesignTokens> = {};
+let _runtimeMotionCache: Record<string, RuntimeMotion> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -207,11 +239,13 @@ export class WhiteLabelRuntime {
   private _identityResolver: IdentityResolver;
   private _brandAssetsResolver: BrandAssetsResolver;
   private _designTokensEngine: DesignTokensEngine;
+  private _motionResolver: MotionResolver;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
     this._brandAssetsResolver = createBrandAssetsResolver(initialTenant);
     this._designTokensEngine = createDesignTokensEngine(initialTenant);
+    this._motionResolver = createMotionResolver(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -586,6 +620,67 @@ export class WhiteLabelRuntime {
 
   clearRuntimeDesignTokensCache(): void {
     _runtimeDesignTokensCache = {};
+  }
+
+  getRuntimeMotion(): RuntimeMotion {
+    return this._currentRuntime.motion;
+  }
+
+  // Motion Integration Helpers
+  resolveRuntimeMotion(tenant?: Tenant): RuntimeMotion {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeMotionCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeMotionCache[cacheKey]);
+    }
+
+    const motion = this._motionResolver.resolveMotionFromTenant(tenant);
+    const runtimeMotion: RuntimeMotion = {
+      duration: { ...motion.duration },
+      easing: { ...motion.easing },
+      fade: { ...motion.fade },
+      slide: { ...motion.slide },
+      scale: { ...motion.scale },
+      hover: { ...motion.hover },
+      press: { ...motion.press },
+      entrance: { ...motion.entrance },
+      exit: { ...motion.exit },
+      microinteractions: { ...motion.microinteractions },
+      reducedMotion: motion.reducedMotion,
+      premiumMotion: motion.premiumMotion
+    };
+
+    _runtimeMotionCache[cacheKey] = runtimeMotion;
+    return this._getDeepCopy(runtimeMotion);
+  }
+
+  resolveMotionFromRuntime(runtimeMotion?: RuntimeMotion): Partial<Motion> {
+    return {
+      duration: runtimeMotion?.duration as Motion["duration"] | undefined,
+      easing: runtimeMotion?.easing as Motion["easing"] | undefined,
+      fade: runtimeMotion?.fade as Motion["fade"] | undefined,
+      slide: runtimeMotion?.slide as Motion["slide"] | undefined,
+      scale: runtimeMotion?.scale as Motion["scale"] | undefined,
+      hover: runtimeMotion?.hover as Motion["hover"] | undefined,
+      press: runtimeMotion?.press as Motion["press"] | undefined,
+      entrance: runtimeMotion?.entrance as Motion["entrance"] | undefined,
+      exit: runtimeMotion?.exit as Motion["exit"] | undefined,
+      microinteractions: runtimeMotion?.microinteractions as Motion["microinteractions"] | undefined,
+      reducedMotion: runtimeMotion?.reducedMotion,
+      premiumMotion: runtimeMotion?.premiumMotion
+    };
+  }
+
+  hasRuntimeMotion(): boolean {
+    return !!this._currentRuntime.motion.duration['200'];
+  }
+
+  createRuntimeMotionSnapshot(): RuntimeMotion {
+    return this._getDeepCopy(this._currentRuntime.motion);
+  }
+
+  clearRuntimeMotionCache(): void {
+    _runtimeMotionCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
