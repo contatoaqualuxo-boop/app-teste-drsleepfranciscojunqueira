@@ -11,6 +11,7 @@ import { Theme, createTheme } from './theme';
 import { BrandAssets, BrandAssetsResolver, createBrandAssetsResolver } from './brandAssets';
 import { DesignTokens, DesignTokensEngine, createDesignTokensEngine } from './designTokens';
 import { Motion, MotionResolver, createMotionResolver } from './motion';
+import { Fonts, FontResolver, createFontResolver } from './fonts';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -85,6 +86,18 @@ export interface RuntimeMotion {
   premiumMotion: boolean;
 }
 
+export interface RuntimeFonts {
+  primary: Record<string, any>;
+  heading: Record<string, any>;
+  body: Record<string, any>;
+  button: Record<string, any>;
+  menu: Record<string, any>;
+  premium: Record<string, any> | null;
+  scale: Record<string, any>;
+  weights: any[];
+  fallbacks: string[];
+}
+
 export interface RuntimeAccess {
   isAuthenticated: boolean;
   permissions: string[];
@@ -104,6 +117,7 @@ export interface Runtime {
   brandAssets: RuntimeBrandAssets;
   designTokens: RuntimeDesignTokens;
   motion: RuntimeMotion;
+  fonts: RuntimeFonts;
   domain: Record<string, any>;
   plan: RuntimePlan;
   subscription: Subscription | null;
@@ -189,6 +203,17 @@ const DEFAULT_RUNTIME: Runtime = {
     reducedMotion: false,
     premiumMotion: false
   },
+  fonts: {
+    primary: {},
+    heading: {},
+    body: {},
+    button: {},
+    menu: {},
+    premium: null,
+    scale: {},
+    weights: [],
+    fallbacks: []
+  },
   domain: {},
   plan: {
     id: 'starter',
@@ -232,6 +257,7 @@ let _runtimeThemeCache: Record<string, RuntimeTheme> = {};
 let _runtimeBrandAssetsCache: Record<string, RuntimeBrandAssets> = {};
 let _runtimeDesignTokensCache: Record<string, RuntimeDesignTokens> = {};
 let _runtimeMotionCache: Record<string, RuntimeMotion> = {};
+let _runtimeFontsCache: Record<string, RuntimeFonts> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -240,12 +266,14 @@ export class WhiteLabelRuntime {
   private _brandAssetsResolver: BrandAssetsResolver;
   private _designTokensEngine: DesignTokensEngine;
   private _motionResolver: MotionResolver;
+  private _fontResolver: FontResolver;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
     this._brandAssetsResolver = createBrandAssetsResolver(initialTenant);
     this._designTokensEngine = createDesignTokensEngine(initialTenant);
     this._motionResolver = createMotionResolver(initialTenant);
+    this._fontResolver = createFontResolver(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -681,6 +709,61 @@ export class WhiteLabelRuntime {
 
   clearRuntimeMotionCache(): void {
     _runtimeMotionCache = {};
+  }
+
+  getRuntimeFonts(): RuntimeFonts {
+    return this._currentRuntime.fonts;
+  }
+
+  // Fonts Integration Helpers
+  resolveRuntimeFonts(tenant?: Tenant): RuntimeFonts {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeFontsCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeFontsCache[cacheKey]);
+    }
+
+    const fonts = this._fontResolver.resolveFontsFromTenant(tenant);
+    const runtimeFonts: RuntimeFonts = {
+      primary: { ...fonts.primary },
+      heading: { ...fonts.heading },
+      body: { ...fonts.body },
+      button: { ...fonts.button },
+      menu: { ...fonts.menu },
+      premium: fonts.premium ? { ...fonts.premium } : null,
+      scale: { ...fonts.scale },
+      weights: [...fonts.weights],
+      fallbacks: [...fonts.fallbacks]
+    };
+
+    _runtimeFontsCache[cacheKey] = runtimeFonts;
+    return this._getDeepCopy(runtimeFonts);
+  }
+
+  resolveFontsFromRuntime(runtimeFonts?: RuntimeFonts): Partial<Fonts> {
+    return {
+      primary: runtimeFonts?.primary as Fonts["primary"] | undefined,
+      heading: runtimeFonts?.heading as Fonts["heading"] | undefined,
+      body: runtimeFonts?.body as Fonts["body"] | undefined,
+      button: runtimeFonts?.button as Fonts["button"] | undefined,
+      menu: runtimeFonts?.menu as Fonts["menu"] | undefined,
+      premium: runtimeFonts?.premium as Fonts["premium"] | undefined,
+      scale: runtimeFonts?.scale as Fonts["scale"] | undefined,
+      weights: runtimeFonts?.weights as Fonts["weights"] | undefined,
+      fallbacks: runtimeFonts?.fallbacks as Fonts["fallbacks"] | undefined
+    };
+  }
+
+  hasRuntimeFonts(): boolean {
+    return !!this._currentRuntime.fonts.primary.fontFamily;
+  }
+
+  createRuntimeFontsSnapshot(): RuntimeFonts {
+    return this._getDeepCopy(this._currentRuntime.fonts);
+  }
+
+  clearRuntimeFontsCache(): void {
+    _runtimeFontsCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
