@@ -1,6 +1,6 @@
 'use client';
 
-import { Tenant } from './tenant';
+import { Tenant, TenantEngine, createTenantEngine } from './tenant';
 import { Registry } from './registry';
 import { Providers, DEFAULT_PROVIDERS } from './providers';
 import { SupabaseSettings } from './supabaseSettingsConnector';
@@ -159,6 +159,10 @@ export interface RuntimeSubscription {
 
 export interface RuntimeUsageLimits {
   usageLimits: RuntimeUsageLimitsState;
+}
+
+export interface RuntimeTenant {
+  tenant: Tenant | null;
 }
 
 export interface RuntimePlan {
@@ -346,6 +350,7 @@ let _runtimePlansCache: Record<string, RuntimePlans> = {};
 let _runtimeBillingCache: Record<string, RuntimeBilling> = {};
 let _runtimeSubscriptionCache: Record<string, RuntimeSubscription> = {};
 let _runtimeUsageLimitsCache: Record<string, RuntimeUsageLimits> = {};
+let _runtimeTenantCache: Record<string, RuntimeTenant> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -366,6 +371,7 @@ export class WhiteLabelRuntime {
   private _billingResolver: BillingResolver;
   private _subscriptionResolver: SubscriptionResolver;
   private _usageLimitsEngine: UsageLimitsEngine;
+  private _tenantEngine: TenantEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -384,6 +390,7 @@ export class WhiteLabelRuntime {
     this._billingResolver = createBillingResolver(initialTenant);
     this._subscriptionResolver = createSubscriptionResolver(initialTenant);
     this._usageLimitsEngine = createUsageLimitsEngine(initialTenant);
+    this._tenantEngine = createTenantEngine(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1283,6 +1290,40 @@ export class WhiteLabelRuntime {
 
   clearRuntimeUsageLimitsCache(): void {
     _runtimeUsageLimitsCache = {};
+  }
+
+  getRuntimeTenant(): RuntimeTenant {
+    return { tenant: this._tenantEngine.currentTenant };
+  }
+
+  // Tenant Integration Helpers
+  resolveRuntimeTenant(tenant?: Tenant): RuntimeTenant {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeTenantCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeTenantCache[cacheKey]);
+    }
+
+    const runtimeTenant: RuntimeTenant = { tenant: tenant ? this._getDeepCopy(tenant) : null };
+
+    _runtimeTenantCache[cacheKey] = runtimeTenant;
+    return runtimeTenant;
+  }
+
+  resolveTenantFromRuntime(runtimeTenant?: RuntimeTenant): Tenant | undefined {
+    return runtimeTenant?.tenant;
+  }
+
+  hasRuntimeTenant(): boolean {
+    return this._tenantEngine.hasTenant();
+  }
+
+  createRuntimeTenantSnapshot(): RuntimeTenant {
+    return this._getDeepCopy({ tenant: this._tenantEngine.currentTenant });
+  }
+
+  clearRuntimeTenantCache(): void {
+    _runtimeTenantCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
