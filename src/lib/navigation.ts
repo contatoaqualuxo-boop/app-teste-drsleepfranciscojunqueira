@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { Tenant } from './tenant';
+import { Identity } from './identity';
 import {
   Home,
   Users,
@@ -35,6 +37,10 @@ export interface NavigationContext {
   superAdmin: NavItem[];
   empresa: NavItem[];
   cliente: NavItem[];
+}
+
+interface NavigationCache {
+  [key: string]: NavigationContext;
 }
 
 // Default Navigation Config
@@ -223,7 +229,102 @@ export const defaultNavigation: NavigationContext = {
   ]
 };
 
-// Helper function to get navigation items for a context
+let _navigationCache: NavigationCache = {};
+
+// Navigation Engine Class
+export class NavigationEngine {
+  private _currentNavigation: NavigationContext;
+
+  constructor(initialTenant?: Tenant) {
+    this._currentNavigation = this.resolveNavigationFromTenant(initialTenant);
+  }
+
+  // Helpers
+  getDefaultNavigation(): NavigationContext {
+    return this._getDeepCopy(defaultNavigation);
+  }
+
+  resolveNavigation(): NavigationContext {
+    return this._getDeepCopy(this._currentNavigation);
+  }
+
+  resolveNavigationFromTenant(tenant?: Tenant): NavigationContext {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_navigationCache[cacheKey]) {
+      return this._getDeepCopy(_navigationCache[cacheKey]);
+    }
+
+    const navigation: NavigationContext = this.getDefaultNavigation();
+    _navigationCache[cacheKey] = navigation;
+    return navigation;
+  }
+
+  resolveNavigationFromIdentity(identity?: Identity): NavigationContext {
+    if (!identity) {
+      return this.getDefaultNavigation();
+    }
+
+    const cacheKey = `identity:${identity.tenant?.id || 'default'}`;
+
+    if (_navigationCache[cacheKey]) {
+      return this._getDeepCopy(_navigationCache[cacheKey]);
+    }
+
+    const navigation: NavigationContext = this.resolveNavigationFromTenant(identity.tenant || undefined);
+    _navigationCache[cacheKey] = navigation;
+    return navigation;
+  }
+
+  getNavigation(
+    context: keyof NavigationContext,
+    isActiveFn?: (href: string) => boolean
+  ): NavItem[] {
+    const items = this._currentNavigation[context] || [];
+    return items
+      .filter(item => item.isVisible !== false)
+      .sort((a, b) => a.order - b.order)
+      .map(item => ({
+        ...item,
+        isActive: isActiveFn ? isActiveFn(item.href) : false
+      }));
+  }
+
+  createNavigationSnapshot(): NavigationContext {
+    return this._getDeepCopy(this._currentNavigation);
+  }
+
+  clearNavigationCache(): void {
+    _navigationCache = {};
+  }
+
+  // Helper to deep copy
+  private _getDeepCopy(obj: any): any {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
+  // Getters and Setters
+  get currentNavigation(): NavigationContext {
+    return this._getDeepCopy(this._currentNavigation);
+  }
+
+  set currentNavigation(navigation: Partial<NavigationContext>) {
+    this._currentNavigation = {
+      ...defaultNavigation,
+      ...navigation,
+      superAdmin: navigation.superAdmin || defaultNavigation.superAdmin,
+      empresa: navigation.empresa || defaultNavigation.empresa,
+      cliente: navigation.cliente || defaultNavigation.cliente
+    };
+  }
+}
+
+// Hook-like factory
+export function createNavigationEngine(initialTenant?: Tenant): NavigationEngine {
+  return new NavigationEngine(initialTenant);
+}
+
+// Helper function to get navigation items for a context (for backward compatibility)
 export function getNavigation(
   context: keyof NavigationContext,
   isActiveFn?: (href: string) => boolean

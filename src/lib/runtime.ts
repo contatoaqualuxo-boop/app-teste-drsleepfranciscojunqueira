@@ -14,6 +14,7 @@ import { Motion, MotionResolver, createMotionResolver } from './motion';
 import { Fonts, FontResolver, createFontResolver } from './fonts';
 import { Spacing, SpacingResolver, createSpacingResolver } from './spacing';
 import { Layout, LayoutResolver, createLayoutResolver } from './layout';
+import { NavigationContext, NavigationEngine, createNavigationEngine } from './navigation';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -116,6 +117,12 @@ export interface RuntimeLayout {
   alignments: Record<string, any>;
 }
 
+export interface RuntimeNavigation {
+  superAdmin: Record<string, any>[];
+  empresa: Record<string, any>[];
+  cliente: Record<string, any>[];
+}
+
 export interface RuntimeAccess {
   isAuthenticated: boolean;
   permissions: string[];
@@ -138,6 +145,7 @@ export interface Runtime {
   fonts: RuntimeFonts;
   spacing: RuntimeSpacing;
   layout: RuntimeLayout;
+  navigation: RuntimeNavigation;
   domain: Record<string, any>;
   plan: RuntimePlan;
   subscription: Subscription | null;
@@ -248,6 +256,11 @@ const DEFAULT_RUNTIME: Runtime = {
     grids: {},
     alignments: {}
   },
+  navigation: {
+    superAdmin: [],
+    empresa: [],
+    cliente: []
+  },
   domain: {},
   plan: {
     id: 'starter',
@@ -294,6 +307,7 @@ let _runtimeMotionCache: Record<string, RuntimeMotion> = {};
 let _runtimeFontsCache: Record<string, RuntimeFonts> = {};
 let _runtimeSpacingCache: Record<string, RuntimeSpacing> = {};
 let _runtimeLayoutCache: Record<string, RuntimeLayout> = {};
+let _runtimeNavigationCache: Record<string, RuntimeNavigation> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -305,6 +319,7 @@ export class WhiteLabelRuntime {
   private _fontResolver: FontResolver;
   private _spacingResolver: SpacingResolver;
   private _layoutResolver: LayoutResolver;
+  private _navigationEngine: NavigationEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -314,6 +329,7 @@ export class WhiteLabelRuntime {
     this._fontResolver = createFontResolver(initialTenant);
     this._spacingResolver = createSpacingResolver(initialTenant);
     this._layoutResolver = createLayoutResolver(initialTenant);
+    this._navigationEngine = createNavigationEngine(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -898,6 +914,49 @@ export class WhiteLabelRuntime {
 
   clearRuntimeLayoutCache(): void {
     _runtimeLayoutCache = {};
+  }
+
+  getRuntimeNavigation(): RuntimeNavigation {
+    return this._currentRuntime.navigation;
+  }
+
+  // Navigation Integration Helpers
+  resolveRuntimeNavigation(tenant?: Tenant): RuntimeNavigation {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeNavigationCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeNavigationCache[cacheKey]);
+    }
+
+    const navigation = this._navigationEngine.resolveNavigationFromTenant(tenant);
+    const runtimeNavigation: RuntimeNavigation = {
+      superAdmin: [...navigation.superAdmin],
+      empresa: [...navigation.empresa],
+      cliente: [...navigation.cliente]
+    };
+
+    _runtimeNavigationCache[cacheKey] = runtimeNavigation;
+    return this._getDeepCopy(runtimeNavigation);
+  }
+
+  resolveNavigationFromRuntime(runtimeNavigation?: RuntimeNavigation): Partial<NavigationContext> {
+    return {
+      superAdmin: runtimeNavigation?.superAdmin as NavigationContext['superAdmin'] | undefined,
+      empresa: runtimeNavigation?.empresa as NavigationContext['empresa'] | undefined,
+      cliente: runtimeNavigation?.cliente as NavigationContext['cliente'] | undefined
+    };
+  }
+
+  hasRuntimeNavigation(): boolean {
+    return !!this._currentRuntime.navigation.superAdmin.length;
+  }
+
+  createRuntimeNavigationSnapshot(): RuntimeNavigation {
+    return this._getDeepCopy(this._currentRuntime.navigation);
+  }
+
+  clearRuntimeNavigationCache(): void {
+    _runtimeNavigationCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
