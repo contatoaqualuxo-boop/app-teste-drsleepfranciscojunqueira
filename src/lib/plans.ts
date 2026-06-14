@@ -200,8 +200,9 @@ export class PlansEngine {
     const state: PlansEngineState = this._getDeepCopy(DEFAULT_PLANS_STATE);
 
     // Apply plan from tenant settings if available
-    if (tenant?.plan) {
-      const plan = DEFAULT_PLANS.find(p => p.id === tenant.plan) || DEFAULT_STARTER_PLAN;
+    const tenantPlan = (tenant as { plan?: string } | undefined)?.plan;
+    if (tenantPlan) {
+      const plan = DEFAULT_PLANS.find(p => p.id === tenantPlan) || DEFAULT_STARTER_PLAN;
       state.activePlan = plan;
     }
 
