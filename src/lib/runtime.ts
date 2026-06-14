@@ -18,6 +18,7 @@ import { NavigationContext, NavigationEngine, createNavigationEngine } from './n
 import { ModuleKey, ModuleEngine, createModuleEngine } from './modules';
 import { FeatureFlagKey, FeatureFlagEngine, createFeatureFlagEngine } from './featureFlags';
 import { UserPermissions, PermissionEngine, createPermissionEngine } from './permissions';
+import { AccessContext, AccessEngine, createAccessEngine, DEFAULT_ACCESS_CONTEXT } from './access';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -139,9 +140,7 @@ export interface RuntimePermissions {
 }
 
 export interface RuntimeAccess {
-  isAuthenticated: boolean;
-  permissions: string[];
-  roles: string[];
+  accessContext: AccessContext;
 }
 
 export interface RuntimePlan {
@@ -303,9 +302,7 @@ const DEFAULT_RUNTIME: Runtime = {
     ai: null
   },
   access: {
-    isAuthenticated: false,
-    permissions: [],
-    roles: []
+    accessContext: { ...DEFAULT_ACCESS_CONTEXT }
   },
   modules: [],
   features: [],
@@ -326,6 +323,7 @@ let _runtimeNavigationCache: Record<string, RuntimeNavigation> = {};
 let _runtimeModulesCache: Record<string, RuntimeModules> = {};
 let _runtimeFeatureFlagsCache: Record<string, RuntimeFeatureFlags> = {};
 let _runtimePermissionsCache: Record<string, RuntimePermissions> = {};
+let _runtimeAccessCache: Record<string, RuntimeAccess> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -341,6 +339,7 @@ export class WhiteLabelRuntime {
   private _moduleEngine: ModuleEngine;
   private _featureFlagEngine: FeatureFlagEngine;
   private _permissionEngine: PermissionEngine;
+  private _accessEngine: AccessEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -354,6 +353,7 @@ export class WhiteLabelRuntime {
     this._moduleEngine = createModuleEngine(initialTenant);
     this._featureFlagEngine = createFeatureFlagEngine(initialTenant);
     this._permissionEngine = createPermissionEngine(undefined, initialTenant);
+    this._accessEngine = createAccessEngine({ tenant: initialTenant || null });
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1086,6 +1086,41 @@ export class WhiteLabelRuntime {
 
   clearRuntimePermissionsCache(): void {
     _runtimePermissionsCache = {};
+  }
+
+  getRuntimeAccess(): RuntimeAccess {
+    return { accessContext: this._accessEngine.accessContext };
+  }
+
+  // Access Integration Helpers
+  resolveRuntimeAccess(tenant?: Tenant): RuntimeAccess {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeAccessCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeAccessCache[cacheKey]);
+    }
+
+    const accessContext = this._accessEngine.resolveAccess(tenant, this._permissionEngine.permissions);
+    const runtimeAccess: RuntimeAccess = { accessContext: this._getDeepCopy(accessContext) };
+
+    _runtimeAccessCache[cacheKey] = runtimeAccess;
+    return runtimeAccess;
+  }
+
+  resolveAccessFromRuntime(runtimeAccess?: RuntimeAccess): AccessContext | undefined {
+    return runtimeAccess?.accessContext;
+  }
+
+  hasRuntimeAccess(): boolean {
+    return !!this._accessEngine.accessContext;
+  }
+
+  createRuntimeAccessSnapshot(): RuntimeAccess {
+    return this._getDeepCopy({ accessContext: this._accessEngine.accessContext });
+  }
+
+  clearRuntimeAccessCache(): void {
+    _runtimeAccessCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
