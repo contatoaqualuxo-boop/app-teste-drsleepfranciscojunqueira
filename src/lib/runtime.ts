@@ -5,6 +5,7 @@ import { Registry } from './registry';
 import { Providers, DEFAULT_PROVIDERS } from './providers';
 import { Subscription } from './subscription';
 import { UsageLimits } from './usageLimits';
+import { SupabaseSettings } from './supabaseSettingsConnector';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -143,6 +144,41 @@ export class WhiteLabelRuntime {
 
   resolveRuntimeFromConfiguration(config?: any): Runtime {
     const runtime: Runtime = this.getDefaultRuntime();
+    return runtime;
+  }
+
+  resolveRuntimeFromSettings(settings?: SupabaseSettings): Runtime {
+    const runtime: Runtime = this.getDefaultRuntime();
+
+    // Safe merging with fallback
+    if (settings?.identity) {
+      runtime.identity = {
+        ...runtime.identity,
+        ...settings.identity
+      };
+    }
+
+    if (settings?.theme) {
+      runtime.theme = {
+        ...runtime.theme,
+        ...settings.theme
+      };
+    }
+
+    if (settings?.plan) {
+      runtime.plan = {
+        ...runtime.plan,
+        ...settings.plan
+      };
+    }
+
+    if (settings?.provider) {
+      runtime.providers = {
+        ...runtime.providers,
+        ...settings.provider
+      };
+    }
+
     return runtime;
   }
 
