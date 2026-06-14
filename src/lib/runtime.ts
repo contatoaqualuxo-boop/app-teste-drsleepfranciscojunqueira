@@ -19,6 +19,7 @@ import { ModuleKey, ModuleEngine, createModuleEngine } from './modules';
 import { FeatureFlagKey, FeatureFlagEngine, createFeatureFlagEngine } from './featureFlags';
 import { UserPermissions, PermissionEngine, createPermissionEngine } from './permissions';
 import { AccessContext, AccessEngine, createAccessEngine, DEFAULT_ACCESS_CONTEXT } from './access';
+import { PlansEngineState, PlansEngine, createPlansEngine } from './plans';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -141,6 +142,10 @@ export interface RuntimePermissions {
 
 export interface RuntimeAccess {
   accessContext: AccessContext;
+}
+
+export interface RuntimePlans {
+  plansState: PlansEngineState;
 }
 
 export interface RuntimePlan {
@@ -324,6 +329,7 @@ let _runtimeModulesCache: Record<string, RuntimeModules> = {};
 let _runtimeFeatureFlagsCache: Record<string, RuntimeFeatureFlags> = {};
 let _runtimePermissionsCache: Record<string, RuntimePermissions> = {};
 let _runtimeAccessCache: Record<string, RuntimeAccess> = {};
+let _runtimePlansCache: Record<string, RuntimePlans> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -340,6 +346,7 @@ export class WhiteLabelRuntime {
   private _featureFlagEngine: FeatureFlagEngine;
   private _permissionEngine: PermissionEngine;
   private _accessEngine: AccessEngine;
+  private _plansEngine: PlansEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -354,6 +361,7 @@ export class WhiteLabelRuntime {
     this._featureFlagEngine = createFeatureFlagEngine(initialTenant);
     this._permissionEngine = createPermissionEngine(undefined, initialTenant);
     this._accessEngine = createAccessEngine({ tenant: initialTenant || null });
+    this._plansEngine = createPlansEngine(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1117,6 +1125,41 @@ export class WhiteLabelRuntime {
 
   clearRuntimeAccessCache(): void {
     _runtimeAccessCache = {};
+  }
+
+  getRuntimePlans(): RuntimePlans {
+    return { plansState: this._plansEngine.currentState };
+  }
+
+  // Plans Integration Helpers
+  resolveRuntimePlans(tenant?: Tenant): RuntimePlans {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimePlansCache[cacheKey]) {
+      return this._getDeepCopy(_runtimePlansCache[cacheKey]);
+    }
+
+    const plansState = this._plansEngine.resolvePlanFromTenant(tenant);
+    const runtimePlans: RuntimePlans = { plansState: this._getDeepCopy(plansState) };
+
+    _runtimePlansCache[cacheKey] = runtimePlans;
+    return runtimePlans;
+  }
+
+  resolvePlansFromRuntime(runtimePlans?: RuntimePlans): PlansEngineState | undefined {
+    return runtimePlans?.plansState;
+  }
+
+  hasRuntimePlans(): boolean {
+    return !!this._plansEngine.currentState.activePlan;
+  }
+
+  createRuntimePlansSnapshot(): RuntimePlans {
+    return this._getDeepCopy({ plansState: this._plansEngine.currentState });
+  }
+
+  clearRuntimePlansCache(): void {
+    _runtimePlansCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
