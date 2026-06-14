@@ -3,7 +3,6 @@
 import { Tenant } from './tenant';
 import { Registry } from './registry';
 import { Providers, DEFAULT_PROVIDERS } from './providers';
-import { UsageLimits } from './usageLimits';
 import { SupabaseSettings } from './supabaseSettingsConnector';
 import { Identity, IdentityResolver, createIdentityResolver } from './identity';
 import { Theme, createTheme } from './theme';
@@ -21,7 +20,7 @@ import { AccessContext, AccessEngine, createAccessEngine, DEFAULT_ACCESS_CONTEXT
 import { PlansEngineState, PlansEngine, createPlansEngine } from './plans';
 import { Billing, BillingResolver, createBillingResolver } from './billing';
 import { Subscription as RuntimeSubscriptionState, SubscriptionResolver, createSubscriptionResolver } from './subscription';
-import { UsageLimits, UsageLimitsEngine, createUsageLimitsEngine } from './usageLimits';
+import { UsageLimits as RuntimeUsageLimitsState, UsageLimitsEngine, createUsageLimitsEngine } from './usageLimits';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -159,7 +158,7 @@ export interface RuntimeSubscription {
 }
 
 export interface RuntimeUsageLimits {
-  usageLimits: UsageLimits;
+  usageLimits: RuntimeUsageLimitsState;
 }
 
 export interface RuntimePlan {
@@ -182,7 +181,7 @@ export interface Runtime {
   domain: Record<string, any>;
   plan: RuntimePlan;
   subscription: RuntimeSubscriptionState | null;
-  limits: UsageLimits;
+  limits: RuntimeUsageLimitsState;
   access: RuntimeAccess;
   modules: string[];
   features: string[];
@@ -1270,7 +1269,7 @@ export class WhiteLabelRuntime {
     return runtimeUsageLimits;
   }
 
-  resolveUsageLimitsFromRuntime(runtimeUsageLimits?: RuntimeUsageLimits): UsageLimits | undefined {
+  resolveUsageLimitsFromRuntime(runtimeUsageLimits?: RuntimeUsageLimits): RuntimeUsageLimitsState | undefined {
     return runtimeUsageLimits?.usageLimits;
   }
 
