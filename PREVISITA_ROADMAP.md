@@ -138,34 +138,16 @@ STATUS:
 White Label
 
 Implementar:
-
-Logo
-
-Nome do aplicativo
-
-Nome da empresa
-
-Nome da carteira
-
-Nome do programa
-
-Nome dos pontos
-
-Cores
-
-Redes sociais
-
-Links
-
-Domínio
-
-Subdomínio
+- Foundation de todas as engines/resolvers (concluído)
+- Integração real com banco de dados (próximo passo)
 
 Objetivo:
-
 Cada empresa possuir identidade própria.
 
----
+STATUS:
+
+✅ CONCLUÍDA (Foundation)
+🔄 EM ANDAMENTO (Integração real com banco)
 
 # FASE 6
 

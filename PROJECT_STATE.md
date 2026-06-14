@@ -1,5 +1,5 @@
 
-# Plataforma Prévisita - Estado do Projeto (v1.0-phase4-complete)
+# Plataforma Prévisita - Estado do Projeto (v1.0-phase5-complete)
 
 ## Tudo que já foi implementado
 
@@ -72,13 +72,20 @@
 - Design Tokens Foundation.
 - Motion Resolver Foundation.
 - Layout Resolver Foundation.
+- Domain Resolver Foundation.
+- Plans Engine Foundation.
+- Billing Resolver Foundation.
+- Subscription Resolver Foundation.
+- Usage Limits Engine Foundation.
+- Provider Integration Foundation.
+- Registry Engine Foundation.
+- White Label Runtime Foundation.
+- White Label Settings Adapter Foundation.
+- Supabase Settings Connector Foundation.
 
 ## Tudo que falta implementar
 
 ### 1. White Label (FASE 5)
-- Personalização visual por empresa (logo, cores, nome).
-- Domínios/subdomínios.
-- Redes sociais e links.
 - Integração real com banco de dados para personalizações.
 - Aplicação automática dos tokens/resolvers nas telas.
 
@@ -100,7 +107,7 @@
 - FASE 9: Marketplace de Módulos.
 
 ## Ordem Correta das Próximas Etapas
-1. **White Label**: Implementar personalização visual por empresa (FASE 5).
+1. **Integração real com Supabase/settings**: Conectar engines/resolvers com dados reais do banco (próximo passo).
 2. **Aplicativo do Cliente**: Conectar todas as páginas do cliente com dados reais (FASE 6).
 3. **Notificações**: Implementar envio de e-mails, WhatsApp e push (FASE 7).
 4. **Analytics**: Implementar dashboards de métricas (FASE 8).
@@ -129,7 +136,7 @@
 
 ## CHECKPOINT OFICIAL
 Data: 2026-06-14
-Versão: v1.0-phase5-foundations-complete
-Último commit: 9d04525 (com o layout resolver a ser commitado em seguida)
+Versão: v1.0-phase5-complete
+Último commit: 0a8496e
 Deploy Vercel: Commit mais recente (deploy automático acionado)
-Status Geral: FASE 5 foundations concluídas, pronto para continuar FASE 5 implementação.
+Status Geral: FASE 5 White Label Foundation concluída, pronto para integração real com Supabase/settings.
