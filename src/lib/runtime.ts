@@ -16,6 +16,7 @@ import { Spacing, SpacingResolver, createSpacingResolver } from './spacing';
 import { Layout, LayoutResolver, createLayoutResolver } from './layout';
 import { NavigationContext, NavigationEngine, createNavigationEngine } from './navigation';
 import { ModuleKey, ModuleEngine, createModuleEngine } from './modules';
+import { FeatureFlagKey, FeatureFlagEngine, createFeatureFlagEngine } from './featureFlags';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -126,6 +127,10 @@ export interface RuntimeNavigation {
 
 export interface RuntimeModules {
   active: ModuleKey[];
+}
+
+export interface RuntimeFeatureFlags {
+  active: FeatureFlagKey[];
 }
 
 export interface RuntimeAccess {
@@ -314,6 +319,7 @@ let _runtimeSpacingCache: Record<string, RuntimeSpacing> = {};
 let _runtimeLayoutCache: Record<string, RuntimeLayout> = {};
 let _runtimeNavigationCache: Record<string, RuntimeNavigation> = {};
 let _runtimeModulesCache: Record<string, RuntimeModules> = {};
+let _runtimeFeatureFlagsCache: Record<string, RuntimeFeatureFlags> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -327,6 +333,7 @@ export class WhiteLabelRuntime {
   private _layoutResolver: LayoutResolver;
   private _navigationEngine: NavigationEngine;
   private _moduleEngine: ModuleEngine;
+  private _featureFlagEngine: FeatureFlagEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -338,6 +345,7 @@ export class WhiteLabelRuntime {
     this._layoutResolver = createLayoutResolver(initialTenant);
     this._navigationEngine = createNavigationEngine(initialTenant);
     this._moduleEngine = createModuleEngine(initialTenant);
+    this._featureFlagEngine = createFeatureFlagEngine(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1000,6 +1008,41 @@ export class WhiteLabelRuntime {
 
   clearRuntimeModulesCache(): void {
     _runtimeModulesCache = {};
+  }
+
+  getRuntimeFeatureFlags(): RuntimeFeatureFlags {
+    return { active: [...this._currentRuntime.features] as FeatureFlagKey[] };
+  }
+
+  // Feature Flag Integration Helpers
+  resolveRuntimeFeatureFlags(tenant?: Tenant): RuntimeFeatureFlags {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeFeatureFlagsCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeFeatureFlagsCache[cacheKey]);
+    }
+
+    const flags = this._featureFlagEngine.resolveFeatureFlagsFromTenant(tenant);
+    const runtimeFeatureFlags: RuntimeFeatureFlags = { active: [...flags] };
+
+    _runtimeFeatureFlagsCache[cacheKey] = runtimeFeatureFlags;
+    return this._getDeepCopy(runtimeFeatureFlags);
+  }
+
+  resolveFeatureFlagsFromRuntime(runtimeFeatureFlags?: RuntimeFeatureFlags): FeatureFlagKey[] {
+    return runtimeFeatureFlags?.active || [];
+  }
+
+  hasRuntimeFeatureFlags(): boolean {
+    return this._currentRuntime.features.length > 0;
+  }
+
+  createRuntimeFeatureFlagsSnapshot(): RuntimeFeatureFlags {
+    return this._getDeepCopy({ active: [...this._currentRuntime.features] as FeatureFlagKey[] });
+  }
+
+  clearRuntimeFeatureFlagsCache(): void {
+    _runtimeFeatureFlagsCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {

@@ -1,5 +1,7 @@
 'use client';
 
+import { Tenant } from './tenant';
+import { Identity } from './identity';
 import { ModuleKey } from './modules';
 
 // Feature Flag Types
@@ -184,6 +186,99 @@ export function getFeatureFlags(
   return flags;
 }
 
+interface FeatureFlagCache {
+  [key: string]: FeatureFlagKey[];
+}
+
+let _featureFlagsCache: FeatureFlagCache = {};
+
+// Feature Flag Engine Class
+export class FeatureFlagEngine {
+  private _currentActiveFlags: FeatureFlagKey[];
+
+  constructor(initialTenant?: Tenant) {
+    this._currentActiveFlags = this.resolveFeatureFlagsFromTenant(initialTenant);
+  }
+
+  // Helpers
+  getDefaultActiveFeatureFlags(): FeatureFlagKey[] {
+    return defaultFeatureFlags.filter(flag => flag.isActiveByDefault).map(flag => flag.key);
+  }
+
+  resolveFeatureFlags(): FeatureFlagKey[] {
+    return [...this._currentActiveFlags];
+  }
+
+  resolveFeatureFlagsFromTenant(tenant?: Tenant): FeatureFlagKey[] {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_featureFlagsCache[cacheKey]) {
+      return [..._featureFlagsCache[cacheKey]];
+    }
+
+    const activeFlags: FeatureFlagKey[] = this.getDefaultActiveFeatureFlags();
+    _featureFlagsCache[cacheKey] = activeFlags;
+    return activeFlags;
+  }
+
+  resolveFeatureFlagsFromIdentity(identity?: Identity): FeatureFlagKey[] {
+    if (!identity) {
+      return this.getDefaultActiveFeatureFlags();
+    }
+
+    const cacheKey = `identity:${identity.tenant?.id || 'default'}`;
+
+    if (_featureFlagsCache[cacheKey]) {
+      return [..._featureFlagsCache[cacheKey]];
+    }
+
+    const activeFlags: FeatureFlagKey[] = this.resolveFeatureFlagsFromTenant(identity.tenant || undefined);
+    _featureFlagsCache[cacheKey] = activeFlags;
+    return activeFlags;
+  }
+
+  getFeatureFlags(context?: FeatureFlagContext): FeatureFlag[] {
+    let flags = [...defaultFeatureFlags];
+    
+    if (context) {
+      flags = flags.filter(flag => flag.context.includes(context));
+    }
+    
+    flags = flags.filter(flag => this._currentActiveFlags.includes(flag.key) || flag.isActiveByDefault);
+    
+    return flags;
+  }
+
+  isFeatureFlagActive(key: FeatureFlagKey): boolean {
+    const flag = defaultFeatureFlags.find(f => f.key === key);
+    if (!flag) return false;
+    return this._currentActiveFlags.includes(key) || flag.isActiveByDefault;
+  }
+
+  createFeatureFlagsSnapshot(): FeatureFlagKey[] {
+    return [...this._currentActiveFlags];
+  }
+
+  clearFeatureFlagsCache(): void {
+    _featureFlagsCache = {};
+  }
+
+  // Getters and Setters
+  get currentActiveFeatureFlags(): FeatureFlagKey[] {
+    return [...this._currentActiveFlags];
+  }
+
+  set currentActiveFeatureFlags(flags: FeatureFlagKey[]) {
+    this._currentActiveFlags = [...flags];
+  }
+}
+
+// Hook-like factory
+export function createFeatureFlagEngine(initialTenant?: Tenant): FeatureFlagEngine {
+  return new FeatureFlagEngine(initialTenant);
+}
+
+// Helper function to check if a feature flag is active (for backward compatibility)
 export function isFeatureFlagActive(
   key: FeatureFlagKey,
   activeFlags?: FeatureFlagKey[]
