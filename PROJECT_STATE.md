@@ -53,12 +53,34 @@
 - Listagem de configurações da empresa.
 - Listagem de programa de fidelidade (wallets).
 
+### 7. White Label Foundation (FASE 5)
+- Theme Engine Foundation.
+- Design System Foundation.
+- White Label Layout Foundation.
+- Navigation Engine Foundation.
+- Module Engine Foundation.
+- Feature Flag Engine Foundation.
+- Configuration Engine Foundation.
+- Tenant Engine Foundation.
+- Permission Engine Foundation.
+- Access Engine Foundation.
+- White Label Resolver Foundation.
+- Identity Resolver Foundation.
+- Brand Assets Resolver Foundation.
+- Font Resolver Foundation.
+- Spacing Resolver Foundation.
+- Design Tokens Foundation.
+- Motion Resolver Foundation.
+- Layout Resolver Foundation.
+
 ## Tudo que falta implementar
 
 ### 1. White Label (FASE 5)
 - Personalização visual por empresa (logo, cores, nome).
 - Domínios/subdomínios.
 - Redes sociais e links.
+- Integração real com banco de dados para personalizações.
+- Aplicação automática dos tokens/resolvers nas telas.
 
 ### 2. Aplicativo do Cliente (FASE 6)
 - Home do cliente.
@@ -106,8 +128,8 @@
 9. **Triggers**: Manter triggers `handle_updated_at` e `on_auth_user_created` (não remover).
 
 ## CHECKPOINT OFICIAL
-Data: 2026-06-13
-Versão: v1.0-phase4-complete
-Último commit: e9d3f21d08fe986c9c3f3928047a00b1f77120d7
-Deploy Vercel: Commit e9d3f21 (deploy automático acionado)
-Status Geral: FASE 4 concluída, projeto pronto para iniciar FASE 5.
+Data: 2026-06-14
+Versão: v1.0-phase5-foundations-complete
+Último commit: 9d04525 (com o layout resolver a ser commitado em seguida)
+Deploy Vercel: Commit mais recente (deploy automático acionado)
+Status Geral: FASE 5 foundations concluídas, pronto para continuar FASE 5 implementação.
