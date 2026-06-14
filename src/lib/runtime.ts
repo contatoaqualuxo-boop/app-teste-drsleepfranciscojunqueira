@@ -20,6 +20,7 @@ import { FeatureFlagKey, FeatureFlagEngine, createFeatureFlagEngine } from './fe
 import { UserPermissions, PermissionEngine, createPermissionEngine } from './permissions';
 import { AccessContext, AccessEngine, createAccessEngine, DEFAULT_ACCESS_CONTEXT } from './access';
 import { PlansEngineState, PlansEngine, createPlansEngine } from './plans';
+import { Billing, BillingResolver, createBillingResolver } from './billing';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -146,6 +147,10 @@ export interface RuntimeAccess {
 
 export interface RuntimePlans {
   plansState: PlansEngineState;
+}
+
+export interface RuntimeBilling {
+  billing: Billing;
 }
 
 export interface RuntimePlan {
@@ -330,6 +335,7 @@ let _runtimeFeatureFlagsCache: Record<string, RuntimeFeatureFlags> = {};
 let _runtimePermissionsCache: Record<string, RuntimePermissions> = {};
 let _runtimeAccessCache: Record<string, RuntimeAccess> = {};
 let _runtimePlansCache: Record<string, RuntimePlans> = {};
+let _runtimeBillingCache: Record<string, RuntimeBilling> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -347,6 +353,7 @@ export class WhiteLabelRuntime {
   private _permissionEngine: PermissionEngine;
   private _accessEngine: AccessEngine;
   private _plansEngine: PlansEngine;
+  private _billingResolver: BillingResolver;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -362,6 +369,7 @@ export class WhiteLabelRuntime {
     this._permissionEngine = createPermissionEngine(undefined, initialTenant);
     this._accessEngine = createAccessEngine({ tenant: initialTenant || null });
     this._plansEngine = createPlansEngine(initialTenant);
+    this._billingResolver = createBillingResolver(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1160,6 +1168,41 @@ export class WhiteLabelRuntime {
 
   clearRuntimePlansCache(): void {
     _runtimePlansCache = {};
+  }
+
+  getRuntimeBilling(): RuntimeBilling {
+    return { billing: this._billingResolver.currentBilling };
+  }
+
+  // Billing Integration Helpers
+  resolveRuntimeBilling(tenant?: Tenant): RuntimeBilling {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeBillingCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeBillingCache[cacheKey]);
+    }
+
+    const billing = this._billingResolver.resolveBillingFromTenant(tenant);
+    const runtimeBilling: RuntimeBilling = { billing: this._getDeepCopy(billing) };
+
+    _runtimeBillingCache[cacheKey] = runtimeBilling;
+    return runtimeBilling;
+  }
+
+  resolveBillingFromRuntime(runtimeBilling?: RuntimeBilling): Billing | undefined {
+    return runtimeBilling?.billing;
+  }
+
+  hasRuntimeBilling(): boolean {
+    return !!this._billingResolver.currentBilling;
+  }
+
+  createRuntimeBillingSnapshot(): RuntimeBilling {
+    return this._getDeepCopy({ billing: this._billingResolver.currentBilling });
+  }
+
+  clearRuntimeBillingCache(): void {
+    _runtimeBillingCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
