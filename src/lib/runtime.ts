@@ -17,6 +17,7 @@ import { Layout, LayoutResolver, createLayoutResolver } from './layout';
 import { NavigationContext, NavigationEngine, createNavigationEngine } from './navigation';
 import { ModuleKey, ModuleEngine, createModuleEngine } from './modules';
 import { FeatureFlagKey, FeatureFlagEngine, createFeatureFlagEngine } from './featureFlags';
+import { UserPermissions, PermissionEngine, createPermissionEngine } from './permissions';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -131,6 +132,10 @@ export interface RuntimeModules {
 
 export interface RuntimeFeatureFlags {
   active: FeatureFlagKey[];
+}
+
+export interface RuntimePermissions {
+  userPermissions: UserPermissions;
 }
 
 export interface RuntimeAccess {
@@ -320,6 +325,7 @@ let _runtimeLayoutCache: Record<string, RuntimeLayout> = {};
 let _runtimeNavigationCache: Record<string, RuntimeNavigation> = {};
 let _runtimeModulesCache: Record<string, RuntimeModules> = {};
 let _runtimeFeatureFlagsCache: Record<string, RuntimeFeatureFlags> = {};
+let _runtimePermissionsCache: Record<string, RuntimePermissions> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -334,6 +340,7 @@ export class WhiteLabelRuntime {
   private _navigationEngine: NavigationEngine;
   private _moduleEngine: ModuleEngine;
   private _featureFlagEngine: FeatureFlagEngine;
+  private _permissionEngine: PermissionEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -346,6 +353,7 @@ export class WhiteLabelRuntime {
     this._navigationEngine = createNavigationEngine(initialTenant);
     this._moduleEngine = createModuleEngine(initialTenant);
     this._featureFlagEngine = createFeatureFlagEngine(initialTenant);
+    this._permissionEngine = createPermissionEngine(undefined, initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1043,6 +1051,41 @@ export class WhiteLabelRuntime {
 
   clearRuntimeFeatureFlagsCache(): void {
     _runtimeFeatureFlagsCache = {};
+  }
+
+  getRuntimePermissions(): RuntimePermissions {
+    return { userPermissions: this._permissionEngine.permissions };
+  }
+
+  // Permission Integration Helpers
+  resolveRuntimePermissions(tenant?: Tenant): RuntimePermissions {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimePermissionsCache[cacheKey]) {
+      return this._getDeepCopy(_runtimePermissionsCache[cacheKey]);
+    }
+
+    const permissions = this._permissionEngine.resolvePermissions(tenant);
+    const runtimePermissions: RuntimePermissions = { userPermissions: this._getDeepCopy(permissions) };
+
+    _runtimePermissionsCache[cacheKey] = runtimePermissions;
+    return runtimePermissions;
+  }
+
+  resolvePermissionsFromRuntime(runtimePermissions?: RuntimePermissions): UserPermissions | undefined {
+    return runtimePermissions?.userPermissions;
+  }
+
+  hasRuntimePermissions(): boolean {
+    return this._permissionEngine.permissions.roles.length > 0;
+  }
+
+  createRuntimePermissionsSnapshot(): RuntimePermissions {
+    return this._getDeepCopy({ userPermissions: this._permissionEngine.permissions });
+  }
+
+  clearRuntimePermissionsCache(): void {
+    _runtimePermissionsCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
