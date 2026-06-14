@@ -12,6 +12,7 @@ import { BrandAssets, BrandAssetsResolver, createBrandAssetsResolver } from './b
 import { DesignTokens, DesignTokensEngine, createDesignTokensEngine } from './designTokens';
 import { Motion, MotionResolver, createMotionResolver } from './motion';
 import { Fonts, FontResolver, createFontResolver } from './fonts';
+import { Spacing, SpacingResolver, createSpacingResolver } from './spacing';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -98,6 +99,14 @@ export interface RuntimeFonts {
   fallbacks: string[];
 }
 
+export interface RuntimeSpacing {
+  base: Record<string, any>;
+  compact: Record<string, any>;
+  comfortable: Record<string, any>;
+  premium: Record<string, any>;
+  activePreset: 'base' | 'compact' | 'comfortable' | 'premium';
+}
+
 export interface RuntimeAccess {
   isAuthenticated: boolean;
   permissions: string[];
@@ -118,6 +127,7 @@ export interface Runtime {
   designTokens: RuntimeDesignTokens;
   motion: RuntimeMotion;
   fonts: RuntimeFonts;
+  spacing: RuntimeSpacing;
   domain: Record<string, any>;
   plan: RuntimePlan;
   subscription: Subscription | null;
@@ -214,6 +224,13 @@ const DEFAULT_RUNTIME: Runtime = {
     weights: [],
     fallbacks: []
   },
+  spacing: {
+    base: {},
+    compact: {},
+    comfortable: {},
+    premium: {},
+    activePreset: 'base'
+  },
   domain: {},
   plan: {
     id: 'starter',
@@ -258,6 +275,7 @@ let _runtimeBrandAssetsCache: Record<string, RuntimeBrandAssets> = {};
 let _runtimeDesignTokensCache: Record<string, RuntimeDesignTokens> = {};
 let _runtimeMotionCache: Record<string, RuntimeMotion> = {};
 let _runtimeFontsCache: Record<string, RuntimeFonts> = {};
+let _runtimeSpacingCache: Record<string, RuntimeSpacing> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -267,6 +285,7 @@ export class WhiteLabelRuntime {
   private _designTokensEngine: DesignTokensEngine;
   private _motionResolver: MotionResolver;
   private _fontResolver: FontResolver;
+  private _spacingResolver: SpacingResolver;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -274,6 +293,7 @@ export class WhiteLabelRuntime {
     this._designTokensEngine = createDesignTokensEngine(initialTenant);
     this._motionResolver = createMotionResolver(initialTenant);
     this._fontResolver = createFontResolver(initialTenant);
+    this._spacingResolver = createSpacingResolver(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -764,6 +784,53 @@ export class WhiteLabelRuntime {
 
   clearRuntimeFontsCache(): void {
     _runtimeFontsCache = {};
+  }
+
+  getRuntimeSpacing(): RuntimeSpacing {
+    return this._currentRuntime.spacing;
+  }
+
+  // Spacing Integration Helpers
+  resolveRuntimeSpacing(tenant?: Tenant): RuntimeSpacing {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeSpacingCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeSpacingCache[cacheKey]);
+    }
+
+    const spacing = this._spacingResolver.resolveSpacingFromTenant(tenant);
+    const runtimeSpacing: RuntimeSpacing = {
+      base: { ...spacing.base },
+      compact: { ...spacing.compact },
+      comfortable: { ...spacing.comfortable },
+      premium: { ...spacing.premium },
+      activePreset: spacing.activePreset
+    };
+
+    _runtimeSpacingCache[cacheKey] = runtimeSpacing;
+    return this._getDeepCopy(runtimeSpacing);
+  }
+
+  resolveSpacingFromRuntime(runtimeSpacing?: RuntimeSpacing): Partial<Spacing> {
+    return {
+      base: runtimeSpacing?.base as Spacing["base"] | undefined,
+      compact: runtimeSpacing?.compact as Spacing["compact"] | undefined,
+      comfortable: runtimeSpacing?.comfortable as Spacing["comfortable"] | undefined,
+      premium: runtimeSpacing?.premium as Spacing["premium"] | undefined,
+      activePreset: runtimeSpacing?.activePreset
+    };
+  }
+
+  hasRuntimeSpacing(): boolean {
+    return !!this._currentRuntime.spacing.base.scale;
+  }
+
+  createRuntimeSpacingSnapshot(): RuntimeSpacing {
+    return this._getDeepCopy(this._currentRuntime.spacing);
+  }
+
+  clearRuntimeSpacingCache(): void {
+    _runtimeSpacingCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
