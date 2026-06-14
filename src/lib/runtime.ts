@@ -8,6 +8,7 @@ import { UsageLimits } from './usageLimits';
 import { SupabaseSettings } from './supabaseSettingsConnector';
 import { Identity, IdentityResolver, createIdentityResolver } from './identity';
 import { Theme, createTheme } from './theme';
+import { BrandAssets, BrandAssetsResolver, createBrandAssetsResolver } from './brandAssets';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -27,6 +28,20 @@ export interface RuntimeTheme {
   layout: Record<string, any>;
 }
 
+export interface RuntimeBrandAssets {
+  logo: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  logoLight: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  logoDark: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  favicon: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  banner: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  openGraph: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  shareImage: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  loginImage: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  signupImage: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  splashImage: { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null };
+  icons: Record<string, { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null }>;
+}
+
 export interface RuntimeAccess {
   isAuthenticated: boolean;
   permissions: string[];
@@ -43,6 +58,7 @@ export interface Runtime {
   tenant: Tenant | null;
   identity: RuntimeIdentity;
   theme: RuntimeTheme;
+  brandAssets: RuntimeBrandAssets;
   domain: Record<string, any>;
   plan: RuntimePlan;
   subscription: Subscription | null;
@@ -75,6 +91,19 @@ const DEFAULT_RUNTIME: Runtime = {
     spacing: {},
     motion: {},
     layout: {}
+  },
+  brandAssets: {
+    logo: { url: null, alt: null, width: null, height: null, mimeType: null },
+    logoLight: { url: null, alt: null, width: null, height: null, mimeType: null },
+    logoDark: { url: null, alt: null, width: null, height: null, mimeType: null },
+    favicon: { url: null, alt: null, width: null, height: null, mimeType: null },
+    banner: { url: null, alt: null, width: null, height: null, mimeType: null },
+    openGraph: { url: null, alt: null, width: null, height: null, mimeType: null },
+    shareImage: { url: null, alt: null, width: null, height: null, mimeType: null },
+    loginImage: { url: null, alt: null, width: null, height: null, mimeType: null },
+    signupImage: { url: null, alt: null, width: null, height: null, mimeType: null },
+    splashImage: { url: null, alt: null, width: null, height: null, mimeType: null },
+    icons: {}
   },
   domain: {},
   plan: {
@@ -116,14 +145,17 @@ const DEFAULT_RUNTIME: Runtime = {
 let _runtimeCache: RuntimeCache = {};
 let _runtimeIdentityCache: Record<string, RuntimeIdentity> = {};
 let _runtimeThemeCache: Record<string, RuntimeTheme> = {};
+let _runtimeBrandAssetsCache: Record<string, RuntimeBrandAssets> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
   private _currentRuntime: Runtime;
   private _identityResolver: IdentityResolver;
+  private _brandAssetsResolver: BrandAssetsResolver;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
+    this._brandAssetsResolver = createBrandAssetsResolver(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -318,6 +350,125 @@ export class WhiteLabelRuntime {
 
   clearRuntimeThemeCache(): void {
     _runtimeThemeCache = {};
+  }
+
+  getRuntimeBrandAssets(): RuntimeBrandAssets {
+    return this._currentRuntime.brandAssets;
+  }
+
+  // Brand Assets Integration Helpers
+  resolveRuntimeBrandAssets(tenant?: Tenant): RuntimeBrandAssets {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeBrandAssetsCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeBrandAssetsCache[cacheKey]);
+    }
+
+    const brandAssets = this._brandAssetsResolver.resolveBrandAssetsFromTenant(tenant);
+    const runtimeBrandAssets: RuntimeBrandAssets = {
+      logo: { ...brandAssets.logo },
+      logoLight: { ...brandAssets.logoLight },
+      logoDark: { ...brandAssets.logoDark },
+      favicon: { ...brandAssets.favicon },
+      banner: { ...brandAssets.banner },
+      openGraph: { ...brandAssets.openGraph },
+      shareImage: { ...brandAssets.shareImage },
+      loginImage: { ...brandAssets.loginImage },
+      signupImage: { ...brandAssets.signupImage },
+      splashImage: { ...brandAssets.splashImage },
+      icons: { ...brandAssets.icons }
+    };
+
+    _runtimeBrandAssetsCache[cacheKey] = runtimeBrandAssets;
+    return this._getDeepCopy(runtimeBrandAssets);
+  }
+
+  resolveBrandAssetsFromRuntime(runtimeBrandAssets?: RuntimeBrandAssets): Partial<BrandAssets> {
+    return {
+      logo: {
+        url: runtimeBrandAssets?.logo?.url || null,
+        alt: runtimeBrandAssets?.logo?.alt || null,
+        width: runtimeBrandAssets?.logo?.width || null,
+        height: runtimeBrandAssets?.logo?.height || null,
+        mimeType: runtimeBrandAssets?.logo?.mimeType || null
+      },
+      logoLight: {
+        url: runtimeBrandAssets?.logoLight?.url || null,
+        alt: runtimeBrandAssets?.logoLight?.alt || null,
+        width: runtimeBrandAssets?.logoLight?.width || null,
+        height: runtimeBrandAssets?.logoLight?.height || null,
+        mimeType: runtimeBrandAssets?.logoLight?.mimeType || null
+      },
+      logoDark: {
+        url: runtimeBrandAssets?.logoDark?.url || null,
+        alt: runtimeBrandAssets?.logoDark?.alt || null,
+        width: runtimeBrandAssets?.logoDark?.width || null,
+        height: runtimeBrandAssets?.logoDark?.height || null,
+        mimeType: runtimeBrandAssets?.logoDark?.mimeType || null
+      },
+      favicon: {
+        url: runtimeBrandAssets?.favicon?.url || null,
+        alt: runtimeBrandAssets?.favicon?.alt || null,
+        width: runtimeBrandAssets?.favicon?.width || null,
+        height: runtimeBrandAssets?.favicon?.height || null,
+        mimeType: runtimeBrandAssets?.favicon?.mimeType || null
+      },
+      banner: {
+        url: runtimeBrandAssets?.banner?.url || null,
+        alt: runtimeBrandAssets?.banner?.alt || null,
+        width: runtimeBrandAssets?.banner?.width || null,
+        height: runtimeBrandAssets?.banner?.height || null,
+        mimeType: runtimeBrandAssets?.banner?.mimeType || null
+      },
+      openGraph: {
+        url: runtimeBrandAssets?.openGraph?.url || null,
+        alt: runtimeBrandAssets?.openGraph?.alt || null,
+        width: runtimeBrandAssets?.openGraph?.width || null,
+        height: runtimeBrandAssets?.openGraph?.height || null,
+        mimeType: runtimeBrandAssets?.openGraph?.mimeType || null
+      },
+      shareImage: {
+        url: runtimeBrandAssets?.shareImage?.url || null,
+        alt: runtimeBrandAssets?.shareImage?.alt || null,
+        width: runtimeBrandAssets?.shareImage?.width || null,
+        height: runtimeBrandAssets?.shareImage?.height || null,
+        mimeType: runtimeBrandAssets?.shareImage?.mimeType || null
+      },
+      loginImage: {
+        url: runtimeBrandAssets?.loginImage?.url || null,
+        alt: runtimeBrandAssets?.loginImage?.alt || null,
+        width: runtimeBrandAssets?.loginImage?.width || null,
+        height: runtimeBrandAssets?.loginImage?.height || null,
+        mimeType: runtimeBrandAssets?.loginImage?.mimeType || null
+      },
+      signupImage: {
+        url: runtimeBrandAssets?.signupImage?.url || null,
+        alt: runtimeBrandAssets?.signupImage?.alt || null,
+        width: runtimeBrandAssets?.signupImage?.width || null,
+        height: runtimeBrandAssets?.signupImage?.height || null,
+        mimeType: runtimeBrandAssets?.signupImage?.mimeType || null
+      },
+      splashImage: {
+        url: runtimeBrandAssets?.splashImage?.url || null,
+        alt: runtimeBrandAssets?.splashImage?.alt || null,
+        width: runtimeBrandAssets?.splashImage?.width || null,
+        height: runtimeBrandAssets?.splashImage?.height || null,
+        mimeType: runtimeBrandAssets?.splashImage?.mimeType || null
+      },
+      icons: runtimeBrandAssets?.icons || {}
+    };
+  }
+
+  hasRuntimeBrandAssets(): boolean {
+    return !!this._currentRuntime.brandAssets.logo.url;
+  }
+
+  createRuntimeBrandAssetsSnapshot(): RuntimeBrandAssets {
+    return this._getDeepCopy(this._currentRuntime.brandAssets);
+  }
+
+  clearRuntimeBrandAssetsCache(): void {
+    _runtimeBrandAssetsCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
