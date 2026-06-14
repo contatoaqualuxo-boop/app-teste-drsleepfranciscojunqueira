@@ -3,7 +3,6 @@
 import { Tenant } from './tenant';
 import { Registry } from './registry';
 import { Providers, DEFAULT_PROVIDERS } from './providers';
-import { Subscription } from './subscription';
 import { UsageLimits } from './usageLimits';
 import { SupabaseSettings } from './supabaseSettingsConnector';
 import { Identity, IdentityResolver, createIdentityResolver } from './identity';
@@ -21,7 +20,7 @@ import { UserPermissions, PermissionEngine, createPermissionEngine } from './per
 import { AccessContext, AccessEngine, createAccessEngine, DEFAULT_ACCESS_CONTEXT } from './access';
 import { PlansEngineState, PlansEngine, createPlansEngine } from './plans';
 import { Billing, BillingResolver, createBillingResolver } from './billing';
-import { Subscription, SubscriptionResolver, createSubscriptionResolver } from './subscription';
+import { Subscription as RuntimeSubscriptionState, SubscriptionResolver, createSubscriptionResolver } from './subscription';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -155,7 +154,7 @@ export interface RuntimeBilling {
 }
 
 export interface RuntimeSubscription {
-  subscription: Subscription;
+  subscription: RuntimeSubscriptionState;
 }
 
 export interface RuntimePlan {
@@ -177,7 +176,7 @@ export interface Runtime {
   navigation: RuntimeNavigation;
   domain: Record<string, any>;
   plan: RuntimePlan;
-  subscription: Subscription | null;
+  subscription: RuntimeSubscriptionState | null;
   limits: UsageLimits;
   access: RuntimeAccess;
   modules: string[];
@@ -454,7 +453,7 @@ export class WhiteLabelRuntime {
     return this._currentRuntime.plan;
   }
 
-  getRuntimeSubscription(): Subscription | null {
+  getRuntimeSubscription(): RuntimeSubscriptionState | null {
     return this._currentRuntime.subscription;
   }
 
@@ -1232,7 +1231,7 @@ export class WhiteLabelRuntime {
     return runtimeSubscription;
   }
 
-  resolveSubscriptionFromRuntime(runtimeSubscription?: RuntimeSubscription): Subscription | undefined {
+  resolveSubscriptionFromRuntime(runtimeSubscription?: RuntimeSubscription): RuntimeSubscriptionState | undefined {
     return runtimeSubscription?.subscription;
   }
 
