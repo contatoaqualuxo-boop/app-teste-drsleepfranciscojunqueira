@@ -968,7 +968,7 @@ export class WhiteLabelRuntime {
   }
 
   getRuntimeModules(): RuntimeModules {
-    return { active: [...this._currentRuntime.modules] };
+    return { active: [...this._currentRuntime.modules] as ModuleKey[] };
   }
 
   // Module Integration Helpers
