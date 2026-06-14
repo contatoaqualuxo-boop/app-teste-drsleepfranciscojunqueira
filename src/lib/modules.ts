@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { Tenant } from './tenant';
+import { Identity } from './identity';
 import {
   LayoutDashboard,
   Users,
@@ -207,7 +209,99 @@ export function getModules(context?: ModuleContext, isActiveFn?: (module: Module
   return modules;
 }
 
-// Helper function to check if a module is active
+interface ModuleCache {
+  [key: string]: ModuleKey[];
+}
+
+let _modulesCache: ModuleCache = {};
+
+// Module Engine Class
+export class ModuleEngine {
+  private _currentActiveModules: ModuleKey[];
+
+  constructor(initialTenant?: Tenant) {
+    this._currentActiveModules = this.resolveModulesFromTenant(initialTenant);
+  }
+
+  // Helpers
+  getDefaultActiveModules(): ModuleKey[] {
+    return defaultModules.filter(mod => mod.isActiveByDefault).map(mod => mod.key);
+  }
+
+  resolveModules(): ModuleKey[] {
+    return [...this._currentActiveModules];
+  }
+
+  resolveModulesFromTenant(tenant?: Tenant): ModuleKey[] {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_modulesCache[cacheKey]) {
+      return [..._modulesCache[cacheKey]];
+    }
+
+    const activeModules: ModuleKey[] = this.getDefaultActiveModules();
+    _modulesCache[cacheKey] = activeModules;
+    return activeModules;
+  }
+
+  resolveModulesFromIdentity(identity?: Identity): ModuleKey[] {
+    if (!identity) {
+      return this.getDefaultActiveModules();
+    }
+
+    const cacheKey = `identity:${identity.tenant?.id || 'default'}`;
+
+    if (_modulesCache[cacheKey]) {
+      return [..._modulesCache[cacheKey]];
+    }
+
+    const activeModules: ModuleKey[] = this.resolveModulesFromTenant(identity.tenant || undefined);
+    _modulesCache[cacheKey] = activeModules;
+    return activeModules;
+  }
+
+  getModules(context?: ModuleContext): Module[] {
+    let modules = [...defaultModules];
+    
+    if (context) {
+      modules = modules.filter(mod => mod.context.includes(context));
+    }
+    
+    modules = modules.filter(mod => this._currentActiveModules.includes(mod.key) || mod.isActiveByDefault);
+    
+    return modules;
+  }
+
+  isModuleActive(key: ModuleKey): boolean {
+    const module = defaultModules.find(m => m.key === key);
+    if (!module) return false;
+    return this._currentActiveModules.includes(key) || module.isActiveByDefault;
+  }
+
+  createModulesSnapshot(): ModuleKey[] {
+    return [...this._currentActiveModules];
+  }
+
+  clearModulesCache(): void {
+    _modulesCache = {};
+  }
+
+  // Getters and Setters
+  get currentActiveModules(): ModuleKey[] {
+    return [...this._currentActiveModules];
+  }
+
+  set currentActiveModules(modules: ModuleKey[]) {
+    this._currentActiveModules = [...modules];
+  }
+}
+
+// Hook-like factory
+export function createModuleEngine(initialTenant?: Tenant): ModuleEngine {
+  return new ModuleEngine(initialTenant);
+}
+
+// Helper function to check if a module is active (for backward compatibility)
 export function isModuleActive(key: ModuleKey, activeModules?: ModuleKey[]): boolean {
   const module = defaultModules.find(m => m.key === key);
   if (!module) return false;

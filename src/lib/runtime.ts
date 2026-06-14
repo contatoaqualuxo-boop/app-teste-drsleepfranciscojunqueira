@@ -15,6 +15,7 @@ import { Fonts, FontResolver, createFontResolver } from './fonts';
 import { Spacing, SpacingResolver, createSpacingResolver } from './spacing';
 import { Layout, LayoutResolver, createLayoutResolver } from './layout';
 import { NavigationContext, NavigationEngine, createNavigationEngine } from './navigation';
+import { ModuleKey, ModuleEngine, createModuleEngine } from './modules';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -121,6 +122,10 @@ export interface RuntimeNavigation {
   superAdmin: Record<string, any>[];
   empresa: Record<string, any>[];
   cliente: Record<string, any>[];
+}
+
+export interface RuntimeModules {
+  active: ModuleKey[];
 }
 
 export interface RuntimeAccess {
@@ -308,6 +313,7 @@ let _runtimeFontsCache: Record<string, RuntimeFonts> = {};
 let _runtimeSpacingCache: Record<string, RuntimeSpacing> = {};
 let _runtimeLayoutCache: Record<string, RuntimeLayout> = {};
 let _runtimeNavigationCache: Record<string, RuntimeNavigation> = {};
+let _runtimeModulesCache: Record<string, RuntimeModules> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -320,6 +326,7 @@ export class WhiteLabelRuntime {
   private _spacingResolver: SpacingResolver;
   private _layoutResolver: LayoutResolver;
   private _navigationEngine: NavigationEngine;
+  private _moduleEngine: ModuleEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -330,6 +337,7 @@ export class WhiteLabelRuntime {
     this._spacingResolver = createSpacingResolver(initialTenant);
     this._layoutResolver = createLayoutResolver(initialTenant);
     this._navigationEngine = createNavigationEngine(initialTenant);
+    this._moduleEngine = createModuleEngine(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -957,6 +965,41 @@ export class WhiteLabelRuntime {
 
   clearRuntimeNavigationCache(): void {
     _runtimeNavigationCache = {};
+  }
+
+  getRuntimeModules(): RuntimeModules {
+    return { active: [...this._currentRuntime.modules] };
+  }
+
+  // Module Integration Helpers
+  resolveRuntimeModules(tenant?: Tenant): RuntimeModules {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeModulesCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeModulesCache[cacheKey]);
+    }
+
+    const modules = this._moduleEngine.resolveModulesFromTenant(tenant);
+    const runtimeModules: RuntimeModules = { active: [...modules] };
+
+    _runtimeModulesCache[cacheKey] = runtimeModules;
+    return this._getDeepCopy(runtimeModules);
+  }
+
+  resolveModulesFromRuntime(runtimeModules?: RuntimeModules): ModuleKey[] {
+    return runtimeModules?.active || [];
+  }
+
+  hasRuntimeModules(): boolean {
+    return this._currentRuntime.modules.length > 0;
+  }
+
+  createRuntimeModulesSnapshot(): RuntimeModules {
+    return this._getDeepCopy({ active: [...this._currentRuntime.modules] });
+  }
+
+  clearRuntimeModulesCache(): void {
+    _runtimeModulesCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
