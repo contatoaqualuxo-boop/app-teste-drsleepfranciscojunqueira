@@ -289,7 +289,7 @@ export class MotionResolver {
     return props.map(p => `${p} ${duration} ${easing}`).join(', ');
   }
 
-  getDuration(key: keyof DurationTokens = '200'): string {
+  getDuration(key: keyof DurationTokens = 200): string {
     return this._currentMotion.duration[key];
   }
 
