@@ -561,18 +561,18 @@ export class WhiteLabelRuntime {
 
   resolveDesignTokensFromRuntime(runtimeDesignTokens?: RuntimeDesignTokens): Partial<DesignTokens> {
     return {
-      colors: runtimeDesignTokens?.colors || undefined,
-      typography: runtimeDesignTokens?.typography || undefined,
-      spacing: runtimeDesignTokens?.spacing || undefined,
-      borders: runtimeDesignTokens?.borders || undefined,
-      radius: runtimeDesignTokens?.radius || undefined,
-      shadows: runtimeDesignTokens?.shadows || undefined,
-      opacity: runtimeDesignTokens?.opacity || undefined,
-      zIndex: runtimeDesignTokens?.zIndex || undefined,
-      breakpoints: runtimeDesignTokens?.breakpoints || undefined,
-      motion: runtimeDesignTokens?.motion || undefined,
-      elevation: runtimeDesignTokens?.elevation || undefined,
-      containers: runtimeDesignTokens?.containers || undefined
+      colors: undefined,
+      typography: runtimeDesignTokens?.typography as DesignTokens["typography"] | undefined,
+      spacing: runtimeDesignTokens?.spacing as DesignTokens["spacing"] | undefined,
+      borders: runtimeDesignTokens?.borders as DesignTokens["borders"] | undefined,
+      radius: runtimeDesignTokens?.radius as DesignTokens["radius"] | undefined,
+      shadows: runtimeDesignTokens?.shadows as DesignTokens["shadows"] | undefined,
+      opacity: runtimeDesignTokens?.opacity as DesignTokens["opacity"] | undefined,
+      zIndex: runtimeDesignTokens?.zIndex as DesignTokens["zIndex"] | undefined,
+      breakpoints: runtimeDesignTokens?.breakpoints as DesignTokens["breakpoints"] | undefined,
+      motion: runtimeDesignTokens?.motion as DesignTokens["motion"] | undefined,
+      elevation: runtimeDesignTokens?.elevation as DesignTokens["elevation"] | undefined,
+      containers: runtimeDesignTokens?.containers as DesignTokens["containers"] | undefined
     };
   }
 
