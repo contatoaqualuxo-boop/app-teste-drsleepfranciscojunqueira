@@ -6,6 +6,7 @@ import { Providers, DEFAULT_PROVIDERS } from './providers';
 import { Subscription } from './subscription';
 import { UsageLimits } from './usageLimits';
 import { SupabaseSettings } from './supabaseSettingsConnector';
+import { Identity, IdentityResolver, createIdentityResolver } from './identity';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -112,12 +113,15 @@ const DEFAULT_RUNTIME: Runtime = {
 };
 
 let _runtimeCache: RuntimeCache = {};
+let _runtimeIdentityCache: Record<string, RuntimeIdentity> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
   private _currentRuntime: Runtime;
+  private _identityResolver: IdentityResolver;
 
   constructor(initialTenant?: Tenant) {
+    this._identityResolver = createIdentityResolver(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -204,6 +208,56 @@ export class WhiteLabelRuntime {
 
   getRuntimeProviders(): Providers {
     return this._currentRuntime.providers;
+  }
+
+  // Identity Integration Helpers
+  resolveRuntimeIdentity(tenant?: Tenant): RuntimeIdentity {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeIdentityCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeIdentityCache[cacheKey]);
+    }
+
+    const identity = this._identityResolver.resolveIdentityFromTenant(tenant);
+    const runtimeIdentity: RuntimeIdentity = {
+      name: identity.companyInfo.companyName || 'Plataforma Prévisita',
+      slug: 'previsita',
+      logo: identity.brandAssets.logoUrl || '',
+      logoDark: '',
+      logoLight: ''
+    };
+
+    _runtimeIdentityCache[cacheKey] = runtimeIdentity;
+    return this._getDeepCopy(runtimeIdentity);
+  }
+
+  resolveIdentityFromRuntime(runtimeIdentity?: RuntimeIdentity): Partial<Identity> {
+    return {
+      companyInfo: {
+        companyName: runtimeIdentity?.name || null,
+        slogan: null,
+        previsitaUrl: null,
+        customDomain: null
+      },
+      brandAssets: {
+        logoUrl: runtimeIdentity?.logo || null,
+        faviconUrl: null,
+        bannerUrl: null,
+        socialImageUrl: null
+      }
+    };
+  }
+
+  hasRuntimeIdentity(): boolean {
+    return !!this._currentRuntime.identity.name && this._currentRuntime.identity.name !== 'Plataforma Prévisita';
+  }
+
+  createRuntimeIdentitySnapshot(): RuntimeIdentity {
+    return this._getDeepCopy(this._currentRuntime.identity);
+  }
+
+  clearRuntimeIdentityCache(): void {
+    _runtimeIdentityCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
