@@ -9,6 +9,7 @@ import { SupabaseSettings } from './supabaseSettingsConnector';
 import { Identity, IdentityResolver, createIdentityResolver } from './identity';
 import { Theme, createTheme } from './theme';
 import { BrandAssets, BrandAssetsResolver, createBrandAssetsResolver } from './brandAssets';
+import { DesignTokens, DesignTokensEngine, createDesignTokensEngine } from './designTokens';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -42,6 +43,32 @@ export interface RuntimeBrandAssets {
   icons: Record<string, { url: string | null; alt: string | null; width: number | null; height: number | null; mimeType: string | null }>;
 }
 
+export interface RuntimeDesignTokens {
+  colors: {
+    primary: Record<string, any>;
+    secondary: Record<string, any>;
+    neutral: Record<string, any>;
+    success: Record<string, any>;
+    warning: Record<string, any>;
+    error: Record<string, any>;
+    info: Record<string, any>;
+    background: Record<string, any>;
+    text: Record<string, any>;
+    border: Record<string, any>;
+  };
+  typography: Record<string, any>;
+  spacing: Record<string, any>;
+  borders: Record<string, any>;
+  radius: Record<string, any>;
+  shadows: Record<string, any>;
+  opacity: Record<string, any>;
+  zIndex: Record<string, any>;
+  breakpoints: Record<string, any>;
+  motion: Record<string, any>;
+  elevation: Record<string, any>;
+  containers: Record<string, any>;
+}
+
 export interface RuntimeAccess {
   isAuthenticated: boolean;
   permissions: string[];
@@ -59,6 +86,7 @@ export interface Runtime {
   identity: RuntimeIdentity;
   theme: RuntimeTheme;
   brandAssets: RuntimeBrandAssets;
+  designTokens: RuntimeDesignTokens;
   domain: Record<string, any>;
   plan: RuntimePlan;
   subscription: Subscription | null;
@@ -105,6 +133,31 @@ const DEFAULT_RUNTIME: Runtime = {
     splashImage: { url: null, alt: null, width: null, height: null, mimeType: null },
     icons: {}
   },
+  designTokens: {
+    colors: {
+      primary: {},
+      secondary: {},
+      neutral: {},
+      success: {},
+      warning: {},
+      error: {},
+      info: {},
+      background: {},
+      text: {},
+      border: {}
+    },
+    typography: {},
+    spacing: {},
+    borders: {},
+    radius: {},
+    shadows: {},
+    opacity: {},
+    zIndex: {},
+    breakpoints: {},
+    motion: {},
+    elevation: {},
+    containers: {}
+  },
   domain: {},
   plan: {
     id: 'starter',
@@ -146,16 +199,19 @@ let _runtimeCache: RuntimeCache = {};
 let _runtimeIdentityCache: Record<string, RuntimeIdentity> = {};
 let _runtimeThemeCache: Record<string, RuntimeTheme> = {};
 let _runtimeBrandAssetsCache: Record<string, RuntimeBrandAssets> = {};
+let _runtimeDesignTokensCache: Record<string, RuntimeDesignTokens> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
   private _currentRuntime: Runtime;
   private _identityResolver: IdentityResolver;
   private _brandAssetsResolver: BrandAssetsResolver;
+  private _designTokensEngine: DesignTokensEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
     this._brandAssetsResolver = createBrandAssetsResolver(initialTenant);
+    this._designTokensEngine = createDesignTokensEngine(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -469,6 +525,67 @@ export class WhiteLabelRuntime {
 
   clearRuntimeBrandAssetsCache(): void {
     _runtimeBrandAssetsCache = {};
+  }
+
+  getRuntimeDesignTokens(): RuntimeDesignTokens {
+    return this._currentRuntime.designTokens;
+  }
+
+  // Design Tokens Integration Helpers
+  resolveRuntimeDesignTokens(tenant?: Tenant): RuntimeDesignTokens {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeDesignTokensCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeDesignTokensCache[cacheKey]);
+    }
+
+    const designTokens = this._designTokensEngine.resolveTokensFromTenant(tenant);
+    const runtimeDesignTokens: RuntimeDesignTokens = {
+      colors: { ...designTokens.colors },
+      typography: { ...designTokens.typography },
+      spacing: { ...designTokens.spacing },
+      borders: { ...designTokens.borders },
+      radius: { ...designTokens.radius },
+      shadows: { ...designTokens.shadows },
+      opacity: { ...designTokens.opacity },
+      zIndex: { ...designTokens.zIndex },
+      breakpoints: { ...designTokens.breakpoints },
+      motion: { ...designTokens.motion },
+      elevation: { ...designTokens.elevation },
+      containers: { ...designTokens.containers }
+    };
+
+    _runtimeDesignTokensCache[cacheKey] = runtimeDesignTokens;
+    return this._getDeepCopy(runtimeDesignTokens);
+  }
+
+  resolveDesignTokensFromRuntime(runtimeDesignTokens?: RuntimeDesignTokens): Partial<DesignTokens> {
+    return {
+      colors: runtimeDesignTokens?.colors || undefined,
+      typography: runtimeDesignTokens?.typography || undefined,
+      spacing: runtimeDesignTokens?.spacing || undefined,
+      borders: runtimeDesignTokens?.borders || undefined,
+      radius: runtimeDesignTokens?.radius || undefined,
+      shadows: runtimeDesignTokens?.shadows || undefined,
+      opacity: runtimeDesignTokens?.opacity || undefined,
+      zIndex: runtimeDesignTokens?.zIndex || undefined,
+      breakpoints: runtimeDesignTokens?.breakpoints || undefined,
+      motion: runtimeDesignTokens?.motion || undefined,
+      elevation: runtimeDesignTokens?.elevation || undefined,
+      containers: runtimeDesignTokens?.containers || undefined
+    };
+  }
+
+  hasRuntimeDesignTokens(): boolean {
+    return !!this._currentRuntime.designTokens.colors.primary['500'];
+  }
+
+  createRuntimeDesignTokensSnapshot(): RuntimeDesignTokens {
+    return this._getDeepCopy(this._currentRuntime.designTokens);
+  }
+
+  clearRuntimeDesignTokensCache(): void {
+    _runtimeDesignTokensCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
