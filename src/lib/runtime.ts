@@ -7,6 +7,7 @@ import { Subscription } from './subscription';
 import { UsageLimits } from './usageLimits';
 import { SupabaseSettings } from './supabaseSettingsConnector';
 import { Identity, IdentityResolver, createIdentityResolver } from './identity';
+import { Theme, createTheme } from './theme';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -114,6 +115,7 @@ const DEFAULT_RUNTIME: Runtime = {
 
 let _runtimeCache: RuntimeCache = {};
 let _runtimeIdentityCache: Record<string, RuntimeIdentity> = {};
+let _runtimeThemeCache: Record<string, RuntimeTheme> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -258,6 +260,64 @@ export class WhiteLabelRuntime {
 
   clearRuntimeIdentityCache(): void {
     _runtimeIdentityCache = {};
+  }
+
+  // Theme Integration Helpers
+  resolveRuntimeTheme(tenant?: Tenant): RuntimeTheme {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeThemeCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeThemeCache[cacheKey]);
+    }
+
+    const theme = this._identityResolver.getTheme();
+    const runtimeTheme: RuntimeTheme = {
+      mode: 'light',
+      colors: {
+        primary: theme.colors.primary,
+        secondary: theme.colors.secondary,
+        accent: theme.colors.accent,
+        background: theme.colors.background,
+        surface: theme.colors.surface,
+        text: theme.colors.text,
+        textSecondary: theme.colors.textSecondary,
+        border: theme.colors.border
+      },
+      fonts: {},
+      spacing: {},
+      motion: {},
+      layout: {}
+    };
+
+    _runtimeThemeCache[cacheKey] = runtimeTheme;
+    return this._getDeepCopy(runtimeTheme);
+  }
+
+  resolveThemeFromRuntime(runtimeTheme?: RuntimeTheme): Partial<Theme> {
+    return {
+      colors: {
+        primary: runtimeTheme?.colors?.primary || '#6366f1',
+        secondary: runtimeTheme?.colors?.secondary || '#8b5cf6',
+        accent: runtimeTheme?.colors?.accent || '#f59e0b',
+        background: runtimeTheme?.colors?.background || '#020617',
+        surface: runtimeTheme?.colors?.surface || '#020617',
+        text: runtimeTheme?.colors?.text || '#ffffff',
+        textSecondary: runtimeTheme?.colors?.textSecondary || '#9ca3af',
+        border: runtimeTheme?.colors?.border || '#1f2937'
+      }
+    };
+  }
+
+  hasRuntimeTheme(): boolean {
+    return !!this._currentRuntime.theme.colors.primary && this._currentRuntime.theme.colors.primary !== '#6366f1';
+  }
+
+  createRuntimeThemeSnapshot(): RuntimeTheme {
+    return this._getDeepCopy(this._currentRuntime.theme);
+  }
+
+  clearRuntimeThemeCache(): void {
+    _runtimeThemeCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
