@@ -113,7 +113,7 @@ interface MotionCache {
 }
 
 // Default Motion Tokens
-const DEFAULT_DURATION_TOKENS: DurationTokens = {
+export const DEFAULT_DURATION_TOKENS: DurationTokens = {
   75: '75ms',
   100: '100ms',
   150: '150ms',
@@ -124,7 +124,7 @@ const DEFAULT_DURATION_TOKENS: DurationTokens = {
   1000: '1000ms'
 };
 
-const DEFAULT_EASING_TOKENS: EasingTokens = {
+export const DEFAULT_EASING_TOKENS: EasingTokens = {
   easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
   easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
   easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -135,41 +135,41 @@ const DEFAULT_EASING_TOKENS: EasingTokens = {
   elastic: 'cubic-bezier(0.68, -0.6, 0.32, 1.6)'
 };
 
-const DEFAULT_FADE_MOTION: FadeMotion = {
+export const DEFAULT_FADE_MOTION: FadeMotion = {
   duration: DEFAULT_DURATION_TOKENS['300'],
   easing: DEFAULT_EASING_TOKENS.easeOut,
   from: 0,
   to: 1
 };
 
-const DEFAULT_SLIDE_MOTION: SlideMotion = {
+export const DEFAULT_SLIDE_MOTION: SlideMotion = {
   duration: DEFAULT_DURATION_TOKENS['300'],
   easing: DEFAULT_EASING_TOKENS.easeOut,
   from: 20,
   to: 0
 };
 
-const DEFAULT_SCALE_MOTION: ScaleMotion = {
+export const DEFAULT_SCALE_MOTION: ScaleMotion = {
   duration: DEFAULT_DURATION_TOKENS['200'],
   easing: DEFAULT_EASING_TOKENS.easeOut,
   from: 0.95,
   to: 1
 };
 
-const DEFAULT_HOVER_MOTION: HoverMotion = {
+export const DEFAULT_HOVER_MOTION: HoverMotion = {
   scale: 1.02,
   duration: DEFAULT_DURATION_TOKENS['150'],
   easing: DEFAULT_EASING_TOKENS.easeOut,
   translateY: -2
 };
 
-const DEFAULT_PRESS_MOTION: PressMotion = {
+export const DEFAULT_PRESS_MOTION: PressMotion = {
   scale: 0.98,
   duration: DEFAULT_DURATION_TOKENS['100'],
   easing: DEFAULT_EASING_TOKENS.easeInOut
 };
 
-const DEFAULT_ENTRANCE_MOTION: EntranceMotion = {
+export const DEFAULT_ENTRANCE_MOTION: EntranceMotion = {
   fade: DEFAULT_FADE_MOTION,
   slideUp: { ...DEFAULT_SLIDE_MOTION, from: 20 },
   slideDown: { ...DEFAULT_SLIDE_MOTION, from: -20 },
@@ -179,7 +179,7 @@ const DEFAULT_ENTRANCE_MOTION: EntranceMotion = {
   staggerChildren: 50
 };
 
-const DEFAULT_EXIT_MOTION: ExitMotion = {
+export const DEFAULT_EXIT_MOTION: ExitMotion = {
   fade: { ...DEFAULT_FADE_MOTION, from: 1, to: 0 },
   slideUp: { ...DEFAULT_SLIDE_MOTION, from: 0, to: 20 },
   slideDown: { ...DEFAULT_SLIDE_MOTION, from: 0, to: -20 },
@@ -188,7 +188,7 @@ const DEFAULT_EXIT_MOTION: ExitMotion = {
   scale: { ...DEFAULT_SCALE_MOTION, from: 1, to: 0.95 }
 };
 
-const DEFAULT_MICROINTERACTIONS: Microinteractions = {
+export const DEFAULT_MICROINTERACTIONS: Microinteractions = {
   buttonHover: DEFAULT_HOVER_MOTION,
   buttonPress: DEFAULT_PRESS_MOTION,
   cardHover: { ...DEFAULT_HOVER_MOTION, translateY: -4, scale: 1.01 },
@@ -200,7 +200,7 @@ const DEFAULT_MICROINTERACTIONS: Microinteractions = {
   }
 };
 
-const DEFAULT_MOTION: Motion = {
+export const DEFAULT_MOTION: Motion = {
   duration: DEFAULT_DURATION_TOKENS,
   easing: DEFAULT_EASING_TOKENS,
   fade: DEFAULT_FADE_MOTION,

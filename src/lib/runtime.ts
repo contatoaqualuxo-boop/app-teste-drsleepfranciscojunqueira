@@ -2,9 +2,7 @@
 
 import { Tenant } from './tenant';
 import { Registry } from './registry';
-import { BrandAssets } from './brandAssets';
-import { DesignTokens } from './designTokens';
-import { Providers } from './providers';
+import { Providers, DEFAULT_PROVIDERS } from './providers';
 import { Subscription } from './subscription';
 import { UsageLimits } from './usageLimits';
 
@@ -108,7 +106,7 @@ const DEFAULT_RUNTIME: Runtime = {
   },
   modules: [],
   features: [],
-  providers: {},
+  providers: { ...DEFAULT_PROVIDERS },
   registry: {}
 };
 

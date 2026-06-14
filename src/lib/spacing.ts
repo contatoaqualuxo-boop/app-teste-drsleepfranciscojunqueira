@@ -118,7 +118,7 @@ interface SpacingCache {
 }
 
 // Default Spacing Scale
-const DEFAULT_SPACING_SCALE: SpacingScale = {
+export const DEFAULT_SPACING_SCALE: SpacingScale = {
   0: 0,
   0.5: 0.125,
   1: 0.25,
@@ -222,7 +222,7 @@ function createDefaultPreset(): SpacingPreset {
 }
 
 // Default Spacing
-const DEFAULT_SPACING: Spacing = {
+export const DEFAULT_SPACING: Spacing = {
   base: createDefaultPreset(),
   compact: createDefaultPreset(),
   comfortable: createDefaultPreset(),

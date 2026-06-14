@@ -42,7 +42,7 @@ interface ProvidersCache {
 }
 
 // Default Providers Config
-const DEFAULT_PROVIDERS: Providers = {
+export const DEFAULT_PROVIDERS: Providers = {
   supabase: {
     type: 'supabase',
     name: 'Supabase',

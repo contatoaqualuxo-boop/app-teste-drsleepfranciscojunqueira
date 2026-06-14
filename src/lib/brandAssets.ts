@@ -32,7 +32,7 @@ interface BrandAssetsCache {
 }
 
 // Default Brand Assets
-const DEFAULT_BRAND_ASSETS: BrandAssets = {
+export const DEFAULT_BRAND_ASSETS: BrandAssets = {
   logo: { url: null, alt: null, width: null, height: null, mimeType: null },
   logoLight: { url: null, alt: null, width: null, height: null, mimeType: null },
   logoDark: { url: null, alt: null, width: null, height: null, mimeType: null },

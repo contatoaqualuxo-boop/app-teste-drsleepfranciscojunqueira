@@ -83,6 +83,12 @@
 - White Label Settings Adapter Foundation.
 - Supabase Settings Connector Foundation.
 
+### 8. Auditoria Arquitetural (FASE 5)
+- Exportadas todas as constantes DEFAULT_* de todos os engines/resolvers para consistência.
+- Removidas importações não utilizadas.
+- Melhorada a consistência dos padrões de fallback.
+- Todos os arquivos passam por lint, build e tsc sem erros.
+
 ## Tudo que falta implementar
 
 ### 1. White Label (FASE 5)

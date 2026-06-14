@@ -330,7 +330,7 @@ interface DesignTokensCache {
 }
 
 // Default Design Tokens
-const DEFAULT_COLOR_TOKENS: ColorTokens = {
+export const DEFAULT_COLOR_TOKENS: ColorTokens = {
   primary: {
     50: '#eff6ff',
     100: '#dbeafe',
@@ -442,7 +442,7 @@ const DEFAULT_COLOR_TOKENS: ColorTokens = {
   }
 };
 
-const DEFAULT_TYPOGRAPHY_TOKENS: TypographyTokens = {
+export const DEFAULT_TYPOGRAPHY_TOKENS: TypographyTokens = {
   fontFamily: {
     primary: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     heading: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -489,7 +489,7 @@ const DEFAULT_TYPOGRAPHY_TOKENS: TypographyTokens = {
   }
 };
 
-const DEFAULT_SPACING_TOKENS: SpacingTokens = {
+export const DEFAULT_SPACING_TOKENS: SpacingTokens = {
   0: '0rem',
   0.5: '0.125rem',
   1: '0.25rem',
@@ -525,7 +525,7 @@ const DEFAULT_SPACING_TOKENS: SpacingTokens = {
   96: '24rem'
 };
 
-const DEFAULT_BORDER_TOKENS: BorderTokens = {
+export const DEFAULT_BORDER_TOKENS: BorderTokens = {
   width: {
     0: '0px',
     1: '1px',
@@ -541,7 +541,7 @@ const DEFAULT_BORDER_TOKENS: BorderTokens = {
   }
 };
 
-const DEFAULT_RADIUS_TOKENS: RadiusTokens = {
+export const DEFAULT_RADIUS_TOKENS: RadiusTokens = {
   none: '0rem',
   sm: '0.125rem',
   md: '0.375rem',
@@ -552,7 +552,7 @@ const DEFAULT_RADIUS_TOKENS: RadiusTokens = {
   full: '9999px'
 };
 
-const DEFAULT_SHADOW_TOKENS: ShadowTokens = {
+export const DEFAULT_SHADOW_TOKENS: ShadowTokens = {
   none: 'none',
   sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
   md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
@@ -562,7 +562,7 @@ const DEFAULT_SHADOW_TOKENS: ShadowTokens = {
   inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)'
 };
 
-const DEFAULT_OPACITY_TOKENS: OpacityTokens = {
+export const DEFAULT_OPACITY_TOKENS: OpacityTokens = {
   0: 0,
   5: 0.05,
   10: 0.1,
@@ -578,7 +578,7 @@ const DEFAULT_OPACITY_TOKENS: OpacityTokens = {
   100: 1
 };
 
-const DEFAULT_Z_INDEX_TOKENS: ZIndexTokens = {
+export const DEFAULT_Z_INDEX_TOKENS: ZIndexTokens = {
   auto: 'auto',
   0: 0,
   10: 10,
@@ -588,7 +588,7 @@ const DEFAULT_Z_INDEX_TOKENS: ZIndexTokens = {
   50: 50
 };
 
-const DEFAULT_BREAKPOINT_TOKENS: BreakpointTokens = {
+export const DEFAULT_BREAKPOINT_TOKENS: BreakpointTokens = {
   xs: '480px',
   sm: '640px',
   md: '768px',
@@ -597,7 +597,7 @@ const DEFAULT_BREAKPOINT_TOKENS: BreakpointTokens = {
   '2xl': '1536px'
 };
 
-const DEFAULT_MOTION_TOKENS: MotionTokens = {
+export const DEFAULT_MOTION_TOKENS: MotionTokens = {
   duration: {
     75: '75ms',
     100: '100ms',
@@ -616,7 +616,7 @@ const DEFAULT_MOTION_TOKENS: MotionTokens = {
   }
 };
 
-const DEFAULT_ELEVATION_TOKENS: ElevationTokens = {
+export const DEFAULT_ELEVATION_TOKENS: ElevationTokens = {
   0: 'none',
   1: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
   2: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
@@ -625,7 +625,7 @@ const DEFAULT_ELEVATION_TOKENS: ElevationTokens = {
   5: '0 25px 50px -12px rgb(0 0 0 / 0.25)'
 };
 
-const DEFAULT_CONTAINER_TOKENS: ContainerTokens = {
+export const DEFAULT_CONTAINER_TOKENS: ContainerTokens = {
   sm: '640px',
   md: '768px',
   lg: '1024px',
@@ -634,7 +634,7 @@ const DEFAULT_CONTAINER_TOKENS: ContainerTokens = {
   full: '100%'
 };
 
-const DEFAULT_DESIGN_TOKENS: DesignTokens = {
+export const DEFAULT_DESIGN_TOKENS: DesignTokens = {
   colors: DEFAULT_COLOR_TOKENS,
   typography: DEFAULT_TYPOGRAPHY_TOKENS,
   spacing: DEFAULT_SPACING_TOKENS,

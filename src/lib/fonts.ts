@@ -43,7 +43,7 @@ interface FontCache {
 }
 
 // Default Font Scale
-const DEFAULT_FONT_SCALE: FontScale = {
+export const DEFAULT_FONT_SCALE: FontScale = {
   xs: 0.75,
   sm: 0.875,
   base: 1,
@@ -57,7 +57,7 @@ const DEFAULT_FONT_SCALE: FontScale = {
 };
 
 // Default Fonts
-const DEFAULT_FONTS: Fonts = {
+export const DEFAULT_FONTS: Fonts = {
   primary: {
     fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
   },
