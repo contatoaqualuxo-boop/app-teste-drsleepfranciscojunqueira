@@ -426,10 +426,6 @@ export class WhiteLabelRuntime {
     return this._currentRuntime.theme;
   }
 
-  getRuntimeAccess(): RuntimeAccess {
-    return this._currentRuntime.access;
-  }
-
   getRuntimePlan(): RuntimePlan {
     return this._currentRuntime.plan;
   }
