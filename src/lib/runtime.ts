@@ -21,6 +21,7 @@ import { UserPermissions, PermissionEngine, createPermissionEngine } from './per
 import { AccessContext, AccessEngine, createAccessEngine, DEFAULT_ACCESS_CONTEXT } from './access';
 import { PlansEngineState, PlansEngine, createPlansEngine } from './plans';
 import { Billing, BillingResolver, createBillingResolver } from './billing';
+import { Subscription, SubscriptionResolver, createSubscriptionResolver } from './subscription';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -151,6 +152,10 @@ export interface RuntimePlans {
 
 export interface RuntimeBilling {
   billing: Billing;
+}
+
+export interface RuntimeSubscription {
+  subscription: Subscription;
 }
 
 export interface RuntimePlan {
@@ -336,6 +341,7 @@ let _runtimePermissionsCache: Record<string, RuntimePermissions> = {};
 let _runtimeAccessCache: Record<string, RuntimeAccess> = {};
 let _runtimePlansCache: Record<string, RuntimePlans> = {};
 let _runtimeBillingCache: Record<string, RuntimeBilling> = {};
+let _runtimeSubscriptionCache: Record<string, RuntimeSubscription> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -354,6 +360,7 @@ export class WhiteLabelRuntime {
   private _accessEngine: AccessEngine;
   private _plansEngine: PlansEngine;
   private _billingResolver: BillingResolver;
+  private _subscriptionResolver: SubscriptionResolver;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -370,6 +377,7 @@ export class WhiteLabelRuntime {
     this._accessEngine = createAccessEngine({ tenant: initialTenant || null });
     this._plansEngine = createPlansEngine(initialTenant);
     this._billingResolver = createBillingResolver(initialTenant);
+    this._subscriptionResolver = createSubscriptionResolver(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1203,6 +1211,41 @@ export class WhiteLabelRuntime {
 
   clearRuntimeBillingCache(): void {
     _runtimeBillingCache = {};
+  }
+
+  getRuntimeSubscription(): RuntimeSubscription {
+    return { subscription: this._subscriptionResolver.currentSubscription };
+  }
+
+  // Subscription Integration Helpers
+  resolveRuntimeSubscription(tenant?: Tenant): RuntimeSubscription {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeSubscriptionCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeSubscriptionCache[cacheKey]);
+    }
+
+    const subscription = this._subscriptionResolver.resolveSubscriptionFromTenant(tenant);
+    const runtimeSubscription: RuntimeSubscription = { subscription: this._getDeepCopy(subscription) };
+
+    _runtimeSubscriptionCache[cacheKey] = runtimeSubscription;
+    return runtimeSubscription;
+  }
+
+  resolveSubscriptionFromRuntime(runtimeSubscription?: RuntimeSubscription): Subscription | undefined {
+    return runtimeSubscription?.subscription;
+  }
+
+  hasRuntimeSubscription(): boolean {
+    return !!this._subscriptionResolver.currentSubscription;
+  }
+
+  createRuntimeSubscriptionSnapshot(): RuntimeSubscription {
+    return this._getDeepCopy({ subscription: this._subscriptionResolver.currentSubscription });
+  }
+
+  clearRuntimeSubscriptionCache(): void {
+    _runtimeSubscriptionCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
