@@ -453,10 +453,6 @@ export class WhiteLabelRuntime {
     return this._currentRuntime.plan;
   }
 
-  getRuntimeSubscription(): RuntimeSubscriptionState | null {
-    return this._currentRuntime.subscription;
-  }
-
   getRuntimeProviders(): Providers {
     return this._currentRuntime.providers;
   }
