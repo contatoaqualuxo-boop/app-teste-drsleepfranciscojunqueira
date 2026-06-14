@@ -21,6 +21,7 @@ import { AccessContext, AccessEngine, createAccessEngine, DEFAULT_ACCESS_CONTEXT
 import { PlansEngineState, PlansEngine, createPlansEngine } from './plans';
 import { Billing, BillingResolver, createBillingResolver } from './billing';
 import { Subscription as RuntimeSubscriptionState, SubscriptionResolver, createSubscriptionResolver } from './subscription';
+import { UsageLimits, UsageLimitsEngine, createUsageLimitsEngine } from './usageLimits';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -155,6 +156,10 @@ export interface RuntimeBilling {
 
 export interface RuntimeSubscription {
   subscription: RuntimeSubscriptionState;
+}
+
+export interface RuntimeUsageLimits {
+  usageLimits: UsageLimits;
 }
 
 export interface RuntimePlan {
@@ -341,6 +346,7 @@ let _runtimeAccessCache: Record<string, RuntimeAccess> = {};
 let _runtimePlansCache: Record<string, RuntimePlans> = {};
 let _runtimeBillingCache: Record<string, RuntimeBilling> = {};
 let _runtimeSubscriptionCache: Record<string, RuntimeSubscription> = {};
+let _runtimeUsageLimitsCache: Record<string, RuntimeUsageLimits> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -360,6 +366,7 @@ export class WhiteLabelRuntime {
   private _plansEngine: PlansEngine;
   private _billingResolver: BillingResolver;
   private _subscriptionResolver: SubscriptionResolver;
+  private _usageLimitsEngine: UsageLimitsEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -377,6 +384,7 @@ export class WhiteLabelRuntime {
     this._plansEngine = createPlansEngine(initialTenant);
     this._billingResolver = createBillingResolver(initialTenant);
     this._subscriptionResolver = createSubscriptionResolver(initialTenant);
+    this._usageLimitsEngine = createUsageLimitsEngine(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1241,6 +1249,41 @@ export class WhiteLabelRuntime {
 
   clearRuntimeSubscriptionCache(): void {
     _runtimeSubscriptionCache = {};
+  }
+
+  getRuntimeUsageLimits(): RuntimeUsageLimits {
+    return { usageLimits: this._usageLimitsEngine.currentUsageLimits };
+  }
+
+  // Usage Limits Integration Helpers
+  resolveRuntimeUsageLimits(tenant?: Tenant): RuntimeUsageLimits {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeUsageLimitsCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeUsageLimitsCache[cacheKey]);
+    }
+
+    const usageLimits = this._usageLimitsEngine.resolveUsageLimitsFromTenant(tenant);
+    const runtimeUsageLimits: RuntimeUsageLimits = { usageLimits: this._getDeepCopy(usageLimits) };
+
+    _runtimeUsageLimitsCache[cacheKey] = runtimeUsageLimits;
+    return runtimeUsageLimits;
+  }
+
+  resolveUsageLimitsFromRuntime(runtimeUsageLimits?: RuntimeUsageLimits): UsageLimits | undefined {
+    return runtimeUsageLimits?.usageLimits;
+  }
+
+  hasRuntimeUsageLimits(): boolean {
+    return !!this._usageLimitsEngine.currentUsageLimits;
+  }
+
+  createRuntimeUsageLimitsSnapshot(): RuntimeUsageLimits {
+    return this._getDeepCopy({ usageLimits: this._usageLimitsEngine.currentUsageLimits });
+  }
+
+  clearRuntimeUsageLimitsCache(): void {
+    _runtimeUsageLimitsCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
