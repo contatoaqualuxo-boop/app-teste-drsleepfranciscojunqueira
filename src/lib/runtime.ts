@@ -13,6 +13,7 @@ import { DesignTokens, DesignTokensEngine, createDesignTokensEngine } from './de
 import { Motion, MotionResolver, createMotionResolver } from './motion';
 import { Fonts, FontResolver, createFontResolver } from './fonts';
 import { Spacing, SpacingResolver, createSpacingResolver } from './spacing';
+import { Layout, LayoutResolver, createLayoutResolver } from './layout';
 
 // Runtime Types
 export interface RuntimeIdentity {
@@ -107,6 +108,14 @@ export interface RuntimeSpacing {
   activePreset: 'base' | 'compact' | 'comfortable' | 'premium';
 }
 
+export interface RuntimeLayout {
+  presets: Record<string, any>;
+  activePreset: string;
+  containers: Record<string, any>;
+  grids: Record<string, any>;
+  alignments: Record<string, any>;
+}
+
 export interface RuntimeAccess {
   isAuthenticated: boolean;
   permissions: string[];
@@ -128,6 +137,7 @@ export interface Runtime {
   motion: RuntimeMotion;
   fonts: RuntimeFonts;
   spacing: RuntimeSpacing;
+  layout: RuntimeLayout;
   domain: Record<string, any>;
   plan: RuntimePlan;
   subscription: Subscription | null;
@@ -231,6 +241,13 @@ const DEFAULT_RUNTIME: Runtime = {
     premium: {},
     activePreset: 'base'
   },
+  layout: {
+    presets: {},
+    activePreset: 'default',
+    containers: {},
+    grids: {},
+    alignments: {}
+  },
   domain: {},
   plan: {
     id: 'starter',
@@ -276,6 +293,7 @@ let _runtimeDesignTokensCache: Record<string, RuntimeDesignTokens> = {};
 let _runtimeMotionCache: Record<string, RuntimeMotion> = {};
 let _runtimeFontsCache: Record<string, RuntimeFonts> = {};
 let _runtimeSpacingCache: Record<string, RuntimeSpacing> = {};
+let _runtimeLayoutCache: Record<string, RuntimeLayout> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -286,6 +304,7 @@ export class WhiteLabelRuntime {
   private _motionResolver: MotionResolver;
   private _fontResolver: FontResolver;
   private _spacingResolver: SpacingResolver;
+  private _layoutResolver: LayoutResolver;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -294,6 +313,7 @@ export class WhiteLabelRuntime {
     this._motionResolver = createMotionResolver(initialTenant);
     this._fontResolver = createFontResolver(initialTenant);
     this._spacingResolver = createSpacingResolver(initialTenant);
+    this._layoutResolver = createLayoutResolver(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -831,6 +851,53 @@ export class WhiteLabelRuntime {
 
   clearRuntimeSpacingCache(): void {
     _runtimeSpacingCache = {};
+  }
+
+  getRuntimeLayout(): RuntimeLayout {
+    return this._currentRuntime.layout;
+  }
+
+  // Layout Integration Helpers
+  resolveRuntimeLayout(tenant?: Tenant): RuntimeLayout {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeLayoutCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeLayoutCache[cacheKey]);
+    }
+
+    const layout = this._layoutResolver.resolveLayoutFromTenant(tenant);
+    const runtimeLayout: RuntimeLayout = {
+      presets: { ...layout.presets },
+      activePreset: layout.activePreset,
+      containers: { ...layout.containers },
+      grids: { ...layout.grids },
+      alignments: { ...layout.alignments }
+    };
+
+    _runtimeLayoutCache[cacheKey] = runtimeLayout;
+    return this._getDeepCopy(runtimeLayout);
+  }
+
+  resolveLayoutFromRuntime(runtimeLayout?: RuntimeLayout): Partial<Layout> {
+    return {
+      presets: runtimeLayout?.presets as Layout["presets"] | undefined,
+      activePreset: runtimeLayout?.activePreset as keyof Layout["presets"] | undefined,
+      containers: runtimeLayout?.containers as Layout["containers"] | undefined,
+      grids: runtimeLayout?.grids as Layout["grids"] | undefined,
+      alignments: runtimeLayout?.alignments as Layout["alignments"] | undefined
+    };
+  }
+
+  hasRuntimeLayout(): boolean {
+    return !!this._currentRuntime.layout.containers;
+  }
+
+  createRuntimeLayoutSnapshot(): RuntimeLayout {
+    return this._getDeepCopy(this._currentRuntime.layout);
+  }
+
+  clearRuntimeLayoutCache(): void {
+    _runtimeLayoutCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
