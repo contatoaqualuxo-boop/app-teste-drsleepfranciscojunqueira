@@ -19,18 +19,18 @@ export interface SupabaseSettings {
   provider?: Record<string, any>;
 }
 
-export interface SupabaseSettingsConnector {
+export interface SupabaseSettingsConnectorState {
   settings: SupabaseSettings | null;
   isLoading: boolean;
   error: string | null;
 }
 
 interface SupabaseSettingsConnectorCache {
-  [key: string]: SupabaseSettingsConnector;
+  [key: string]: SupabaseSettingsConnectorState;
 }
 
 // Default Supabase Settings Connector Config
-const DEFAULT_SUPABASE_SETTINGS_CONNECTOR: SupabaseSettingsConnector = {
+const DEFAULT_SUPABASE_SETTINGS_CONNECTOR: SupabaseSettingsConnectorState = {
   settings: null,
   isLoading: false,
   error: null
@@ -40,18 +40,18 @@ let _supabaseSettingsConnectorCache: SupabaseSettingsConnectorCache = {};
 
 // Supabase Settings Connector Class
 export class SupabaseSettingsConnector {
-  private _currentConnector: SupabaseSettingsConnector;
+  private _currentConnector: SupabaseSettingsConnectorState;
 
   constructor(initialTenant?: Tenant) {
     this._currentConnector = this.getDefaultSupabaseSettingsConnector();
   }
 
   // Helpers
-  getDefaultSupabaseSettingsConnector(): SupabaseSettingsConnector {
+  getDefaultSupabaseSettingsConnector(): SupabaseSettingsConnectorState {
     return this._getDeepCopy(DEFAULT_SUPABASE_SETTINGS_CONNECTOR);
   }
 
-  resolveSupabaseSettingsConnector(): SupabaseSettingsConnector {
+  resolveSupabaseSettingsConnector(): SupabaseSettingsConnectorState {
     return this._getDeepCopy(this._currentConnector);
   }
 
@@ -79,7 +79,7 @@ export class SupabaseSettingsConnector {
     return null;
   }
 
-  createSupabaseSettingsSnapshot(): SupabaseSettingsConnector {
+  createSupabaseSettingsSnapshot(): SupabaseSettingsConnectorState {
     return this._getDeepCopy(this._currentConnector);
   }
 
@@ -93,11 +93,11 @@ export class SupabaseSettingsConnector {
   }
 
   // Getters and Setters
-  get currentConnector(): SupabaseSettingsConnector {
+  get currentConnector(): SupabaseSettingsConnectorState {
     return this._getDeepCopy(this._currentConnector);
   }
 
-  set currentConnector(connector: Partial<SupabaseSettingsConnector>) {
+  set currentConnector(connector: Partial<SupabaseSettingsConnectorState>) {
     this._currentConnector = {
       ...DEFAULT_SUPABASE_SETTINGS_CONNECTOR,
       ...connector
