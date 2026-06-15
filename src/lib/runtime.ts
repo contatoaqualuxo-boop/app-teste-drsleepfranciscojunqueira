@@ -358,6 +358,7 @@ let _runtimeUsageLimitsCache: Record<string, RuntimeUsageLimits> = {};
 let _runtimeTenantCache: Record<string, RuntimeTenant> = {};
 let _runtimeProvidersCache: Record<string, Providers> = {};
 let _runtimeConfigurationCache: Record<string, RuntimeConfiguration> = {};
+let _runtimeBootstrapCache: Record<string, Runtime> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -1400,6 +1401,38 @@ export class WhiteLabelRuntime {
 
   clearRuntimeConfigurationCache(): void {
     _runtimeConfigurationCache = {};
+  }
+
+  // Bootstrap Integration Helpers
+  initializeRuntime(tenant?: Tenant): Runtime {
+    const cacheKey = `bootstrap-${tenant?.id || 'default'}`;
+
+    if (_runtimeBootstrapCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeBootstrapCache[cacheKey]);
+    }
+
+    // Initialize all components
+    const runtime: Runtime = this.resolveRuntimeFromTenant(tenant);
+
+    _runtimeBootstrapCache[cacheKey] = runtime;
+    return this._getDeepCopy(runtime);
+  }
+
+  createRuntimeBootstrap(tenant?: Tenant): Runtime {
+    return this.initializeRuntime(tenant);
+  }
+
+  validateRuntimeBootstrap(runtime?: Runtime): boolean {
+    // Validate critical components are present
+    return !!runtime && !!runtime.identity && !!runtime.theme && !!runtime.providers;
+  }
+
+  createRuntimeBootstrapSnapshot(): Runtime {
+    return this.createRuntimeSnapshot();
+  }
+
+  clearRuntimeBootstrapCache(): void {
+    _runtimeBootstrapCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
