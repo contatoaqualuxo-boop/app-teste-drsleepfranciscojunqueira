@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo } from 'react';
-import { createWhiteLabelRuntime, type Providers } from '@/lib/runtime';
+import { createWhiteLabelRuntime } from '@/lib/runtime';
 
-export function useRuntimeProviders(): Providers {
+export function useRuntimeProviders() {
   return useMemo(() => {
     const runtime = createWhiteLabelRuntime();
     return runtime.getRuntimeProviders();
