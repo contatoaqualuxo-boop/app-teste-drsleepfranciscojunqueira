@@ -176,6 +176,14 @@ export interface RuntimePlan {
   features: string[];
 }
 
+export interface RuntimeCurrentUser {
+  id: string | null;
+  name: string | null;
+  email: string | null;
+  avatar: string | null;
+  role: string | null;
+}
+
 export interface Runtime {
   tenant: Tenant | null;
   identity: RuntimeIdentity;
@@ -196,6 +204,7 @@ export interface Runtime {
   features: string[];
   providers: Providers;
   registry: Registry;
+  currentUser: RuntimeCurrentUser;
 }
 
 interface RuntimeCache {
@@ -334,7 +343,14 @@ const DEFAULT_RUNTIME: Runtime = {
   modules: [],
   features: [],
   providers: { ...DEFAULT_PROVIDERS },
-  registry: {}
+  registry: {},
+  currentUser: {
+    id: null,
+    name: null,
+    email: null,
+    avatar: null,
+    role: null
+  }
 };
 
 let _runtimeCache: RuntimeCache = {};
@@ -358,6 +374,7 @@ let _runtimeUsageLimitsCache: Record<string, RuntimeUsageLimits> = {};
 let _runtimeTenantCache: Record<string, RuntimeTenant> = {};
 let _runtimeProvidersCache: Record<string, Providers> = {};
 let _runtimeConfigurationCache: Record<string, RuntimeConfiguration> = {};
+let _runtimeCurrentUserCache: Record<string, RuntimeCurrentUser> = {};
 let _runtimeBootstrapCache: Record<string, Runtime> = {};
 
 // White Label Runtime Class
@@ -469,6 +486,10 @@ export class WhiteLabelRuntime {
 
   getRuntimeIdentity(): RuntimeIdentity {
     return this._currentRuntime.identity;
+  }
+
+  getRuntimeCurrentUser(): RuntimeCurrentUser {
+    return this._currentRuntime.currentUser;
   }
 
   getRuntimeTheme(): RuntimeTheme {
