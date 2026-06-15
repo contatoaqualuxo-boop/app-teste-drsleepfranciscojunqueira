@@ -170,6 +170,10 @@ export interface RuntimeConfiguration {
   config: ConfigEngineState;
 }
 
+export interface RuntimeEnvironment {
+  mode: 'development' | 'preview' | 'production';
+}
+
 export interface RuntimePlan {
   id: string;
   name: string;
@@ -205,6 +209,7 @@ export interface Runtime {
   providers: Providers;
   registry: Registry;
   currentUser: RuntimeCurrentUser;
+  environment: RuntimeEnvironment;
 }
 
 interface RuntimeCache {
@@ -350,6 +355,9 @@ const DEFAULT_RUNTIME: Runtime = {
     email: null,
     avatar: null,
     role: null
+  },
+  environment: {
+    mode: 'development'
   }
 };
 
@@ -374,6 +382,7 @@ let _runtimeUsageLimitsCache: Record<string, RuntimeUsageLimits> = {};
 let _runtimeTenantCache: Record<string, RuntimeTenant> = {};
 let _runtimeProvidersCache: Record<string, Providers> = {};
 let _runtimeConfigurationCache: Record<string, RuntimeConfiguration> = {};
+let _runtimeEnvironmentCache: Record<string, RuntimeEnvironment> = {};
 let _runtimeCurrentUserCache: Record<string, RuntimeCurrentUser> = {};
 let _runtimeBootstrapCache: Record<string, Runtime> = {};
 
@@ -1422,6 +1431,42 @@ export class WhiteLabelRuntime {
 
   clearRuntimeConfigurationCache(): void {
     _runtimeConfigurationCache = {};
+  }
+
+  getRuntimeEnvironment(): RuntimeEnvironment {
+    return this._currentRuntime.environment;
+  }
+
+  // Environment Integration Helpers
+  resolveRuntimeEnvironment(tenant?: Tenant): RuntimeEnvironment {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeEnvironmentCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeEnvironmentCache[cacheKey]);
+    }
+
+    const environment: RuntimeEnvironment = {
+      mode: 'development'
+    };
+
+    _runtimeEnvironmentCache[cacheKey] = environment;
+    return this._getDeepCopy(environment);
+  }
+
+  resolveEnvironmentFromRuntime(runtimeEnvironment?: RuntimeEnvironment): RuntimeEnvironment | undefined {
+    return runtimeEnvironment;
+  }
+
+  hasRuntimeEnvironment(): boolean {
+    return !!this._currentRuntime.environment;
+  }
+
+  createRuntimeEnvironmentSnapshot(): RuntimeEnvironment {
+    return this._getDeepCopy(this._currentRuntime.environment);
+  }
+
+  clearRuntimeEnvironmentCache(): void {
+    _runtimeEnvironmentCache = {};
   }
 
   // Bootstrap Integration Helpers
