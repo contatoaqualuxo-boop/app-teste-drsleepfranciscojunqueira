@@ -1311,7 +1311,7 @@ export class WhiteLabelRuntime {
   }
 
   resolveTenantFromRuntime(runtimeTenant?: RuntimeTenant): Tenant | undefined {
-    return runtimeTenant?.tenant;
+    return runtimeTenant?.tenant ?? undefined;
   }
 
   hasRuntimeTenant(): boolean {
