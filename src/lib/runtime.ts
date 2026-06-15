@@ -2,7 +2,7 @@
 
 import { Tenant, TenantEngine, createTenantEngine } from './tenant';
 import { Registry } from './registry';
-import { Providers, DEFAULT_PROVIDERS } from './providers';
+import { Providers, DEFAULT_PROVIDERS, ProviderIntegrationEngine, createProviderIntegrationEngine } from './providers';
 import { SupabaseSettings } from './supabaseSettingsConnector';
 import { Identity, IdentityResolver, createIdentityResolver } from './identity';
 import { Theme, createTheme } from './theme';
@@ -351,6 +351,7 @@ let _runtimeBillingCache: Record<string, RuntimeBilling> = {};
 let _runtimeSubscriptionCache: Record<string, RuntimeSubscription> = {};
 let _runtimeUsageLimitsCache: Record<string, RuntimeUsageLimits> = {};
 let _runtimeTenantCache: Record<string, RuntimeTenant> = {};
+let _runtimeProvidersCache: Record<string, Providers> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -372,6 +373,7 @@ export class WhiteLabelRuntime {
   private _subscriptionResolver: SubscriptionResolver;
   private _usageLimitsEngine: UsageLimitsEngine;
   private _tenantEngine: TenantEngine;
+  private _providersEngine: ProviderIntegrationEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -391,6 +393,7 @@ export class WhiteLabelRuntime {
     this._subscriptionResolver = createSubscriptionResolver(initialTenant);
     this._usageLimitsEngine = createUsageLimitsEngine(initialTenant);
     this._tenantEngine = createTenantEngine(initialTenant);
+    this._providersEngine = createProviderIntegrationEngine(initialTenant);
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1324,6 +1327,37 @@ export class WhiteLabelRuntime {
 
   clearRuntimeTenantCache(): void {
     _runtimeTenantCache = {};
+  }
+
+  // Providers Integration Helpers
+  resolveRuntimeProviders(tenant?: Tenant): Providers {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeProvidersCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeProvidersCache[cacheKey]);
+    }
+
+    const providers = this._providersEngine.resolveProviders(tenant);
+    const runtimeProviders: Providers = this._getDeepCopy(providers);
+
+    _runtimeProvidersCache[cacheKey] = runtimeProviders;
+    return runtimeProviders;
+  }
+
+  resolveProvidersFromRuntime(runtimeProviders?: Providers): Providers | undefined {
+    return runtimeProviders;
+  }
+
+  hasRuntimeProviders(): boolean {
+    return Object.keys(this._providersEngine.currentProviders).length > 0;
+  }
+
+  createRuntimeProvidersSnapshot(): Providers {
+    return this._getDeepCopy(this._providersEngine.currentProviders);
+  }
+
+  clearRuntimeProvidersCache(): void {
+    _runtimeProvidersCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
