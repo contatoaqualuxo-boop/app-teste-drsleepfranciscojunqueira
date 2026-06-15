@@ -3,6 +3,7 @@
 import { Tenant, TenantEngine, createTenantEngine } from './tenant';
 import { Registry } from './registry';
 import { Providers, DEFAULT_PROVIDERS, ProviderIntegrationEngine, createProviderIntegrationEngine } from './providers';
+import { ConfigurationEngine, createConfigEngine, ConfigEngineState } from './configuration';
 import { SupabaseSettings } from './supabaseSettingsConnector';
 import { Identity, IdentityResolver, createIdentityResolver } from './identity';
 import { Theme, createTheme } from './theme';
@@ -163,6 +164,10 @@ export interface RuntimeUsageLimits {
 
 export interface RuntimeTenant {
   tenant: Tenant | null;
+}
+
+export interface RuntimeConfiguration {
+  config: ConfigEngineState;
 }
 
 export interface RuntimePlan {
@@ -352,6 +357,7 @@ let _runtimeSubscriptionCache: Record<string, RuntimeSubscription> = {};
 let _runtimeUsageLimitsCache: Record<string, RuntimeUsageLimits> = {};
 let _runtimeTenantCache: Record<string, RuntimeTenant> = {};
 let _runtimeProvidersCache: Record<string, Providers> = {};
+let _runtimeConfigurationCache: Record<string, RuntimeConfiguration> = {};
 
 // White Label Runtime Class
 export class WhiteLabelRuntime {
@@ -374,6 +380,7 @@ export class WhiteLabelRuntime {
   private _usageLimitsEngine: UsageLimitsEngine;
   private _tenantEngine: TenantEngine;
   private _providersEngine: ProviderIntegrationEngine;
+  private _configEngine: ConfigurationEngine;
 
   constructor(initialTenant?: Tenant) {
     this._identityResolver = createIdentityResolver(initialTenant);
@@ -394,6 +401,7 @@ export class WhiteLabelRuntime {
     this._usageLimitsEngine = createUsageLimitsEngine(initialTenant);
     this._tenantEngine = createTenantEngine(initialTenant);
     this._providersEngine = createProviderIntegrationEngine(initialTenant);
+    this._configEngine = createConfigEngine();
     this._currentRuntime = this.resolveRuntimeFromTenant(initialTenant);
   }
 
@@ -1358,6 +1366,40 @@ export class WhiteLabelRuntime {
 
   clearRuntimeProvidersCache(): void {
     _runtimeProvidersCache = {};
+  }
+
+  // Configuration Integration Helpers
+  resolveRuntimeConfiguration(tenant?: Tenant): RuntimeConfiguration {
+    const cacheKey = `tenant:${tenant?.id || 'default'}`;
+
+    if (_runtimeConfigurationCache[cacheKey]) {
+      return this._getDeepCopy(_runtimeConfigurationCache[cacheKey]);
+    }
+
+    const runtimeConfiguration: RuntimeConfiguration = { config: this._configEngine.state };
+
+    _runtimeConfigurationCache[cacheKey] = runtimeConfiguration;
+    return this._getDeepCopy(runtimeConfiguration);
+  }
+
+  resolveConfigurationFromRuntime(runtimeConfig?: RuntimeConfiguration): ConfigEngineState | undefined {
+    return runtimeConfig?.config;
+  }
+
+  getRuntimeConfiguration(): RuntimeConfiguration {
+    return { config: this._configEngine.state };
+  }
+
+  hasRuntimeConfiguration(): boolean {
+    return !!this._configEngine.state.companyConfig !== null;
+  }
+
+  createRuntimeConfigurationSnapshot(): RuntimeConfiguration {
+    return this._getDeepCopy({ config: this._configEngine.state });
+  }
+
+  clearRuntimeConfigurationCache(): void {
+    _runtimeConfigurationCache = {};
   }
 
   createRuntimeSnapshot(): Runtime {
