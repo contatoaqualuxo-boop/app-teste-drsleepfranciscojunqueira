@@ -1,5 +1,5 @@
 
-# Plataforma Prévisita - Estado do Projeto (v1.0-phase6-complete)
+# Plataforma Prévisita - Estado do Projeto (v1.0-phase7-complete)
 
 ## Tudo que já foi implementado
 
@@ -97,30 +97,47 @@
 - Auditoria final com todas as validações: lint, build, tsc.
 - App local rodando em http://localhost:3000.
 
+### 10. Runtime Hooks (FASE 7)
+- ThemeProvider usando Runtime.
+- useRuntimeIdentity hook.
+- useRuntimeBrandAssets hook.
+- useRuntimeDesignTokens hook.
+- useRuntimeFonts hook.
+- useRuntimeSpacing hook.
+- useRuntimeMotion hook.
+- useRuntimeLayout hook.
+- useRuntimeNavigation hook.
+- useRuntimeModules hook.
+- useRuntimeFeatureFlags hook.
+- useRuntimePermissions hook.
+- useRuntimeCurrentUser hook.
+- useRuntimeAccess hook.
+- useRuntimePlans hook.
+- useRuntimeBilling hook.
+- useRuntimeSubscription hook.
+- useRuntimeUsageLimits hook.
+- useRuntimeProviders hook.
+- useRuntimeConfiguration hook.
+- useRuntimeEnvironment hook.
+- Auditoria final com todas as validações: lint, build, tsc.
+- Git limpo, sincronizado com GitHub e Vercel READY.
+
 ## Tudo que falta implementar
 
-### 1. Aplicativo do Cliente (FASE 7)
-- Home do cliente.
-- Meu produto (colchão).
-- Garantia.
-- Documentos.
-- Cuidados com o produto.
-- Programa de fidelidade.
-- Carteira de pontos.
-- Timeline do cliente.
-- Indicações.
-- Perfil do cliente.
+### 1. Dashboard Foundation / CRM Base (FASE 8)
+- Dashboard base.
+- CRM base.
 
 ### 2. Outras Fases
-- FASE 8: Notificações.
-- FASE 9: Analytics.
-- FASE 10: Marketplace de Módulos.
+- FASE 9: Notificações.
+- FASE 10: Analytics.
+- FASE 11: Marketplace de Módulos.
 
 ## Ordem Correta das Próximas Etapas
-1. **Aplicativo do Cliente**: Conectar todas as páginas do cliente com dados reais (FASE 7).
-2. **Notificações**: Implementar envio de e-mails, WhatsApp e push (FASE 8).
-3. **Analytics**: Implementar dashboards de métricas (FASE 9).
-4. **Marketplace**: Preparar arquitetura para módulos adicionais (FASE 10).
+1. **Dashboard Foundation / CRM Base**: Implementar dashboard e CRM base (FASE 8).
+2. **Notificações**: Implementar envio de e-mails, WhatsApp e push (FASE 9).
+3. **Analytics**: Implementar dashboards de métricas (FASE 10).
+4. **Marketplace**: Preparar arquitetura para módulos adicionais (FASE 11).
 
 ## Dependências
 - Node.js
@@ -145,7 +162,7 @@
 
 ## CHECKPOINT OFICIAL
 Data: 2026-06-15
-Versão: v1.0-phase6-complete
-Último commit: 4973875
+Versão: v1.0-phase7-complete
+Último commit: f5ac2d5
 Deploy Vercel: Commit mais recente (deploy automático acionado)
-Status Geral: FASE 6 Runtime Bootstrap concluída, pronto para FASE 7 (Aplicativo do Cliente).
+Status Geral: FASE 7 Runtime Hooks concluída, pronto para FASE 8 (Dashboard Foundation / CRM Base).
