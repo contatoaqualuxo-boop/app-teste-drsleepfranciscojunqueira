@@ -1,5 +1,5 @@
 
-# Plataforma Prévisita - Estado do Projeto (v1.0-phase5-complete)
+# Plataforma Prévisita - Estado do Projeto (v1.0-phase6-complete)
 
 ## Tudo que já foi implementado
 
@@ -89,13 +89,17 @@
 - Melhorada a consistência dos padrões de fallback.
 - Todos os arquivos passam por lint, build e tsc sem erros.
 
+### 9. Runtime Bootstrap (FASE 6)
+- Runtime integrado com Settings, Identity, Theme, Brand Assets, Design Tokens, Fonts, Motion, Spacing, Layout, Navigation, Modules, Feature Flags, Permissions, Access, Plans, Billing, Subscription, Usage Limits, Tenant, Providers e Configuration.
+- Criação de `resolveRuntime*` e `resolve*FromRuntime` para todos os módulos.
+- Criação de `hasRuntime*`, `createRuntime*Snapshot`, `clearRuntime*Cache` para todos os módulos.
+- Criação de `initializeRuntime`, `createRuntimeBootstrap`, `validateRuntimeBootstrap`, `createRuntimeBootstrapSnapshot`, `clearRuntimeBootstrapCache`.
+- Auditoria final com todas as validações: lint, build, tsc.
+- App local rodando em http://localhost:3000.
+
 ## Tudo que falta implementar
 
-### 1. White Label (FASE 5)
-- Integração real com banco de dados para personalizações.
-- Aplicação automática dos tokens/resolvers nas telas.
-
-### 2. Aplicativo do Cliente (FASE 6)
+### 1. Aplicativo do Cliente (FASE 7)
 - Home do cliente.
 - Meu produto (colchão).
 - Garantia.
@@ -107,17 +111,16 @@
 - Indicações.
 - Perfil do cliente.
 
-### 3. Outras Fases
-- FASE 7: Notificações.
-- FASE 8: Analytics.
-- FASE 9: Marketplace de Módulos.
+### 2. Outras Fases
+- FASE 8: Notificações.
+- FASE 9: Analytics.
+- FASE 10: Marketplace de Módulos.
 
 ## Ordem Correta das Próximas Etapas
-1. **Integração real com Supabase/settings**: Conectar engines/resolvers com dados reais do banco (próximo passo).
-2. **Aplicativo do Cliente**: Conectar todas as páginas do cliente com dados reais (FASE 6).
-3. **Notificações**: Implementar envio de e-mails, WhatsApp e push (FASE 7).
-4. **Analytics**: Implementar dashboards de métricas (FASE 8).
-5. **Marketplace**: Preparar arquitetura para módulos adicionais (FASE 9).
+1. **Aplicativo do Cliente**: Conectar todas as páginas do cliente com dados reais (FASE 7).
+2. **Notificações**: Implementar envio de e-mails, WhatsApp e push (FASE 8).
+3. **Analytics**: Implementar dashboards de métricas (FASE 9).
+4. **Marketplace**: Preparar arquitetura para módulos adicionais (FASE 10).
 
 ## Dependências
 - Node.js
@@ -141,8 +144,8 @@
 9. **Triggers**: Manter triggers `handle_updated_at` e `on_auth_user_created` (não remover).
 
 ## CHECKPOINT OFICIAL
-Data: 2026-06-14
-Versão: v1.0-phase5-complete
-Último commit: 0a8496e
+Data: 2026-06-15
+Versão: v1.0-phase6-complete
+Último commit: b88e336
 Deploy Vercel: Commit mais recente (deploy automático acionado)
-Status Geral: FASE 5 White Label Foundation concluída, pronto para integração real com Supabase/settings.
+Status Geral: FASE 6 Runtime Bootstrap concluída, pronto para FASE 7 (Aplicativo do Cliente).
