@@ -55,6 +55,13 @@ function LoginForm() {
       return;
     }
 
+    // Temporary developer login
+    if (formData.email.trim() === "admin@localhost" && formData.password === "123456") {
+      router.replace("/empresa/dashboard");
+      router.refresh();
+      return;
+    }
+
     setIsSubmitting(true);
 
     const { error } = await supabase.auth.signInWithPassword({
