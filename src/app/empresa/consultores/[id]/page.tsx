@@ -201,8 +201,13 @@ export default function ConsultantProfilePage() {
             <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-sm">
               <h3 className="text-white font-bold text-lg mb-4">Ações rápidas</h3>
               <div className="space-y-3">
+                <Link
+                  href="/empresa/consultores/1/editar"
+                  className="w-full flex items-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white/80 px-4 py-3.5 rounded-xl transition-all text-left shadow-sm"
+                >
+                  Editar consultor
+                </Link>
                 {[
-                  { label: "Editar consultor" },
                   { label: "Ver agenda" },
                   { label: "Ver clientes" },
                   { label: "Relatório" }
