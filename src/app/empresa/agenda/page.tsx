@@ -3,7 +3,7 @@
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
-  Store, FileText, CalendarHeart, Search, Plus, UserCheck,
+  CalendarHeart, Search, Plus, UserCheck,
   Calendar as CalendarIcon, Zap, Clock, AlertTriangle
 } from "lucide-react";
 
@@ -24,13 +24,13 @@ export default function AgendaPage() {
   ];
 
   const getStatusClassName = (status: string) => {
-    const base = "px-4 py-2 rounded-full text-xs font-semibold border";
-    if (status === "Confirmado") return base + " bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
-    if (status === "Pendente") return base + " bg-yellow-500/15 text-yellow-300 border-yellow-500/30";
-    if (status === "Em andamento") return base + " bg-blue-500/15 text-blue-300 border-blue-500/30";
-    if (status === "Finalizado") return base + " bg-purple-500/15 text-purple-300 border-purple-500/30";
-    if (status === "Reagendar") return base + " bg-red-500/15 text-red-300 border-red-500/30";
-    return base + " bg-white/10 text-white/70 border-white/10";
+    const base = "inline-flex rounded-full px-3 py-1 text-xs font-semibold";
+    if (status === "Confirmado") return base + " bg-emerald-500/15 text-emerald-300";
+    if (status === "Pendente") return base + " bg-yellow-500/15 text-yellow-300";
+    if (status === "Em andamento") return base + " bg-blue-500/15 text-blue-300";
+    if (status === "Finalizado") return base + " bg-purple-500/15 text-purple-300";
+    if (status === "Reagendar") return base + " bg-red-500/15 text-red-300";
+    return base + " bg-white/10 text-white/70";
   };
 
   return (
@@ -59,7 +59,7 @@ export default function AgendaPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: "Atendimentos hoje", value: "5", icon: CalendarHeart },
-            { label: "Pré-visitas", value: "3", icon: CalendarIcon },
+            { label: "Pré-visitas agendadas", value: "3", icon: CalendarIcon },
             { label: "Retornos pendentes", value: "12", icon: Clock },
             { label: "Horários livres", value: "4", icon: Zap }
           ].map((stat, i) => (
@@ -90,56 +90,32 @@ export default function AgendaPage() {
                 Novo Agendamento
               </button>
             </div>
-            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-white/10 bg-white/2.5">
-                    {["Horário", "Cliente", "Tipo", "Consultor", "Status", "Próxima ação"].map((col, i) => (
-                      <th key={i} className="text-left px-6 py-5">
-                        <span className="text-xs font-bold text-white/50 uppercase tracking-wider">{col}</span>
-                      </th>
-                    ))}
-                  </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {scheduleItems.map((item) => (
-                      <tr key={item.id} className="group hover:bg-white/5 transition-all duration-300 cursor-pointer">
-                        <td className="px-6 py-6">
-                          <span className="text-white/80 text-sm font-semibold flex items-center gap-2">
-                            <Clock className="w-3.5 h-3.5 text-white/40" />
-                            {item.time}
-                          </span>
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-600/30 flex items-center justify-center text-white font-semibold shadow-sm">
-                              {item.client.charAt(0)}
-                            </div>
-                            <span className="text-white font-semibold">{item.client}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
-                          <span className="text-white/80 text-sm font-medium">{item.type}</span>
-                        </td>
-                        <td className="px-6 py-6">
-                          <span className="text-white/70 text-sm">{item.consultant}</span>
-                        </td>
-                        <td className="px-6 py-6">
-                          <span className={getStatusClassName(item.status)}>
-                            {item.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-6">
-                          <button className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold group-hover:gap-3 transition-all">
-                            {item.nextAction}
-                            <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+            <div className="space-y-4">
+              {scheduleItems.map((item) => (
+                <div key={item.id} className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-white/40" />
+                      <span className="text-white/80 text-sm font-semibold">{item.time}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-600/30 flex items-center justify-center text-white font-semibold shadow-sm">
+                        {item.client.charAt(0)}
+                      </div>
+                      <span className="text-white font-semibold">{item.client}</span>
+                    </div>
+                    <span className="text-white/80 text-sm font-medium">{item.type}</span>
+                    <span className="text-white/70 text-sm">{item.consultant}</span>
+                    <span className={getStatusClassName(item.status)}>
+                      {item.status}
+                    </span>
+                    <button className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold justify-end transition-all">
+                      {item.nextAction}
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
           <div className="space-y-6">
