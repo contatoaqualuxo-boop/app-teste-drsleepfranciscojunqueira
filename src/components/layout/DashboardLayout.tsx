@@ -37,6 +37,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  const safeSidebarNavItems = sidebarNavItems ?? [];
+
   return (
     <div className="min-h-screen bg-[#020617] relative flex overflow-hidden">
       {/* Mobile Sidebar Overlay */}
@@ -70,7 +72,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
           {/* Principal Group */}
-          {sidebarNavItems?.filter(i => i.group === 'principal').map((item) => (
+          {safeSidebarNavItems.filter(i => i.group === 'principal').map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -86,12 +88,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </Link>
           ))}
 
-          {isSidebarOpen && sidebarNavItems?.filter(i => i.group === 'principal').length > 0 && sidebarNavItems?.filter(i => i.group === 'outros').length > 0 && (
+          {isSidebarOpen && safeSidebarNavItems.filter(i => i.group === 'principal').length > 0 && safeSidebarNavItems.filter(i => i.group === 'outros').length > 0 && (
             <div className="h-px bg-white/10 my-4" />
           )}
 
           {/* Outros Group */}
-          {sidebarNavItems?.filter(i => i.group === 'outros').map((item) => (
+          {safeSidebarNavItems.filter(i => i.group === 'outros').map((item) => (
             <Link
               key={item.href}
               href={item.href}
