@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
@@ -111,7 +112,8 @@ export default function StoresPage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {stores.map((store) => (
-                <div key={store.id} className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm">
+                <Link key={store.id} href={`/empresa/lojas/${store.id}`} className="block">
+                  <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm cursor-pointer">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-white font-semibold">{store.name}</h3>
@@ -147,7 +149,8 @@ export default function StoresPage() {
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
-                </div>
+                  </div>
+                </Link>
               ))}
             </div>
           </div>

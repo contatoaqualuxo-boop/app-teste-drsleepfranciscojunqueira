@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
@@ -121,7 +122,8 @@ export default function ProdutosPage() {
               {products.map((product) => {
                 const statusConfig = getStatusConfig(product.status);
                 return (
-                  <div key={product.id} className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm relative">
+                  <Link key={product.id} href={`/empresa/produtos/${product.id}`} className="block">
+                    <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm relative cursor-pointer">
                     {product.featured && (
                       <div className="absolute top-4 right-4">
                         <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 border border-amber-500/25 text-amber-400 flex items-center gap-1.5">
@@ -143,7 +145,8 @@ export default function ProdutosPage() {
                       </span>
                     </div>
                     <p className="text-white/60 text-xs">Estoque: {product.stock} unidades</p>
-                  </div>
+                    </div>
+                  </Link>
                 );
               })}
             </div>

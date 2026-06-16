@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
@@ -137,7 +138,8 @@ export default function ClientesPage() {
                     {clients.map((client) => {
                       const statusConfig = getStatusConfig(client.status);
                       return (
-                        <tr key={client.id} className="group hover:bg-white/5 transition-all duration-300 cursor-pointer">
+                        <Link key={client.id} href={`/empresa/clientes/${client.id}`} className="block">
+                          <tr className="group hover:bg-white/5 transition-all duration-300 cursor-pointer">
                           <td className="px-8 py-6">
                             <div className="flex items-center gap-4">
                               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 via-purple-600/30 to-cyan-500/30 flex items-center justify-center text-white font-semibold shadow-sm">
@@ -170,7 +172,8 @@ export default function ClientesPage() {
                           <td className="px-8 py-6">
                             <span className="text-white/90 text-sm font-bold">{client.potential}</span>
                           </td>
-                        </tr>
+                          </tr>
+                        </Link>
                       );
                     })}
                   </tbody>
