@@ -1,309 +1,252 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
-  Home,
-  Users,
-  ShoppingCart,
-  ShieldCheck,
-  CalendarHeart,
-  Bell,
-  Settings,
-  ChevronLeft,
-  LayoutDashboard,
-  Store,
-  FileText,
-  CheckCircle2,
-  XCircle,
-  Phone,
-  Mail,
-  User
+  Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
+  Store, FileText, CalendarHeart, Search, Plus, UserCheck,
+  UserX, TrendingUp, Star, Phone, Calendar as CalendarIcon,
+  Briefcase, Target, UserPlus, Sparkles, CreditCard
 } from "lucide-react";
-import { createClient } from "@/lib/supabase";
 
-interface Company {
-  id: string;
-  name: string;
-  slug: string;
-  logo_url: string | null;
-}
+export default function ClientesPage() {
+  const navItems = [
+    { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
+    { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const, isActive: true },
+    { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
+    { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
+    { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
+    { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "outros" as const },
+    { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
+    { label: "Prévisitas", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
+    { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
+  ];
 
-interface Store {
-  id: string;
-  name: string;
-}
+  const clients = [
+    { id: 1, name: "Ana Carolina Silva", phone: "(11) 98765-4321", product: "Colchão Premium", lastPurchase: "12/06/2026", status: "Ativo", potential: "R$ 8.500" },
+    { id: 2, name: "Bruno Mendes", phone: "(11) 91234-5678", product: "Travesseiro Ergonômico", lastPurchase: "05/06/2026", status: "Ativo", potential: "R$ 2.200" },
+    { id: 3, name: "Carla Costa", phone: "(11) 99876-5432", product: "Kit Cama + Travesseiro", lastPurchase: "20/05/2026", status: "Fidelidade", potential: "R$ 12.000" },
+    { id: 4, name: "Daniel Almeida", phone: "(11) 92345-6789", product: "Colchão Ortopédico", lastPurchase: "10/04/2026", status: "Inativo", potential: "R$ 6.000" },
+    { id: 5, name: "Eliane Ribeiro", phone: "(11) 93456-7890", product: "Cama Box", lastPurchase: "02/06/2026", status: "Fidelidade", potential: "R$ 15.000" },
+    { id: 6, name: "Fernando Gomes", phone: "(11) 94567-8901", product: "Colchão Hybrid", lastPurchase: "18/06/2026", status: "Ativo", potential: "R$ 10.000" },
+  ];
 
-interface CustomerType {
-  id: string;
-  company_id: string | null;
-  store_id: string | null;
-  name: string;
-  email: string;
-  phone: string | null;
-  avatar_url: string | null;
-  last_login: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  stores?: Store;
-}
-
-export default function CustomersPage() {
-  const supabase = useMemo(() => createClient(), []);
-  const [toast, setToast] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [customers, setCustomers] = useState<CustomerType[]>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          return;
-        }
-
-        const { data: userData } = await supabase
-          .from("users")
-          .select("company_id")
-          .eq("id", user.id)
-          .single();
-        
-        if (!userData?.company_id) {
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from("users")
-          .select("*, stores!left(*)")
-          .eq("company_id", userData.company_id)
-          .eq("is_active", true)
-          .order("created_at", { ascending: false });
-        
-        if (error) {
-          console.error("Error fetching customers:", error);
-        } else {
-          setCustomers(data || []);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
+  const getStatusConfig = (status: string) => {
+    switch (status) {
+      case "Ativo":
+        return { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/25", dot: "bg-emerald-500" };
+      case "Inativo":
+        return { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/25", dot: "bg-red-500" };
+      case "Fidelidade":
+        return { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/25", dot: "bg-amber-500" };
+      default:
+        return { bg: "bg-white/10", text: "text-white/60", border: "border-white/20", dot: "bg-white/40" };
     }
-
-    fetchData();
-  }, [supabase]);
-
-  const showToast = (message: string) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 4000);
   };
 
   return (
-    <main className="min-h-screen bg-[#020617] relative flex overflow-hidden">
-      {/* Toast */}
-      {toast && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-3 rounded-2xl text-white font-medium">
-          {toast}
-        </div>
-      )}
-
-      {/* Sidebar */}
-      <div className="w-72 bg-[#03091c] border-r border-white/10 flex-shrink-0 flex flex-col">
-        {/* Logo */}
-        <div className="p-6 border-b border-white/10 flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-            <LayoutDashboard className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <p className="text-white font-black text-lg">Empresa</p>
-            <p className="text-blue-400 text-xs font-medium">Painel</p>
+    <DashboardLayout
+      title="Clientes"
+      sidebarNavItems={navItems}
+      sidebarTitle="Dr. Sleep"
+      sidebarSubtitle="Sono™"
+      actions={
+        <div className="flex items-center gap-3">
+          <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:border-white/20 transition-all relative shadow-sm">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+          </button>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-600/30">
+            FJ
           </div>
         </div>
-
-        {/* Nav */}
-        <div className="flex-1 p-4 space-y-1">
-          {/* Principal */}
-          <div className="mb-6">
-            <p className="text-white/40 text-xs uppercase tracking-wider px-3 mb-2">Principal</p>
-            <Link href="/empresa/dashboard" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Home className="w-5 h-5" />
-              <span>Dashboard</span>
-            </Link>
-            <Link href="/empresa/clientes" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 font-medium">
-              <Users className="w-5 h-5" />
-              <span>Clientes</span>
-            </Link>
-            <Link href="/empresa/produtos" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <ShoppingCart className="w-5 h-5" />
-              <span>Produtos</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/garantias" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <ShieldCheck className="w-5 h-5" />
-              <span>Garantias</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-          </div>
-
-          {/* Outros */}
-          <div className="mb-6">
-            <p className="text-white/40 text-xs uppercase tracking-wider px-3 mb-2">Outros</p>
-            <Link href="/empresa/lojas" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Store className="w-5 h-5" />
-              <span>Lojas</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/documentos" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <FileText className="w-5 h-5" />
-              <span>Documentos</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/previsitas" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <CalendarHeart className="w-5 h-5" />
-              <span>Prévisitas</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/configuracoes" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Settings className="w-5 h-5" />
-              <span>Configurações</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-          </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tight">Clientes</h1>
+          <p className="text-blue-300/90 text-sm mt-1">Base de clientes da Dr. Sleep + Sono™</p>
         </div>
 
-        {/* Help */}
-        <div className="p-4 border-t border-white/10">
-          <div className="bg-blue-600/10 border border-blue-500/30 rounded-xl p-4">
-            <p className="text-white font-medium text-sm mb-1">Suporte Prévisita</p>
-            <p className="text-blue-200/70 text-xs">Entre em contato com nossa equipe</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        {/* Topbar */}
-        <div className="sticky top-0 z-40 bg-[#020617]/95 backdrop-blur-xl border-b border-white/10 px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-3">
-                <Link href="/empresa/dashboard" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all">
-                  <ChevronLeft className="w-5 h-5" />
-                </Link>
-                <h1 className="text-white font-medium text-lg">Clientes</h1>
+        {/* Top Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "Total de clientes", value: "1,248", icon: Users, color: "from-blue-500/30 to-cyan-500/30", trend: "+12%" },
+            { label: "Clientes ativos", value: "986", icon: UserCheck, color: "from-emerald-500/30 to-green-500/30", trend: "+8%" },
+            { label: "Clientes com pré-visita", value: "152", icon: CalendarHeart, color: "from-purple-500/30 to-pink-500/30", trend: "+15%" },
+            { label: "Clientes fidelidade", value: "312", icon: Star, color: "from-amber-500/30 to-orange-500/30", trend: "+5%" },
+          ].map((stat, i) => (
+            <div key={i} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                  <stat.icon className="w-5 h-5 text-white/90" />
+                </div>
+                <span className="text-xs font-semibold text-emerald-400">{stat.trend}</span>
               </div>
+              <h3 className="text-white font-bold text-2xl tracking-tight">{stat.value}</h3>
+              <p className="text-white/60 text-sm mt-1">{stat.label}</p>
             </div>
-            <div className="flex items-center gap-4">
-              <button onClick={() => showToast("Notificações em desenvolvimento")} className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white relative">
-                <Bell className="w-5 h-5" />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Main Content */}
+          <div className="xl:col-span-3 space-y-6">
+            {/* Top Bar */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm">
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <div className="relative flex-1 sm:flex-initial">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input
+                    type="text"
+                    placeholder="Buscar cliente por nome, telefone ou produto..."
+                    className="pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 w-full sm:w-80 transition-all"
+                  />
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {["Todos", "Ativos", "Inativos", "Fidelidade"].map((filter, i) => (
+                    <button
+                      key={i}
+                      className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${i === 0 ? "bg-blue-600/20 border border-blue-500/30 text-blue-400 shadow-sm" : "bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20 hover:text-white/80"}`}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-600/30 active:scale-[0.98] transition-all">
+                <Plus className="w-4.5 h-4.5" />
+                Novo Cliente
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* Content */}
-        <div className="p-8 space-y-6 flex-1">
-          {/* Page Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-black text-white">Todos os Clientes</h2>
-              <p className="text-blue-100/70 text-sm mt-1">Gerencie os clientes da sua empresa</p>
+            {/* Clients List */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-white/2.5">
+                      {["Cliente", "Telefone", "Produto", "Última Compra", "Status", "Potencial"].map((col, i) => (
+                        <th key={i} className="text-left px-8 py-5">
+                          <span className="text-xs font-bold text-white/50 uppercase tracking-wider">{col}</span>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {clients.map((client) => {
+                      const statusConfig = getStatusConfig(client.status);
+                      return (
+                        <tr key={client.id} className="group hover:bg-white/5 transition-all duration-300 cursor-pointer">
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 via-purple-600/30 to-cyan-500/30 flex items-center justify-center text-white font-semibold shadow-sm">
+                                {client.name.charAt(0)}
+                              </div>
+                              <span className="text-white font-semibold">{client.name}</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="text-white/70 text-sm flex items-center gap-2">
+                              <Phone className="w-3.5 h-3.5 text-white/40" />
+                              {client.phone}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="text-white/80 text-sm font-medium">{client.product}</span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="text-white/70 text-sm flex items-center gap-2">
+                              <CalendarIcon className="w-3.5 h-3.5 text-white/40" />
+                              {client.lastPurchase}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className={`px-4 py-2 rounded-full text-xs font-semibold border flex items-center gap-2 ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
+                              <span className={`w-2 h-2 rounded-full ${statusConfig.dot}`} />
+                              {client.status}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="text-white/90 text-sm font-bold">{client.potential}</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 
-          {/* Customers Grid/Cards */}
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-white/10 animate-pulse"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="w-32 h-4 bg-white/10 rounded animate-pulse"></div>
-                      <div className="w-20 h-3 bg-white/10 rounded animate-pulse"></div>
+          {/* Right Panel */}
+          <div className="space-y-6">
+            {/* Client Profile */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
+                <UserCheck className="w-5 h-5 text-blue-400" />
+                Perfil do Cliente
+              </h3>
+
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500/30 via-purple-600/30 to-cyan-500/30 flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                  A
+                </div>
+                <div>
+                  <p className="text-white font-semibold">Ana Carolina Silva</p>
+                  <p className="text-white/60 text-sm">Cliente desde 2024</p>
+                </div>
+              </div>
+
+              <div className="space-y-5">
+                <div>
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Preferência de Produto</p>
+                  <p className="text-white/90 text-sm font-semibold">Colchão Premium</p>
+                </div>
+
+                <div>
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Última Interação</p>
+                  <p className="text-white/90 text-sm font-semibold">Pré-visita em 12/06/2026</p>
+                </div>
+
+                <div>
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Próxima Ação</p>
+                  <p className="text-blue-400 text-sm font-semibold">Ligar para confirmar pedido</p>
+                </div>
+
+                <div>
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-3">Score de Relacionamento</p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-white/10 rounded-full h-3">
+                      <div className="bg-gradient-to-r from-emerald-500 to-green-500 h-3 rounded-full" style={{ width: "85%" }} />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="w-full h-3 bg-white/10 rounded animate-pulse"></div>
-                    <div className="w-2/3 h-3 bg-white/10 rounded animate-pulse"></div>
+                    <span className="text-emerald-400 font-bold text-lg">85</span>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          ) : customers.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {customers.map((customer) => (
-                <div key={customer.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500/30 to-green-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {customer.avatar_url ? (
-                        <Image
-                          src={customer.avatar_url}
-                          alt={customer.name}
-                          fill
-                          className="object-cover"
-                          priority
-                        />
-                      ) : (
-                        <User className="w-7 h-7 text-white/60" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-white font-bold text-lg truncate">{customer.name}</h3>
-                      {customer.stores && (
-                        <p className="text-blue-200/70 text-xs truncate">{customer.stores.name}</p>
-                      )}
-                    </div>
-                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      customer.is_active ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
-                    }`}>
-                      {customer.is_active ? (
-                        <CheckCircle2 className="w-3 h-3 inline mr-1" />
-                      ) : (
-                        <XCircle className="w-3 h-3 inline mr-1" />
-                      )}
-                      {customer.is_active ? "Ativo" : "Inativo"}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-white/50 text-xs">
-                      <Mail className="w-3 h-3 flex-shrink-0" />
-                      <span className="truncate">{customer.email}</span>
-                    </div>
-                    {customer.phone && (
-                      <div className="flex items-center gap-2 text-white/50 text-xs">
-                        <Phone className="w-3 h-3 flex-shrink-0" />
-                        <span className="truncate">{customer.phone}</span>
-                      </div>
-                    )}
-                    <p className="text-white/40 text-xs mt-2">
-                      Criado em: {new Date(customer.created_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' })}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            // Empty State
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <Users className="w-20 h-20 text-white/10 mb-4" />
-              <h3 className="text-white font-bold text-xl mb-2">Nenhum cliente cadastrado</h3>
-              <p className="text-blue-100/60 text-sm max-w-md">
-                Ainda não há clientes na sua empresa. As funcionalidades de criação de clientes serão implementadas em breve.
-              </p>
-            </div>
-          )}
-        </div>
 
-        {/* Footer */}
-        <div className="p-6 border-t border-white/10 text-center text-white/40 text-xs">
-          © 2024 Plataforma Prévisita - Todos os direitos reservados.
+            {/* Quick Actions */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-white font-bold text-lg mb-4">Ações Rápidas</h3>
+              <div className="space-y-3">
+                <button className="w-full flex items-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white/80 px-4 py-3.5 rounded-xl transition-all text-left shadow-sm">
+                  <Phone className="w-4.5 h-4.5 text-blue-400" />
+                  Ligar para Cliente
+                </button>
+                <button className="w-full flex items-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white/80 px-4 py-3.5 rounded-xl transition-all text-left shadow-sm">
+                  <CalendarHeart className="w-4.5 h-4.5 text-purple-400" />
+                  Agendar Pré-visita
+                </button>
+                <button className="w-full flex items-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white/80 px-4 py-3.5 rounded-xl transition-all text-left shadow-sm">
+                  <CreditCard className="w-4.5 h-4.5 text-emerald-400" />
+                  Ver Histórico de Compras
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </main>
+    </DashboardLayout>
   );
 }
