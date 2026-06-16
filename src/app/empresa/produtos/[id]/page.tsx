@@ -113,8 +113,14 @@ export default function ProductProfilePage() {
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
+          <Link
+            href="/empresa/produtos/1/editar"
+            className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:brightness-110 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg active:scale-[0.98] transition-all"
+          >
+            <Edit className="w-4.5 h-4.5" />
+            Editar Produto
+          </Link>
           {[
-            { label: "Editar Produto", icon: Edit, color: "from-blue-600 to-blue-700" },
             { label: "Nova Venda", icon: Plus, color: "from-emerald-600 to-emerald-700" },
             { label: "Criar Campanha", icon: Sparkles, color: "from-purple-600 to-purple-700" },
             { label: "Ver Histórico", icon: FileText, color: "from-amber-600 to-amber-700" },
