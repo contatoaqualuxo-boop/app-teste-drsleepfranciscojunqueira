@@ -146,7 +146,7 @@ export default function ConsultantsPage() {
                       <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold border ${getPerformanceBg(consultant.performance)} ${getPerformanceColor(consultant.performance)}`}>
                         {consultant.performance}
                       </span>
-                      <Link href="/empresa/consultores" className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold transition-all">
+                      <Link href="/empresa/consultores/1" className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold transition-all">
                         Ver detalhes
                         <ChevronRight className="w-4 h-4" />
                       </Link>
