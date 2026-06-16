@@ -1,298 +1,242 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
-  Home,
-  Users,
-  ShoppingCart,
-  ShieldCheck,
-  CalendarHeart,
-  Bell,
-  Settings,
-  ChevronLeft,
-  LayoutDashboard,
-  Store,
-  FileText,
-  Box,
-  Calendar,
-  Clock
+  Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
+  Store, FileText, CalendarHeart, Search, Plus, UserCheck,
+  TrendingUp, Star, Calendar as CalendarIcon, AlertTriangle, Sparkles, Clock
 } from "lucide-react";
-import { createClient } from "@/lib/supabase";
-
-interface UserType {
-  id: string;
-  name: string;
-  email: string;
-}
-
-interface ProductType {
-  id: string;
-  name: string;
-}
-
-interface WarrantyType {
-  id: string;
-  company_id: string;
-  user_id: string;
-  product_id: string;
-  purchase_date: string | null;
-  serial_number: string | null;
-  warranty_months: number | null;
-  status: string;
-  created_at: string;
-  updated_at: string;
-  users?: UserType;
-  products?: ProductType;
-}
 
 export default function WarrantiesPage() {
-  const supabase = useMemo(() => createClient(), []);
-  const [toast, setToast] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [warranties, setWarranties] = useState<WarrantyType[]>([]);
+  const navItems = [
+    { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
+    { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
+    { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
+    { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
+    { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const, isActive: true },
+    { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "outros" as const },
+    { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
+    { label: "Prévisitas", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
+    { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
+  ];
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          return;
-        }
+  const warranties = [
+    { id: 1, client: "Ana Carolina Silva", product: "Colchão Premium Orthomol", purchaseDate: "15/03/2026", expiryDate: "15/03/2036", status: "Ativa", nextAction: "Nenhuma" },
+    { id: 2, client: "Bruno Mendes", product: "Travesseiro Ergonômico Sono", purchaseDate: "10/05/2026", expiryDate: "10/05/2028", status: "Vencendo", nextAction: "Contatar cliente" },
+    { id: 3, client: "Carla Costa", product: "Cabeceira Estofada Premium", purchaseDate: "20/01/2021", expiryDate: "20/01/2026", status: "Expirada", nextAction: "Arquivar" },
+    { id: 4, client: "Daniel Almeida", product: "Colchão Hybrid Premium", purchaseDate: "01/06/2026", expiryDate: "01/06/2036", status: "Em análise", nextAction: "Avaliar solicitação" },
+  ];
 
-        const { data: userData } = await supabase
-          .from("users")
-          .select("company_id")
-          .eq("id", user.id)
-          .single();
-        
-        if (!userData?.company_id) {
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from("user_products")
-          .select("*, users!left(*), products!left(*)")
-          .eq("company_id", userData.company_id)
-          .order("created_at", { ascending: false });
-        
-        if (error) {
-          console.error("Error fetching warranties:", error);
-        } else {
-          setWarranties(data || []);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
+  const getStatusConfig = (status: string) => {
+    switch (status) {
+      case "Ativa":
+        return { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/25" };
+      case "Vencendo":
+        return { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/25" };
+      case "Expirada":
+        return { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/25" };
+      case "Em análise":
+        return { bg: "bg-blue-500/15", text: "text-blue-400", border: "border-blue-500/25" };
+      default:
+        return { bg: "bg-white/10", text: "text-white/60", border: "border-white/20" };
     }
-
-    fetchData();
-  }, [supabase]);
-
-  const showToast = (message: string) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 4000);
   };
 
   return (
-    <main className="min-h-screen bg-[#020617] relative flex overflow-hidden">
-      {/* Toast */}
-      {toast && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-3 rounded-2xl text-white font-medium">
-          {toast}
-        </div>
-      )}
-
-      {/* Sidebar */}
-      <div className="w-72 bg-[#03091c] border-r border-white/10 flex-shrink-0 flex flex-col">
-        {/* Logo */}
-        <div className="p-6 border-b border-white/10 flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-            <LayoutDashboard className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <p className="text-white font-black text-lg">Empresa</p>
-            <p className="text-blue-400 text-xs font-medium">Painel</p>
+    <DashboardLayout
+      title="Garantias"
+      sidebarNavItems={navItems}
+      sidebarTitle="Dr. Sleep"
+      sidebarSubtitle="Sono™"
+      actions={
+        <div className="flex items-center gap-3">
+          <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:border-white/20 transition-all relative shadow-sm">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+          </button>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-600/30">
+            FJ
           </div>
         </div>
-
-        {/* Nav */}
-        <div className="flex-1 p-4 space-y-1">
-          {/* Principal */}
-          <div className="mb-6">
-            <p className="text-white/40 text-xs uppercase tracking-wider px-3 mb-2">Principal</p>
-            <Link href="/empresa/dashboard" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Home className="w-5 h-5" />
-              <span>Dashboard</span>
-            </Link>
-            <Link href="/empresa/clientes" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Users className="w-5 h-5" />
-              <span>Clientes</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/produtos" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <ShoppingCart className="w-5 h-5" />
-              <span>Produtos</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/garantias" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 font-medium">
-              <ShieldCheck className="w-5 h-5" />
-              <span>Garantias</span>
-            </Link>
-          </div>
-
-          {/* Outros */}
-          <div className="mb-6">
-            <p className="text-white/40 text-xs uppercase tracking-wider px-3 mb-2">Outros</p>
-            <Link href="/empresa/lojas" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Store className="w-5 h-5" />
-              <span>Lojas</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/documentos" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <FileText className="w-5 h-5" />
-              <span>Documentos</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/previsitas" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <CalendarHeart className="w-5 h-5" />
-              <span>Prévisitas</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/configuracoes" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Settings className="w-5 h-5" />
-              <span>Configurações</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-          </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tight">Garantias</h1>
+          <p className="text-blue-300/90 text-sm mt-1">Controle de garantias, prazos e pós-venda</p>
         </div>
 
-        {/* Help */}
-        <div className="p-4 border-t border-white/10">
-          <div className="bg-blue-600/10 border border-blue-500/30 rounded-xl p-4">
-            <p className="text-white font-medium text-sm mb-1">Suporte Prévisita</p>
-            <p className="text-blue-200/70 text-xs">Entre em contato com nossa equipe</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        {/* Topbar */}
-        <div className="sticky top-0 z-40 bg-[#020617]/95 backdrop-blur-xl border-b border-white/10 px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-3">
-                <Link href="/empresa/dashboard" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all">
-                  <ChevronLeft className="w-5 h-5" />
-                </Link>
-                <h1 className="text-white font-medium text-lg">Garantias</h1>
+        {/* Top Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "Garantias ativas", value: "156", icon: ShieldCheck, color: "from-emerald-500/30 to-green-500/30" },
+            { label: "Vencendo em breve", value: "28", icon: Clock, color: "from-amber-500/30 to-orange-500/30" },
+            { label: "Expiradas", value: "42", icon: AlertTriangle, color: "from-red-500/30 to-pink-500/30" },
+            { label: "Solicitações abertas", value: "8", icon: Search, color: "from-blue-500/30 to-cyan-500/30" },
+          ].map((stat, i) => (
+            <div key={i} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                  <stat.icon className="w-5 h-5 text-white/90" />
+                </div>
+                <h3 className="text-white font-bold text-2xl tracking-tight">{stat.value}</h3>
               </div>
+              <p className="text-white/60 text-sm">{stat.label}</p>
             </div>
-            <div className="flex items-center gap-4">
-              <button onClick={() => showToast("Notificações em desenvolvimento")} className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white relative">
-                <Bell className="w-5 h-5" />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Main Content */}
+          <div className="xl:col-span-3 space-y-6">
+            {/* Top Bar */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm">
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <div className="relative flex-1 sm:flex-initial">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input
+                    type="text"
+                    placeholder="Buscar garantia por cliente, produto ou data..."
+                    className="pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 w-full sm:w-80 transition-all"
+                  />
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {["Todas", "Ativas", "Vencendo", "Expiradas", "Em análise"].map((filter, i) => (
+                    <button
+                      key={i}
+                      className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${i === 0 ? "bg-blue-600/20 border border-blue-500/30 text-blue-400 shadow-sm" : "bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20 hover:text-white/80"}`}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-600/30 active:scale-[0.98] transition-all">
+                <Plus className="w-4.5 h-4.5" />
+                Nova Garantia
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* Content */}
-        <div className="p-8 space-y-6 flex-1">
-          {/* Page Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-black text-white">Todas as Garantias</h2>
-              <p className="text-blue-100/70 text-sm mt-1">Gerencie as garantias da sua empresa</p>
+            {/* Warranties Table */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-white/2.5">
+                      {["Cliente", "Produto", "Data da compra", "Validade", "Status", "Próxima ação"].map((col, i) => (
+                        <th key={i} className="text-left px-8 py-5">
+                          <span className="text-xs font-bold text-white/50 uppercase tracking-wider">{col}</span>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {warranties.map((warranty) => {
+                      const statusConfig = getStatusConfig(warranty.status);
+                      return (
+                        <tr key={warranty.id} className="group hover:bg-white/5 transition-all duration-300 cursor-pointer">
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 via-purple-600/30 to-cyan-500/30 flex items-center justify-center text-white font-semibold shadow-sm">
+                                {warranty.client.charAt(0)}
+                              </div>
+                              <span className="text-white font-semibold">{warranty.client}</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="text-white/80 text-sm font-medium">{warranty.product}</span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="text-white/70 text-sm flex items-center gap-2">
+                              <CalendarIcon className="w-3.5 h-3.5 text-white/40" />
+                              {warranty.purchaseDate}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="text-white/70 text-sm flex items-center gap-2">
+                              <ShieldCheck className="w-3.5 h-3.5 text-white/40" />
+                              {warranty.expiryDate}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className={`px-4 py-2 rounded-full text-xs font-semibold border ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
+                              {warranty.status}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <button className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold group-hover:gap-3 transition-all">
+                              {warranty.nextAction}
+                              <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 
-          {/* Warranties Grid/Cards */}
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-white/10 animate-pulse"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="w-32 h-4 bg-white/10 rounded animate-pulse"></div>
-                      <div className="w-20 h-3 bg-white/10 rounded animate-pulse"></div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="w-full h-3 bg-white/10 rounded animate-pulse"></div>
-                    <div className="w-2/3 h-3 bg-white/10 rounded animate-pulse"></div>
+          {/* Right Panel */}
+          <div className="space-y-6">
+            {/* Resumo de Garantias */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-emerald-400" />
+                Resumo de Garantias
+              </h3>
+              <div className="space-y-5">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Garantias vencendo em 30 dias</p>
+                    <p className="text-white/80 text-sm">28 garantias necessitam atenção</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : warranties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {warranties.map((warranty) => (
-                <div key={warranty.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center flex-shrink-0">
-                      <ShieldCheck className="w-7 h-7 text-white/60" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-white font-bold text-lg truncate">{warranty.products?.name || "Produto"}</h3>
-                      {warranty.users && (
-                        <p className="text-blue-200/70 text-xs truncate">{warranty.users.name}</p>
-                      )}
-                    </div>
-                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      warranty.status === "active" ? "bg-emerald-500/20 text-emerald-400" : "bg-amber-500/20 text-amber-400"
-                    }`}>
-                      {warranty.status === "active" ? "Ativa" : "Inativa"}
-                    </div>
-                  </div>
+                <div className="pt-4 border-t border-white/10">
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Produto com mais solicitações</p>
+                  <p className="text-white font-semibold">Colchão Premium Orthomol</p>
+                </div>
+                <div className="pt-4 border-t border-white/10">
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Alertas de pós-venda</p>
                   <div className="space-y-2">
-                    {warranty.serial_number && (
-                      <div className="flex items-center gap-2 text-white/50 text-xs">
-                        <span className="text-white/40">Número de Série:</span>
-                        <span className="truncate">{warranty.serial_number}</span>
-                      </div>
-                    )}
-                    {warranty.purchase_date && (
-                      <div className="flex items-center gap-2 text-white/50 text-xs">
-                        <Calendar className="w-3 h-3 flex-shrink-0" />
-                        <span>Compra: {new Date(warranty.purchase_date).toLocaleDateString('pt-BR')}</span>
-                      </div>
-                    )}
-                    {warranty.warranty_months && (
-                      <div className="flex items-center gap-2 text-white/50 text-xs">
-                        <Clock className="w-3 h-3 flex-shrink-0" />
-                        <span>Garantia: {warranty.warranty_months} meses</span>
-                      </div>
-                    )}
-                    <p className="text-white/40 text-xs mt-2">
-                      Criado em: {new Date(warranty.created_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    <p className="text-white/80 text-sm flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-amber-500" />
+                      12 garantias com solicitações pendentes
+                    </p>
+                    <p className="text-white/80 text-sm flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                      8 atendimentos agendados para hoje
                     </p>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          ) : (
-            // Empty State
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <ShieldCheck className="w-20 h-20 text-white/10 mb-4" />
-              <h3 className="text-white font-bold text-xl mb-2">Nenhuma garantia cadastrada</h3>
-              <p className="text-blue-100/60 text-sm max-w-md">
-                Ainda não há garantias na sua empresa. As funcionalidades de criação de garantias serão implementadas em breve.
-              </p>
-            </div>
-          )}
-        </div>
 
-        {/* Footer */}
-        <div className="p-6 border-t border-white/10 text-center text-white/40 text-xs">
-          © 2024 Plataforma Prévisita - Todos os direitos reservados.
+            {/* Ações rápidas */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-white font-bold text-lg mb-4">Ações rápidas</h3>
+              <div className="space-y-3">
+                {[
+                  { label: "Ver solicitações", icon: FileText },
+                  { label: "Emitir certificado", icon: ShieldCheck },
+                  { label: "Enviar lembretes", icon: Bell },
+                ].map((action, i) => (
+                  <button
+                    key={i}
+                    className="w-full flex items-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 text-white/80 px-4 py-3.5 rounded-xl transition-all text-left shadow-sm"
+                  >
+                    <action.icon className="w-4.5 h-4.5 text-blue-400" />
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </main>
+    </DashboardLayout>
   );
 }
