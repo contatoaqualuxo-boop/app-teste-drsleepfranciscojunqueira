@@ -77,10 +77,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               key={item.href}
               href={item.href}
               onClick={() => setIsMobileSidebarOpen(false)}
-              className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
+              className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-250 ease-out border ${
                 item.isActive
-                  ? 'bg-blue-600/20 border border-blue-500/30 text-blue-400 font-medium shadow-lg shadow-blue-500/10'
-                  : 'text-white/60 hover:bg-white/5 hover:text-white hover:border hover:border-white/10'
+                  ? 'bg-blue-600/20 border-blue-500/30 text-blue-400 font-medium shadow-lg shadow-blue-500/10'
+                  : 'border-transparent text-white/60 hover:bg-white/5 hover:text-white hover:border-white/10'
               }`}
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />
@@ -98,10 +98,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               key={item.href}
               href={item.href}
               onClick={() => setIsMobileSidebarOpen(false)}
-              className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all ${
+              className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-250 ease-out border ${
                 item.isActive
-                  ? 'bg-blue-600/20 border border-blue-500/30 text-blue-400 font-medium shadow-lg shadow-blue-500/10'
-                  : 'text-white/60 hover:bg-white/5 hover:text-white hover:border hover:border-white/10'
+                  ? 'bg-blue-600/20 border-blue-500/30 text-blue-400 font-medium shadow-lg shadow-blue-500/10'
+                  : 'border-transparent text-white/60 hover:bg-white/5 hover:text-white hover:border-white/10'
               }`}
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />
