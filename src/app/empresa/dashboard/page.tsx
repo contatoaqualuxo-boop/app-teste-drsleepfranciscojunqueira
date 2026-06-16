@@ -202,6 +202,189 @@ export default function CompanyDashboardPage() {
             ))}
           </div>
         </div>
+
+        {/* Novos Cards Premium */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Saúde Comercial */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-xl">Saúde Comercial</h3>
+              <Activity className="w-6 h-6 text-blue-400" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { label: "Clientes ativos", value: "987", color: "from-emerald-500/30 to-green-500/30", status: "success" },
+                { label: "Clientes inativos", value: "247", color: "from-amber-500/30 to-orange-500/30", status: "warning" },
+                { label: "Leads aguardando", value: "89", color: "from-purple-500/30 to-pink-500/30", status: "info" },
+                { label: "Clientes VIP", value: "156", color: "from-blue-500/30 to-cyan-500/30", status: "vip" }
+              ].map((item, i) => (
+                <div key={i} className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-2 h-2 rounded-full ${
+                      item.status === "success" ? "bg-emerald-400" :
+                      item.status === "warning" ? "bg-amber-400" :
+                      item.status === "vip" ? "bg-blue-400" : "bg-purple-400"
+                    }`} />
+                    <span className="text-white/60 text-sm">{item.label}</span>
+                  </div>
+                  <p className="text-white font-bold text-2xl">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Performance das Lojas */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-xl">Performance das Lojas</h3>
+              <Store className="w-6 h-6 text-blue-400" />
+            </div>
+            <div className="space-y-4">
+              {[
+                { name: "Zona Norte", conversion: "32%", sales: 245, consultants: 8, performance: 85 },
+                { name: "Centro", conversion: "28%", sales: 189, consultants: 6, performance: 70 },
+                { name: "Zona Sul", conversion: "35%", sales: 278, consultants: 9, performance: 95 }
+              ].map((store, i) => (
+                <div key={i} className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-white font-semibold">{store.name}</h4>
+                    <span className="text-emerald-400 text-sm font-medium">{store.conversion}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm mb-3">
+                    <span className="text-white/60">{store.sales} vendas</span>
+                    <span className="text-white/60">{store.consultants} consultores</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full"
+                      style={{ width: `${store.performance}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Produtos Mais Vendidos */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-xl">Produtos Mais Vendidos</h3>
+              <ShoppingCart className="w-6 h-6 text-blue-400" />
+            </div>
+            <div className="space-y-3">
+              {[
+                { rank: 1, name: "Colchão Premium Orthomol", sales: 89 },
+                { rank: 2, name: "Travesseiro Pluma Natural", sales: 76 },
+                { rank: 3, name: "Cama Box King Size", sales: 54 },
+                { rank: 4, name: "Colchão Infantil Eco", sales: 45 },
+                { rank: 5, name: "Protetor de Colchão", sales: 38 }
+              ].map((product, i) => (
+                <div key={i} className="flex items-center gap-4 bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center text-white font-bold">
+                    {product.rank}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white text-sm font-medium">{product.name}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-white font-bold">{product.sales}</p>
+                    <p className="text-white/40 text-xs">unidades</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Alertas Inteligentes */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-xl">Alertas Inteligentes</h3>
+              <Bell className="w-6 h-6 text-amber-400" />
+            </div>
+            <div className="space-y-3">
+              {[
+                { icon: Zap, text: "12 colchões precisam de giro", color: "text-amber-400" },
+                { icon: Calendar, text: "31 travesseiros vencem este mês", color: "text-orange-400" },
+                { icon: ShieldCheck, text: "7 garantias próximas do fim", color: "text-red-400" },
+                { icon: Gift, text: "15 clientes fazem aniversário", color: "text-purple-400" },
+                { icon: Users, text: "4 indicações aguardando validação", color: "text-blue-400" }
+              ].map((alert, i) => (
+                <div key={i} className="flex items-center gap-3 bg-white/5 rounded-xl p-4 border border-white/10">
+                  <alert.icon className={`w-5 h-5 flex-shrink-0 ${alert.color}`} />
+                  <p className="text-white/80 text-sm">{alert.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Ranking dos Consultores */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-xl">Ranking dos Consultores</h3>
+              <Target className="w-6 h-6 text-blue-400" />
+            </div>
+            <div className="space-y-3">
+              {[
+                { rank: 1, name: "Mariana Costa", conversion: "42%", sales: 89, avatar: "M" },
+                { rank: 2, name: "Ricardo Alves", conversion: "38%", sales: 76, avatar: "R" },
+                { rank: 3, name: "Fernanda Lima", conversion: "35%", sales: 68, avatar: "F" },
+                { rank: 4, name: "Carlos Souza", conversion: "31%", sales: 54, avatar: "C" },
+                { rank: 5, name: "Juliana Rocha", conversion: "29%", sales: 48, avatar: "J" }
+              ].map((consultor, i) => (
+                <div key={i} className="flex items-center gap-4 bg-white/5 rounded-xl p-4 border border-white/10">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold flex-shrink-0">
+                    {consultor.avatar}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white">
+                        {consultor.rank}
+                      </span>
+                      <p className="text-white text-sm font-medium">{consultor.name}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-emerald-400 font-bold">{consultor.conversion}</p>
+                    <p className="text-white/40 text-xs">{consultor.sales} vendas</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Resumo Financeiro */}
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-white font-bold text-xl">Resumo Financeiro</h3>
+              <CreditCard className="w-6 h-6 text-blue-400" />
+            </div>
+            <div className="space-y-4">
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <p className="text-white/60 text-sm mb-1">Receita do mês</p>
+                <p className="text-white font-bold text-3xl">R$ 89,540</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <p className="text-white/60 text-xs mb-1">Meta</p>
+                  <p className="text-white font-bold text-xl">R$ 100,000</p>
+                </div>
+                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                  <p className="text-white/60 text-xs mb-1">Percentual</p>
+                  <p className="text-emerald-400 font-bold text-xl">89,5%</p>
+                </div>
+              </div>
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-white/60 text-sm">Ticket médio</p>
+                  <p className="text-white font-bold">R$ 3,450</p>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-emerald-500 to-green-500 h-2 rounded-full" style={{ width: "89.5%" }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   );
