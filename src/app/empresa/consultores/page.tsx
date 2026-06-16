@@ -107,10 +107,10 @@ export default function ConsultantsPage() {
                   ))}
                 </div>
               </div>
-              <button className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-600/30 active:scale-[0.98] transition-all">
+              <Link href="/empresa/consultores/novo" className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-600/30 active:scale-[0.98] transition-all">
                 <Plus className="w-4.5 h-4.5" />
                 Novo Consultor
-              </button>
+              </Link>
             </div>
 
             <div className="space-y-4">
