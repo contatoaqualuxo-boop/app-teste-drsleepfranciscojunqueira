@@ -54,6 +54,16 @@ export default function AgendaPage() {
     }
   };
 
+  const getStatusClassName = (status: string) => {
+    const base = "px-4 py-2 rounded-full text-xs font-semibold inline-flex items-center justify-center";
+    if (status === "Confirmado") return `${base} bg-emerald-500/15 text-emerald-300 border border-emerald-500/30`;
+    if (status === "Pendente") return `${base} bg-yellow-500/15 text-yellow-300 border border-yellow-500/30`;
+    if (status === "Em andamento") return `${base} bg-blue-500/15 text-blue-300 border border-blue-500/30`;
+    if (status === "Finalizado") return `${base} bg-purple-500/15 text-purple-300 border border-purple-500/30`;
+    if (status === "Reagendar") return `${base} bg-red-500/15 text-red-300 border border-red-500/30`;
+    return `${base} bg-white/10 text-white/70 border border-white/10`;
+  };
+
   return (
     <DashboardLayout
       title="Agenda"
@@ -184,7 +194,7 @@ export default function AgendaPage() {
                             <span className="text-white/70 text-sm">{item.consultant}</span>
                           </td>
                           <td className="px-6 py-6">
-                            <span className={`px-4 py-2 rounded-full text-xs font-semibold border ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
+                            <span className={getStatusClassName(item.status)}>
                               {item.status}
                             </span>
                           </td>
