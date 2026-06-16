@@ -1,321 +1,189 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
-  Home,
-  Users,
-  ShoppingCart,
-  ShieldCheck,
-  CalendarHeart,
-  Bell,
-  Settings,
-  ChevronLeft,
-  LayoutDashboard,
-  Store,
-  FileText,
-  CheckCircle2,
-  XCircle,
-  Box,
-  Tag
+  Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
+  Store, FileText, CalendarHeart, Search, Plus, UserCheck,
+  TrendingUp, Star, Package, Filter, Sparkles, AlertTriangle
 } from "lucide-react";
-import { createClient } from "@/lib/supabase";
 
-interface Company {
-  id: string;
-  name: string;
-  slug: string;
-  logo_url: string | null;
-}
+export default function ProdutosPage() {
+  const navItems = [
+    { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
+    { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
+    { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
+    { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const, isActive: true },
+    { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
+    { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "outros" as const },
+    { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
+    { label: "Prévisitas", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
+    { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
+  ];
 
-interface ProductCategory {
-  id: string;
-  name: string;
-}
+  const products = [
+    { id: 1, category: "Colchões", name: "Colchão Premium Orthomol", price: "R$ 4.500", stock: 12, status: "Disponível", featured: true, description: "Colchão de molas ensacadas com pillow top premium" },
+    { id: 2, category: "Travesseiros", name: "Travesseiro Ergonômico Sono", price: "R$ 350", stock: 45, status: "Disponível", featured: false, description: "Travesseiro com espuma viscoelástica e tecnologia de temperatura" },
+    { id: 3, category: "Cabeceiras", name: "Cabeceira Estofada Premium", price: "R$ 1.200", stock: 8, status: "Disponível", featured: true, description: "Cabeceira estofada em tecido premium com detalhes em botões" },
+    { id: 4, category: "Poltronas", name: "Poltrona Relax Massageadora", price: "R$ 2.800", stock: 3, status: "Baixo estoque", featured: false, description: "Poltrona reclinável com função de massagem e aquecimento" },
+    { id: 5, category: "Acessórios", name: "Protetor de Colchão Impermeável", price: "R$ 180", stock: 89, status: "Disponível", featured: false, description: "Protetor impermeável e antialérgico para colchões" },
+    { id: 6, category: "Colchões", name: "Colchão Hybrid Premium", price: "R$ 5.800", stock: 6, status: "Disponível", featured: true, description: "Colchão híbrido com molas ensacadas e espuma viscoelástica" },
+  ];
 
-interface ProductType {
-  id: string;
-  company_id: string;
-  category_id: string | null;
-  brand: string | null;
-  name: string;
-  model: string | null;
-  description: string | null;
-  warranty_months: number | null;
-  estimated_lifespan_months: number | null;
-  image_url: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  product_categories?: ProductCategory;
-}
-
-export default function ProductsPage() {
-  const supabase = useMemo(() => createClient(), []);
-  const [toast, setToast] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [products, setProducts] = useState<ProductType[]>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          return;
-        }
-
-        const { data: userData } = await supabase
-          .from("users")
-          .select("company_id")
-          .eq("id", user.id)
-          .single();
-        
-        if (!userData?.company_id) {
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from("products")
-          .select("*, product_categories!left(*)")
-          .eq("company_id", userData.company_id)
-          .eq("is_active", true)
-          .order("created_at", { ascending: false });
-        
-        if (error) {
-          console.error("Error fetching products:", error);
-        } else {
-          setProducts(data || []);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
+  const getStatusConfig = (status: string) => {
+    switch (status) {
+      case "Disponível":
+        return { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/25" };
+      case "Baixo estoque":
+        return { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/25" };
+      default:
+        return { bg: "bg-white/10", text: "text-white/60", border: "border-white/20" };
     }
-
-    fetchData();
-  }, [supabase]);
-
-  const showToast = (message: string) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 4000);
   };
 
   return (
-    <main className="min-h-screen bg-[#020617] relative flex overflow-hidden">
-      {/* Toast */}
-      {toast && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-3 rounded-2xl text-white font-medium">
-          {toast}
-        </div>
-      )}
-
-      {/* Sidebar */}
-      <div className="w-72 bg-[#03091c] border-r border-white/10 flex-shrink-0 flex flex-col">
-        {/* Logo */}
-        <div className="p-6 border-b border-white/10 flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-            <LayoutDashboard className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <p className="text-white font-black text-lg">Empresa</p>
-            <p className="text-blue-400 text-xs font-medium">Painel</p>
+    <DashboardLayout
+      title="Produtos"
+      sidebarNavItems={navItems}
+      sidebarTitle="Dr. Sleep"
+      sidebarSubtitle="Sono™"
+      actions={
+        <div className="flex items-center gap-3">
+          <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 hover:border-white/20 transition-all relative shadow-sm">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+          </button>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-600/30">
+            FJ
           </div>
         </div>
-
-        {/* Nav */}
-        <div className="flex-1 p-4 space-y-1">
-          {/* Principal */}
-          <div className="mb-6">
-            <p className="text-white/40 text-xs uppercase tracking-wider px-3 mb-2">Principal</p>
-            <Link href="/empresa/dashboard" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Home className="w-5 h-5" />
-              <span>Dashboard</span>
-            </Link>
-            <Link href="/empresa/clientes" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Users className="w-5 h-5" />
-              <span>Clientes</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/produtos" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 font-medium">
-              <ShoppingCart className="w-5 h-5" />
-              <span>Produtos</span>
-            </Link>
-            <Link href="/empresa/garantias" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <ShieldCheck className="w-5 h-5" />
-              <span>Garantias</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-          </div>
-
-          {/* Outros */}
-          <div className="mb-6">
-            <p className="text-white/40 text-xs uppercase tracking-wider px-3 mb-2">Outros</p>
-            <Link href="/empresa/lojas" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Store className="w-5 h-5" />
-              <span>Lojas</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/documentos" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <FileText className="w-5 h-5" />
-              <span>Documentos</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/previsitas" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <CalendarHeart className="w-5 h-5" />
-              <span>Prévisitas</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-            <Link href="/empresa/configuracoes" className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-white/60 hover:bg-white/5 hover:text-white transition-all">
-              <Settings className="w-5 h-5" />
-              <span>Configurações</span>
-              <ChevronLeft className="w-4 h-4 ml-auto text-white/40" />
-            </Link>
-          </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tight">Produtos</h1>
+          <p className="text-blue-300/90 text-sm mt-1">Catálogo inteligente da Dr. Sleep + Sono™</p>
         </div>
 
-        {/* Help */}
-        <div className="p-4 border-t border-white/10">
-          <div className="bg-blue-600/10 border border-blue-500/30 rounded-xl p-4">
-            <p className="text-white font-medium text-sm mb-1">Suporte Prévisita</p>
-            <p className="text-blue-200/70 text-xs">Entre em contato com nossa equipe</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col overflow-y-auto">
-        {/* Topbar */}
-        <div className="sticky top-0 z-40 bg-[#020617]/95 backdrop-blur-xl border-b border-white/10 px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-3">
-                <Link href="/empresa/dashboard" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-all">
-                  <ChevronLeft className="w-5 h-5" />
-                </Link>
-                <h1 className="text-white font-medium text-lg">Produtos</h1>
+        {/* Top Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "Total de produtos", value: "156", icon: Package, color: "from-blue-500/30 to-cyan-500/30" },
+            { label: "Colchões", value: "48", icon: TrendingUp, color: "from-emerald-500/30 to-green-500/30" },
+            { label: "Acessórios", value: "62", icon: Star, color: "from-purple-500/30 to-pink-500/30" },
+            { label: "Produtos em destaque", value: "12", icon: Sparkles, color: "from-amber-500/30 to-orange-500/30" },
+          ].map((stat, i) => (
+            <div key={i} className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                  <stat.icon className="w-5 h-5 text-white/90" />
+                </div>
               </div>
+              <h3 className="text-white font-bold text-2xl tracking-tight">{stat.value}</h3>
+              <p className="text-white/60 text-sm mt-1">{stat.label}</p>
             </div>
-            <div className="flex items-center gap-4">
-              <button onClick={() => showToast("Notificações em desenvolvimento")} className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white relative">
-                <Bell className="w-5 h-5" />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Main Content */}
+          <div className="xl:col-span-3 space-y-6">
+            {/* Top Bar */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm">
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <div className="relative flex-1 sm:flex-initial">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  <input
+                    type="text"
+                    placeholder="Buscar produto por nome, categoria ou SKU..."
+                    className="pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 w-full sm:w-80 transition-all"
+                  />
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {["Todos", "Destaques", "Baixo estoque", "Mais vendidos"].map((filter, i) => (
+                    <button
+                      key={i}
+                      className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${i === 0 ? "bg-blue-600/20 border border-blue-500/30 text-blue-400 shadow-sm" : "bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20 hover:text-white/80"}`}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <button className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-600/30 active:scale-[0.98] transition-all">
+                <Plus className="w-4.5 h-4.5" />
+                Novo Produto
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* Content */}
-        <div className="p-8 space-y-6 flex-1">
-          {/* Page Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-black text-white">Todos os Produtos</h2>
-              <p className="text-blue-100/70 text-sm mt-1">Gerencie os produtos da sua empresa</p>
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {products.map((product) => {
+                const statusConfig = getStatusConfig(product.status);
+                return (
+                  <div key={product.id} className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm relative">
+                    {product.featured && (
+                      <div className="absolute top-4 right-4">
+                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 border border-amber-500/25 text-amber-400 flex items-center gap-1.5">
+                          <Star className="w-3.5 h-3.5 fill-current" />
+                          Destaque
+                        </span>
+                      </div>
+                    )}
+                    <div className="w-full h-32 bg-gradient-to-br from-blue-500/20 via-purple-600/20 to-cyan-500/20 rounded-xl mb-4 flex items-center justify-center">
+                      <ShoppingCart className="w-12 h-12 text-white/60" />
+                    </div>
+                    <p className="text-blue-300/80 text-xs uppercase tracking-wider mb-1">{product.category}</p>
+                    <h3 className="text-white font-semibold mb-2">{product.name}</h3>
+                    <p className="text-white/60 text-sm mb-4 line-clamp-2">{product.description}</p>
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-white font-bold text-xl">{product.price}</p>
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${statusConfig.bg} ${statusConfig.text} ${statusConfig.border}`}>
+                        {product.status}
+                      </span>
+                    </div>
+                    <p className="text-white/60 text-xs">Estoque: {product.stock} unidades</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          {/* Products Grid/Cards */}
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-white/10 animate-pulse"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="w-32 h-4 bg-white/10 rounded animate-pulse"></div>
-                      <div className="w-20 h-3 bg-white/10 rounded animate-pulse"></div>
+          {/* Right Panel */}
+          <div className="space-y-6">
+            {/* Resumo do Catálogo */}
+            <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 shadow-sm">
+              <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-emerald-400" />
+                Resumo do Catálogo
+              </h3>
+              <div className="space-y-5">
+                <div>
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Categoria mais vendida</p>
+                  <p className="text-white font-semibold text-lg">Colchões</p>
+                </div>
+                <div>
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Produto mais consultado</p>
+                  <p className="text-white font-medium">Colchão Premium Orthomol</p>
+                </div>
+                <div className="pt-4 border-t border-white/10">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Estoque crítico</p>
+                      <p className="text-white/80 text-sm">3 produtos com estoque abaixo de 5 unidades</p>
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="w-full h-3 bg-white/10 rounded animate-pulse"></div>
-                    <div className="w-2/3 h-3 bg-white/10 rounded animate-pulse"></div>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : products.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((product) => (
-                <div key={product.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500/30 to-orange-500/30 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {product.image_url ? (
-                        <Image
-                          src={product.image_url}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
-                          priority
-                        />
-                      ) : (
-                        <Box className="w-7 h-7 text-white/60" />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-white font-bold text-lg truncate">{product.name}</h3>
-                      {product.product_categories && (
-                        <p className="text-blue-200/70 text-xs truncate flex items-center gap-1">
-                          <Tag className="w-3 h-3" />
-                          {product.product_categories.name}
-                        </p>
-                      )}
-                    </div>
-                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      product.is_active ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
-                    }`}>
-                      {product.is_active ? (
-                        <CheckCircle2 className="w-3 h-3 inline mr-1" />
-                      ) : (
-                        <XCircle className="w-3 h-3 inline mr-1" />
-                      )}
-                      {product.is_active ? "Ativo" : "Inativo"}
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {product.brand && (
-                      <div className="flex items-center gap-2 text-white/50 text-xs">
-                        <span className="text-white/40">Marca:</span>
-                        <span className="truncate">{product.brand}</span>
-                      </div>
-                    )}
-                    {product.model && (
-                      <div className="flex items-center gap-2 text-white/50 text-xs">
-                        <span className="text-white/40">Modelo:</span>
-                        <span className="truncate">{product.model}</span>
-                      </div>
-                    )}
-                    {product.warranty_months && (
-                      <div className="flex items-center gap-2 text-white/50 text-xs">
-                        <span className="text-white/40">Garantia:</span>
-                        <span>{product.warranty_months} meses</span>
-                      </div>
-                    )}
-                    <p className="text-white/40 text-xs mt-2">
-                      Criado em: {new Date(product.created_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' })}
-                    </p>
-                  </div>
+                <div className="pt-4 border-t border-white/10">
+                  <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Sugestão de campanha</p>
+                  <p className="text-white/80 text-sm">Criar campanha de destaque para colchões com até 15% de desconto</p>
                 </div>
-              ))}
+              </div>
             </div>
-          ) : (
-            // Empty State
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <ShoppingCart className="w-20 h-20 text-white/10 mb-4" />
-              <h3 className="text-white font-bold text-xl mb-2">Nenhum produto cadastrado</h3>
-              <p className="text-blue-100/60 text-sm max-w-md">
-                Ainda não há produtos na sua empresa. As funcionalidades de criação de produtos serão implementadas em breve.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="p-6 border-t border-white/10 text-center text-white/40 text-xs">
-          © 2024 Plataforma Prévisita - Todos os direitos reservados.
+          </div>
         </div>
       </div>
-    </main>
+    </DashboardLayout>
   );
 }
