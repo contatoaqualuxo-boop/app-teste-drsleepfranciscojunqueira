@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
