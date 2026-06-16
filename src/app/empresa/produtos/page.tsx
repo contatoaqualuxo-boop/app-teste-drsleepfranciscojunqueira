@@ -12,12 +12,13 @@ export default function ProdutosPage() {
   const navItems = [
     { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
     { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
+    { label: "Consultores", href: "/empresa/consultores", icon: UserCheck, group: "principal" as const },
     { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
     { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const, isActive: true },
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
-    { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "outros" as const },
+    { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "principal" as const },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
-    { label: "Prévisitas", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
+    { label: "Visitas à Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
     { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
   ];
 

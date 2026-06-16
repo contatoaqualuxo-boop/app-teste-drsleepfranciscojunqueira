@@ -100,18 +100,18 @@ export default function CompanyDashboardPage() {
         {/* Grid Premium Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[ 
-            { label: "Clientes", icon: Users, color: "from-blue-500 to-blue-600" },
-            { label: "CRM", icon: MessageSquare, color: "from-purple-500 to-purple-600" },
-            { label: "Financeiro", icon: CreditCard, color: "from-emerald-500 to-emerald-600" },
-            { label: "Agenda", icon: Calendar, color: "from-amber-500 to-amber-600" },
-            { label: "IA", icon: Sparkles, color: "from-pink-500 to-rose-600" },
-            { label: "Sistema de Fidelidade", icon: Gift, color: "from-cyan-500 to-teal-600" },
-            { label: "Pré-visitas", icon: CalendarHeart, color: "from-indigo-500 to-violet-600" },
-            { label: "Campanhas", icon: Target, color: "from-red-500 to-orange-600" },
+            { label: "Clientes", icon: Users, color: "from-blue-500 to-blue-600", href: "/empresa/clientes" },
+            { label: "CRM", icon: MessageSquare, color: "from-purple-500 to-purple-600", href: "/empresa/crm" },
+            { label: "Financeiro", icon: CreditCard, color: "from-emerald-500 to-emerald-600", href: "/empresa/financeiro" },
+            { label: "Agenda", icon: Calendar, color: "from-amber-500 to-amber-600", href: "/empresa/agenda" },
+            { label: "IA", icon: Sparkles, color: "from-pink-500 to-rose-600", href: "/empresa/ia" },
+            { label: "Sistema de Fidelidade", icon: Gift, color: "from-cyan-500 to-teal-600", href: "/empresa/programa-fidelidade" },
+            { label: "Visitas à Loja", icon: CalendarHeart, color: "from-indigo-500 to-violet-600", href: "/empresa/previsitas" },
+            { label: "Campanhas", icon: Target, color: "from-red-500 to-orange-600", href: "/empresa/campanhas" },
           ].map((card, i) => (
             <Link 
               key={i} 
-              href="#" 
+              href={card.href} 
               className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all group"
             >
               <div className="flex items-center gap-4">

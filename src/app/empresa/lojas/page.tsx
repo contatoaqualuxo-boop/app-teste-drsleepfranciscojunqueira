@@ -12,12 +12,13 @@ export default function StoresPage() {
   const navItems = [
     { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
     { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
+    { label: "Consultores", href: "/empresa/consultores", icon: UserCheck, group: "principal" as const },
     { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
     { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
     { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "principal" as const, isActive: true },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
-    { label: "Prévisitas", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
+    { label: "Visitas à Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
     { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
   ];
 
@@ -105,10 +106,10 @@ export default function StoresPage() {
                   ))}
                 </div>
               </div>
-              <button className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-600/30 active:scale-[0.98] transition-all">
+              <Link href="/empresa/lojas/nova" className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-600/30 active:scale-[0.98] transition-all">
                 <Plus className="w-4.5 h-4.5" />
                 Nova Loja
-              </button>
+              </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {stores.map((store) => (

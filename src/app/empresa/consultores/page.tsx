@@ -12,13 +12,13 @@ export default function ConsultantsPage() {
   const navItems = [
     { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
     { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
-    { label: "Consultores", href: "/empresa/consultores", icon: UserCheck, group: "principal" as const },
+    { label: "Consultores", href: "/empresa/consultores", icon: UserCheck, group: "principal" as const, isActive: true },
     { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
     { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
     { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "principal" as const },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
-    { label: "Pré-visitas", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
+    { label: "Visitas à Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
     { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
   ];
 
@@ -115,44 +115,46 @@ export default function ConsultantsPage() {
 
             <div className="space-y-4">
               {consultants.map((consultant) => (
-                <div key={consultant.id} className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm">
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                    <div className="md:col-span-2 flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-600/30 flex items-center justify-center text-white font-semibold shadow-sm">
-                        {consultant.name.charAt(0)}
+                <Link key={consultant.id} href={`/empresa/consultores/${consultant.id}`} className="block">
+                  <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                      <div className="md:col-span-2 flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-600/30 flex items-center justify-center text-white font-semibold shadow-sm">
+                          {consultant.name.charAt(0)}
+                        </div>
+                      </div>
+                      <div className="md:col-span-2">
+                        <p className="text-white font-semibold">{consultant.name}</p>
+                        <p className="text-white/60 text-xs">{consultant.role}</p>
+                      </div>
+                      <div className="md:col-span-2 flex items-center gap-2">
+                        <Store className="w-3.5 h-3.5 text-white/50" />
+                        <span className="text-white/80 text-sm">{consultant.store}</span>
+                      </div>
+                      <div className="md:col-span-2 flex items-center gap-2">
+                        <Phone className="w-3.5 h-3.5 text-white/50" />
+                        <span className="text-white/80 text-sm">{consultant.phone}</span>
+                      </div>
+                      <div className="md:col-span-1 text-center">
+                        <p className="text-white font-semibold">{consultant.previsitas}</p>
+                        <p className="text-white/60 text-xs">Pré-visitas</p>
+                      </div>
+                      <div className="md:col-span-1 text-center">
+                        <p className="text-white font-semibold">{consultant.conversion}%</p>
+                        <p className="text-white/60 text-xs">Conversão</p>
+                      </div>
+                      <div className="md:col-span-2 flex items-center gap-2 justify-between">
+                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold border ${getPerformanceBg(consultant.performance)} ${getPerformanceColor(consultant.performance)}`}>
+                          {consultant.performance}
+                        </span>
+                        <span className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold transition-all">
+                          Ver detalhes
+                          <ChevronRight className="w-4 h-4" />
+                        </span>
                       </div>
                     </div>
-                    <div className="md:col-span-2">
-                      <p className="text-white font-semibold">{consultant.name}</p>
-                      <p className="text-white/60 text-xs">{consultant.role}</p>
-                    </div>
-                    <div className="md:col-span-2 flex items-center gap-2">
-                      <Store className="w-3.5 h-3.5 text-white/50" />
-                      <span className="text-white/80 text-sm">{consultant.store}</span>
-                    </div>
-                    <div className="md:col-span-2 flex items-center gap-2">
-                      <Phone className="w-3.5 h-3.5 text-white/50" />
-                      <span className="text-white/80 text-sm">{consultant.phone}</span>
-                    </div>
-                    <div className="md:col-span-1 text-center">
-                      <p className="text-white font-semibold">{consultant.previsitas}</p>
-                      <p className="text-white/60 text-xs">Pré-visitas</p>
-                    </div>
-                    <div className="md:col-span-1 text-center">
-                      <p className="text-white font-semibold">{consultant.conversion}%</p>
-                      <p className="text-white/60 text-xs">Conversão</p>
-                    </div>
-                    <div className="md:col-span-2 flex items-center gap-2 justify-between">
-                      <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold border ${getPerformanceBg(consultant.performance)} ${getPerformanceColor(consultant.performance)}`}>
-                        {consultant.performance}
-                      </span>
-                      <Link href="/empresa/consultores/1" className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold transition-all">
-                        Ver detalhes
-                        <ChevronRight className="w-4 h-4" />
-                      </Link>
-                    </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
