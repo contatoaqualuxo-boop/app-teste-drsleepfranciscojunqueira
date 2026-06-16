@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
@@ -11,6 +12,7 @@ export default function ConsultantsPage() {
   const navItems = [
     { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
     { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
+    { label: "Consultores", href: "/empresa/consultores", icon: UserCheck, group: "principal" as const },
     { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
     { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
@@ -144,10 +146,10 @@ export default function ConsultantsPage() {
                       <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold border ${getPerformanceBg(consultant.performance)} ${getPerformanceColor(consultant.performance)}`}>
                         {consultant.performance}
                       </span>
-                      <button className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold transition-all">
+                      <Link href="/empresa/consultores" className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold transition-all">
                         Ver detalhes
                         <ChevronRight className="w-4 h-4" />
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

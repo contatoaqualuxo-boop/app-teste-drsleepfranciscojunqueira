@@ -12,6 +12,7 @@ export default function StoreProfilePage() {
   const navItems = [
     { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
     { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
+    { label: "Consultores", href: "/empresa/consultores", icon: UserCheck, group: "principal" as const },
     { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
     { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
@@ -142,7 +143,7 @@ export default function StoreProfilePage() {
               <div className="overflow-x-auto">
                 <div className="divide-y divide-white/10">
                   {consultants.map((consultant) => (
-                    <div key={consultant.id} className="flex flex-col md:flex-row items-center gap-4 p-6 hover:bg-white/5 transition-all duration-300">
+                    <Link key={consultant.id} href="/empresa/consultores" className="flex flex-col md:flex-row items-center gap-4 p-6 hover:bg-white/5 transition-all duration-300">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-600/30 flex items-center justify-center text-white font-semibold shadow-sm">
                         {consultant.name.charAt(0)}
                       </div>
@@ -164,7 +165,7 @@ export default function StoreProfilePage() {
                           <p className="text-white/60 text-xs">Performance</p>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>
