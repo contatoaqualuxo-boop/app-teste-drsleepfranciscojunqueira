@@ -25,7 +25,8 @@ import {
   DollarSign,
   Zap,
   Award,
-  Hash
+  Hash,
+  Bed
 } from "lucide-react";
 
 export default function IndicouGanhouPage() {
