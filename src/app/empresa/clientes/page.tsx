@@ -6,7 +6,7 @@ import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
   Store, FileText, CalendarHeart, Search, Plus, UserCheck,
   UserX, TrendingUp, Star, Phone, Calendar as CalendarIcon,
-  Briefcase, Target, UserPlus, Sparkles, CreditCard, Gift, HeartPulse, Activity
+  Briefcase, Target, UserPlus, Sparkles, CreditCard, Gift, HeartPulse, Activity, Zap
 } from "lucide-react";
 
 export default function ClientesPage() {
