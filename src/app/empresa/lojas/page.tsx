@@ -5,7 +5,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
   Store, FileText, CalendarHeart, Search, Plus, UserCheck,
-  TrendingUp, Star, MapPin, Phone, Zap, Gift
+  TrendingUp, Star, MapPin, Phone, Zap, Gift, HeartPulse, Activity
 } from "lucide-react";
 
 export default function StoresPage() {

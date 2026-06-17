@@ -5,7 +5,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
   Store, FileText, CalendarHeart, Search, Plus, UserCheck,
-  TrendingUp, Star, Package, Filter, Sparkles, AlertTriangle, Gift
+  TrendingUp, Star, Package, Filter, Sparkles, AlertTriangle, Gift, HeartPulse, Activity
 } from "lucide-react";
 
 export default function ProdutosPage() {

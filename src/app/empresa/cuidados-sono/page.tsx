@@ -25,7 +25,8 @@ import {
   Bed,
   Wind,
   RefreshCcw,
-  HeartPulse
+  HeartPulse,
+  Activity
 } from "lucide-react";
 
 export default function CuidadosSonoPage() {
