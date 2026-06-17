@@ -42,6 +42,7 @@ export default function IndicouGanhouPage() {
     { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "principal" as const },
     { label: "Cuidados do Sono", href: "/empresa/cuidados-sono", icon: HeartPulse, group: "principal" as const },
     { label: "Score Sono™", href: "/empresa/score-sono", icon: Activity, group: "principal" as const },
+    { label: "Motor de Oportunidades™", href: "/empresa/oportunidades", icon: Zap, group: "principal" as const },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
     { label: "Visitas à Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
     { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
