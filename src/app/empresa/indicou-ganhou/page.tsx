@@ -26,7 +26,9 @@ import {
   Zap,
   Award,
   Hash,
-  Bed
+  Bed,
+  HeartPulse,
+  Activity
 } from "lucide-react";
 
 export default function IndicouGanhouPage() {
@@ -38,6 +40,8 @@ export default function IndicouGanhouPage() {
     { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
     { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "principal" as const },
+    { label: "Cuidados do Sono", href: "/empresa/cuidados-sono", icon: HeartPulse, group: "principal" as const },
+    { label: "Score Sono™", href: "/empresa/score-sono", icon: Activity, group: "principal" as const },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
     { label: "Visitas à Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
     { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },

@@ -5,7 +5,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
   Store, FileText, CalendarHeart, Search, Plus, UserCheck,
-  TrendingUp, Star, MapPin, Phone, Zap, Clock, Gift
+  TrendingUp, Star, MapPin, Phone, Zap, Clock, Gift, HeartPulse, Activity
 } from "lucide-react";
 
 export default function ConsultantsPage() {
@@ -18,6 +18,8 @@ export default function ConsultantsPage() {
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
     { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "principal" as const },
     { label: "Indicou Ganhou", href: "/empresa/indicou-ganhou", icon: Gift, group: "principal" as const },
+    { label: "Cuidados do Sono", href: "/empresa/cuidados-sono", icon: HeartPulse, group: "principal" as const },
+    { label: "Score Sono™", href: "/empresa/score-sono", icon: Activity, group: "principal" as const },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
     { label: "Visitas à Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
     { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },

@@ -5,7 +5,7 @@ import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight, 
   LayoutDashboard, Store, FileText, CalendarHeart, Search, User, 
   TrendingUp, Zap, CreditCard, Calendar, Sparkles, Gift, 
-  Target, MessageSquare, Clock, Activity, CheckCircle2, Plus 
+  Target, MessageSquare, Clock, Activity, CheckCircle2, Plus, HeartPulse
 } from "lucide-react";
 import Link from "next/link";
 
