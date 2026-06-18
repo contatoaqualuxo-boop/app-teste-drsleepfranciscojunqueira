@@ -5,19 +5,24 @@ import {
   Home, Users, ShoppingCart, ShieldCheck, Bell, Settings, ChevronRight,
   Store, FileText, CalendarHeart, Search, Plus, UserCheck,
   TrendingUp, Star, Calendar as CalendarIcon, MapPin, Zap,
-  Clock, AlertTriangle, Sparkles, MessageCircle, CheckCircle
+  Clock, AlertTriangle, Sparkles, MessageCircle, CheckCircle, Gift, HeartPulse, Activity
 } from "lucide-react";
 
 export default function PreVisitasPage() {
   const navItems = [
     { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
     { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
+    { label: "Consultores", href: "/empresa/consultores", icon: UserCheck, group: "principal" as const },
     { label: "CRM", href: "/empresa/crm", icon: UserCheck, group: "principal" as const },
     { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
-    { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "outros" as const },
+    { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "principal" as const },
+    { label: "Indicou Ganhou", href: "/empresa/indicou-ganhou", icon: Gift, group: "principal" as const },
+    { label: "Cuidados do Sono", href: "/empresa/cuidados-sono", icon: HeartPulse, group: "principal" as const },
+    { label: "Score Sono™", href: "/empresa/score-sono", icon: Activity, group: "principal" as const },
+    { label: "Motor de Oportunidades™", href: "/empresa/oportunidades", icon: Zap, group: "principal" as const },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
-    { label: "Prévisitas", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const, isActive: true },
+    { label: "Visitas à Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const, isActive: true },
     { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
   ];
 

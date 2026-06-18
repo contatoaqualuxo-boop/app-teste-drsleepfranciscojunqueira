@@ -40,6 +40,7 @@ export default function IndicouGanhouPage() {
     { label: "Produtos", href: "/empresa/produtos", icon: ShoppingCart, group: "principal" as const },
     { label: "Garantias", href: "/empresa/garantias", icon: ShieldCheck, group: "principal" as const },
     { label: "Lojas", href: "/empresa/lojas", icon: Store, group: "principal" as const },
+    { label: "Indicou Ganhou", href: "/empresa/indicou-ganhou", icon: Gift, group: "principal" as const, isActive: true },
     { label: "Cuidados do Sono", href: "/empresa/cuidados-sono", icon: HeartPulse, group: "principal" as const },
     { label: "Score Sono™", href: "/empresa/score-sono", icon: Activity, group: "principal" as const },
     { label: "Motor de Oportunidades™", href: "/empresa/oportunidades", icon: Zap, group: "principal" as const },

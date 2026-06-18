@@ -143,15 +143,14 @@ export default function ClientesPage() {
                     {clients.map((client) => {
                       const statusConfig = getStatusConfig(client.status);
                       return (
-                        <Link key={client.id} href={`/empresa/clientes/${client.id}`} className="block">
-                          <tr className="group hover:bg-white/5 transition-all duration-300 cursor-pointer">
+                        <tr key={client.id} className="group hover:bg-white/5 transition-all duration-300 cursor-pointer">
                           <td className="px-8 py-6">
-                            <div className="flex items-center gap-4">
+                            <Link href={`/empresa/clientes/${client.id}`} className="flex items-center gap-4">
                               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 via-purple-600/30 to-cyan-500/30 flex items-center justify-center text-white font-semibold shadow-sm">
                                 {client.name.charAt(0)}
                               </div>
                               <span className="text-white font-semibold">{client.name}</span>
-                            </div>
+                            </Link>
                           </td>
                           <td className="px-8 py-6">
                             <span className="text-white/70 text-sm flex items-center gap-2">
@@ -175,10 +174,11 @@ export default function ClientesPage() {
                             </span>
                           </td>
                           <td className="px-8 py-6">
-                            <span className="text-white/90 text-sm font-bold">{client.potential}</span>
+                            <Link href={`/empresa/clientes/${client.id}`} className="text-white/90 text-sm font-bold hover:text-blue-400 transition-colors">
+                              {client.potential}
+                            </Link>
                           </td>
-                          </tr>
-                        </Link>
+                        </tr>
                       );
                     })}
                   </tbody>
