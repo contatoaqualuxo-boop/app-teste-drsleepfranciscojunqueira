@@ -22,7 +22,7 @@ export default function PreVisitasPage() {
     { label: "Score Sono™", href: "/empresa/score-sono", icon: Activity, group: "principal" as const },
     { label: "Motor de Oportunidades™", href: "/empresa/oportunidades", icon: Zap, group: "principal" as const },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const },
-    { label: "Visitas à Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const, isActive: true },
+    { label: "Visitas a Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const, isActive: true },
     { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
   ];
 
@@ -77,7 +77,7 @@ export default function PreVisitasPage() {
 
   return (
     <DashboardLayout
-      title="Pré-visitas"
+      title="Visitas a Loja"
       sidebarNavItems={navItems}
       sidebarTitle="Dr. Sleep"
       sidebarSubtitle="Sono™"
@@ -96,8 +96,8 @@ export default function PreVisitasPage() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Pré-visitas</h1>
-          <p className="text-blue-300/90 text-sm mt-1">Gestão inteligente das experiências antes da visita presencial.</p>
+          <h1 className="text-3xl font-black text-white tracking-tight">Visitas a Loja</h1>
+          <p className="text-blue-300/90 text-sm mt-1">Gestão inteligente das visitas à loja.</p>
         </div>
 
         {/* Top Cards */}
