@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
 import {
   Home,
   Users,
@@ -18,45 +16,74 @@ import {
   HeartPulse,
   Activity,
   Zap,
-  LayoutDashboard,
-  ChevronLeft
+  Search,
+  Plus,
+  Download,
+  FileCheck,
+  File,
+  FileArchive
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { createClient } from "@/lib/supabase";
 
-interface UserType {
-  id: string;
-  name: string;
-  email: string;
-}
+const mockDocuments = [
+  {
+    id: "1",
+    name: "Contrato de Prestação de Serviços - Cliente X",
+    type: "Contratos",
+    date: "15/06/2026",
+    size: "245 KB",
+    status: "Ativo"
+  },
+  {
+    id: "2",
+    name: "Manual de Instalação Colchão Premium",
+    type: "Manuais",
+    date: "10/05/2026",
+    size: "1.2 MB",
+    status: "Ativo"
+  },
+  {
+    id: "3",
+    name: "Termo de Garantia Colchão Orthomol",
+    type: "Garantias",
+    date: "20/04/2026",
+    size: "156 KB",
+    status: "Ativo"
+  },
+  {
+    id: "4",
+    name: "Contrato de Consultoria Loja Centro",
+    type: "Contratos",
+    date: "05/03/2026",
+    size: "189 KB",
+    status: "Ativo"
+  },
+  {
+    id: "5",
+    name: "Manual de Uso Travesseiro Ergonômico",
+    type: "Manuais",
+    date: "12/02/2026",
+    size: "890 KB",
+    status: "Ativo"
+  },
+  {
+    id: "6",
+    name: "Termo de Garantia Cama Box King",
+    type: "Garantias",
+    date: "28/01/2026",
+    size: "178 KB",
+    status: "Ativo"
+  }
+];
 
-interface ProductType {
-  id: string;
-  name: string;
-}
+const documentCategories = [
+  { label: "Documentos ativos", icon: FileCheck, count: 24, color: "from-blue-500/30 to-cyan-500/30" },
+  { label: "Contratos", icon: FileText, count: 12, color: "from-purple-500/30 to-pink-500/30" },
+  { label: "Manuais", icon: File, count: 8, color: "from-emerald-500/30 to-green-500/30" },
+  { label: "Garantias", icon: FileArchive, count: 4, color: "from-amber-500/30 to-orange-500/30" }
+];
 
-interface DocumentType {
-  id: string;
-  company_id: string;
-  user_product_id: string | null;
-  user_id: string | null;
-  document_type: string;
-  file_name: string;
-  file_path: string;
-  file_url: string | null;
-  mime_type: string | null;
-  file_size_bytes: number | null;
-  expires_at: string | null;
-  created_at: string;
-  users?: UserType;
-}
-
-export default function DocumentsPage() {
-  const supabase = useMemo(() => createClient(), []);
-  const [toast, setToast] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [documents, setDocuments] = useState<DocumentType[]>([]);
-
+export default function DocumentosPage() {
   const navItems = [
     { label: "Dashboard", href: "/empresa/dashboard", icon: Home, group: "principal" as const },
     { label: "Clientes", href: "/empresa/clientes", icon: Users, group: "principal" as const },
@@ -71,53 +98,8 @@ export default function DocumentsPage() {
     { label: "Motor de Oportunidades™", href: "/empresa/oportunidades", icon: Zap, group: "principal" as const },
     { label: "Documentos", href: "/empresa/documentos", icon: FileText, group: "outros" as const, isActive: true },
     { label: "Visitas a Loja", href: "/empresa/previsitas", icon: CalendarHeart, group: "outros" as const },
-    { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const },
+    { label: "Configurações", href: "/empresa/configuracoes", icon: Settings, group: "outros" as const }
   ];
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) {
-          return;
-        }
-
-        const { data: userData } = await supabase
-          .from("users")
-          .select("company_id")
-          .eq("id", user.id)
-          .single();
-        
-        if (!userData?.company_id) {
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from("documents")
-          .select("*, users!left(*)")
-          .eq("company_id", userData.company_id)
-          .order("created_at", { ascending: false });
-        
-        if (error) {
-          console.error("Error fetching documents:", error);
-        } else {
-          setDocuments(data || []);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchData();
-  }, [supabase]);
-
-  const showToast = (message: string) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 4000);
-  };
 
   return (
     <DashboardLayout
@@ -127,90 +109,115 @@ export default function DocumentsPage() {
       sidebarSubtitle="Sono™"
       actions={
         <div className="flex items-center gap-3">
-          <button onClick={() => showToast("Notificações em desenvolvimento")} className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white relative">
-            <Bell className="w-5 h-5" />
+          <div className="relative hidden sm:flex">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+            <input
+              type="text"
+              placeholder="Pesquisar..."
+              className="pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+            />
+          </div>
+          <button className="flex items-center gap-2 bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white px-4 py-2 rounded-xl font-semibold shadow-lg shadow-blue-600/30 active:scale-[0.98] transition-all">
+            <Plus className="w-4 h-4" />
+            Novo Documento
           </button>
         </div>
       }
     >
-      {/* Toast */}
-      {toast && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-white/10 backdrop-blur-xl border border-white/20 px-6 py-3 rounded-2xl text-white font-medium">
-          {toast}
-        </div>
-      )}
-
-      <div className="space-y-6">
-        {/* Page Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-black text-white">Todos os Documentos</h2>
-            <p className="text-blue-100/70 text-sm mt-1">Gerencie os documentos da sua empresa</p>
-          </div>
+      <div className="space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-4xl font-black text-white tracking-tight">Documentos</h1>
+          <p className="text-blue-300/90 text-sm mt-1">Gerencie todos os documentos da sua empresa</p>
         </div>
 
-        {/* Documents */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-white/10 animate-pulse"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="w-32 h-4 bg-white/10 rounded animate-pulse"></div>
-                    <div className="w-20 h-3 bg-white/10 rounded animate-pulse"></div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div className="w-full h-3 bg-white/10 rounded animate-pulse"></div>
-                  <div className="w-2/3 h-3 bg-white/10 rounded animate-pulse"></div>
+        {/* Categories Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {documentCategories.map((category, i) => (
+            <div
+              key={i}
+              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl shadow-sm group"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${category.color} flex items-center justify-center`}>
+                  <category.icon className="w-6 h-6 text-white/80" />
                 </div>
               </div>
-            ))}
+              <h3 className="text-white font-bold text-2xl">{category.count}</h3>
+              <p className="text-white/60 text-sm mt-1">{category.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Documents List */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-white font-bold text-xl">Lista de Documentos</h3>
           </div>
-        ) : documents.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {documents.map((doc) => (
-              <div key={doc.id} className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500/30 to-blue-500/30 flex items-center justify-center flex-shrink-0">
-                    <FileText className="w-5 h-5 text-white/60" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-white font-bold text-lg truncate">{doc.file_name}</h3>
-                    <p className="text-blue-200/70 text-xs truncate">{doc.document_type}</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  {doc.users && (
-                    <div className="flex items-center gap-2 text-white/50 text-xs">
-                      <Users className="w-3 h-3 flex-shrink-0" />
-                      <span>{doc.users.name}</span>
-                    </div>
-                  )}
-                  {doc.file_size_bytes && (
-                    <div className="flex items-center gap-2 text-white/50 text-xs">
-                      <span>{(doc.file_size_bytes / 1024).toFixed(2)} KB</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2 text-white/50 text-xs">
-                    <Calendar className="w-3 h-3 flex-shrink-0" />
-                    <span>Adicionado em: {new Date(doc.created_at).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/10 bg-white/2.5">
+                  <th className="text-left px-6 py-4">
+                    <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Documento</span>
+                  </th>
+                  <th className="text-left px-6 py-4">
+                    <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Tipo</span>
+                  </th>
+                  <th className="text-left px-6 py-4">
+                    <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Data</span>
+                  </th>
+                  <th className="text-left px-6 py-4">
+                    <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Tamanho</span>
+                  </th>
+                  <th className="text-left px-6 py-4">
+                    <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Status</span>
+                  </th>
+                  <th className="text-left px-6 py-4">
+                    <span className="text-xs font-bold text-white/50 uppercase tracking-wider">Ação</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {mockDocuments.map((doc) => (
+                  <tr key={doc.id} className="group hover:bg-white/5 transition-all duration-300 cursor-pointer">
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/30 via-purple-600/30 to-cyan-500/30 flex items-center justify-center text-white font-semibold shadow-sm">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <span className="text-white font-semibold">{doc.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="text-white/80 text-sm">{doc.type}</span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="text-white/60 text-sm flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5 text-white/40" />
+                        {doc.date}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="text-white/60 text-sm">{doc.size}</span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="px-4 py-2 rounded-full text-xs font-semibold border bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                        {doc.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <button className="text-blue-400 text-sm hover:text-blue-300 flex items-center gap-2 font-semibold transition-all">
+                        <Download className="w-4 h-4" />
+                        Baixar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ) : (
-          // Empty State
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <FileText className="w-20 h-20 text-white/10 mb-4" />
-            <h3 className="text-white font-bold text-xl mb-2">Nenhum documento</h3>
-            <p className="text-blue-100/60 text-sm max-w-md">
-              Ainda não há documentos na sua empresa. As funcionalidades de upload de documentos serão implementadas em breve.
-            </p>
-          </div>
-        )}
+        </div>
       </div>
     </DashboardLayout>
   );

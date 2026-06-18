@@ -70,7 +70,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {/* Principal Group */}
           {safeSidebarNavItems.filter(i => i.group === 'principal').map((item) => (
             <Link
