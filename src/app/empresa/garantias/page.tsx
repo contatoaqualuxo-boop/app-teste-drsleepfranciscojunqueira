@@ -208,11 +208,11 @@ export default function WarrantiesPage() {
                   <p className="text-white/60 text-xs uppercase tracking-wider mb-2">Alertas de pós-venda</p>
                   <div className="space-y-2">
                     <p className="text-white/80 text-sm flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-amber-500" />
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
                       12 garantias com solicitações pendentes
                     </p>
                     <p className="text-white/80 text-sm flex items-center gap-2">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
                       8 atendimentos agendados para hoje
                     </p>
                   </div>
