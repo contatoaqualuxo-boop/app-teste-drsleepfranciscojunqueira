@@ -12,7 +12,7 @@ const navItems = [
   { label: 'Clube', href: '/cliente-premium/clube', icon: CalendarHeart, group: 'principal' as const },
   { label: 'Indique e Ganhe', href: '/cliente-premium/indique-e-ganhe', icon: CalendarHeart, group: 'principal' as const },
   { label: 'Documentos', href: '/cliente-premium/documentos', icon: CalendarHeart, group: 'outros' as const },
-  { label: 'Pré-visita', href: '/cliente-premium/pre-visita', icon: CalendarHeart, group: 'outros' as const, isActive: true },
+  { label: 'Visita à Loja', href: '/cliente-premium/pre-visita', icon: CalendarHeart, group: 'outros' as const, isActive: true },
   { label: 'Minha Conta', href: '/cliente-premium/minha-conta', icon: CalendarHeart, group: 'outros' as const },
 ];
 
@@ -25,7 +25,7 @@ const mockVisits = [
 export default function PremiumCustomerPreVisit() {
   return (
     <DashboardLayout
-      title="Pré-visita"
+      title="Visita à Loja"
       sidebarNavItems={navItems}
       sidebarTitle="Área do Cliente"
       sidebarSubtitle="Premium"
@@ -34,7 +34,7 @@ export default function PremiumCustomerPreVisit() {
         {/* Intro */}
         <div className="bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border border-indigo-500/20 rounded-2xl p-6 backdrop-blur-xl">
           <h2 className="text-2xl font-bold text-white mb-2">Agende sua visita</h2>
-          <p className="text-white/70">Acompanhe e agende visitas personalizadas.</p>
+          <p className="text-white/70">Agende, acompanhe e consulte o histórico das suas visitas à loja.</p>
         </div>
 
         {/* Visits List */}

@@ -12,7 +12,7 @@ const navItems = [
   { label: 'Clube', href: '/cliente-premium/clube', icon: Trophy, group: 'principal' as const, isActive: true },
   { label: 'Indique e Ganhe', href: '/cliente-premium/indique-e-ganhe', icon: Trophy, group: 'principal' as const },
   { label: 'Documentos', href: '/cliente-premium/documentos', icon: Trophy, group: 'outros' as const },
-  { label: 'Pré-visita', href: '/cliente-premium/pre-visita', icon: Trophy, group: 'outros' as const },
+  { label: 'Visita à Loja', href: '/cliente-premium/pre-visita', icon: Trophy, group: 'outros' as const },
   { label: 'Minha Conta', href: '/cliente-premium/minha-conta', icon: Trophy, group: 'outros' as const },
 ];
 
